@@ -30,7 +30,9 @@ DB_PASS=$(openssl rand -hex 16)
 
 sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;" || echo "Database already exists"
 sudo -u postgres psql -c "CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASS';" || echo "User already exists"
+sudo -u postgres psql -c "ALTER USER $DB_USER WITH PASSWORD '$DB_PASS';"
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
+sudo -u postgres psql -d $DB_NAME -c "GRANT ALL ON SCHEMA public TO $DB_USER;"
 
 # 4. Generate Production .env files
 echo "📝 Generating environment files..."
