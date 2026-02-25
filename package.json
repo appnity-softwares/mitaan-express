@@ -1,0 +1,14 @@
+{
+    "name": "mitaan-express-monorepo",
+    "private": true,
+    "scripts": {
+        "postinstall": "cd frontend && npm install && cd ../backend && npm install",
+        "frontend": "cd frontend && npm run dev",
+        "backend": "cd backend && npm run dev",
+        "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+        "build": "cd frontend && npm run build"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    }
+}

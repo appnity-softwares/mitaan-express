@@ -1,0 +1,269 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  name      String?
+  role      Role      @default(USER)
+  image     String?
+  bio       String?
+  articles  Article[]
+  blogs     Blog[]
+  activityLogs ActivityLog[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+  EDITOR
+  REPORTER
+}
+
+model Article {
+  id               Int           @id @default(autoincrement())
+  title            String
+  slug             String        @unique
+  content          String        @db.Text
+  shortDescription String?       @db.Text
+  image            String?
+  
+  // Options
+  isBreaking       Boolean       @default(false)
+  isTrending       Boolean       @default(false)
+  isFeatured       Boolean       @default(false)
+  
+  // SEO
+  videoUrl         String?
+  metaTitle        String?
+  metaDescription  String?
+  metaKeywords     String?
+
+  // Relations
+  category         Category      @relation(fields: [categoryId], references: [id])
+  categoryId       Int
+  author           User          @relation(fields: [authorId], references: [id])
+  authorId         Int
+  tags             Tag[]
+  analytics        Analytics[]
+  
+  // Status
+  status           ArticleStatus @default(DRAFT)
+  language         String        @default("en") // "en" or "hi"
+  published        Boolean       @default(false) 
+  publishedAt      DateTime?
+  views            Int           @default(0)
+  
+  // Dynamic fields
+  priority         Priority      @default(NORMAL)
+  scheduledAt      DateTime?
+
+  // specific categories (e.g. film rating, match score)
+  metadata         Json?
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+enum Priority {
+  HIGH
+  NORMAL
+  LOW
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+}
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  nameHi      String?    // Hindi name
+  slug        String     @unique
+  description String?
+  image       String?
+  icon        String?    // Icon name for sidebar
+  color       String?    // Color code for styling
+  sortOrder   Int        @default(0)
+  parentId    Int?
+  parent      Category?  @relation("SubCategories", fields: [parentId], references: [id])
+  children    Category[] @relation("SubCategories")
+
+  articles    Article[]
+  blogs       Blog[]
+  analytics   Analytics[]
+}
+
+model Tag {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  nameHi   String?   @unique
+  slug     String    @unique
+  articles Article[]
+  blogs    Blog[]
+}
+
+model Blog {
+  id               Int           @id @default(autoincrement())
+  title            String
+  slug             String        @unique
+  content          String        @db.Text
+  shortDescription String?       @db.Text
+  image            String?
+  
+  // Relations
+  author           User          @relation(fields: [authorId], references: [id])
+  authorId         Int
+  category         Category?      @relation(fields: [categoryId], references: [id])
+  categoryId       Int?
+
+  tags             Tag[]
+  
+  // Status
+  status           ArticleStatus @default(DRAFT)
+  language         String        @default("en") // "en" or "hi"
+  published        Boolean       @default(false)
+  views            Int           @default(0)
+  
+  // Dynamic fields
+  metadata         Json?
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+
+model Media {
+  id          Int       @id @default(autoincrement())
+  type        MediaType
+  title       String
+  description String?   @db.Text
+  url         String
+  thumbnail   String?
+  category    String?
+  filename    String?
+  size        String?
+  duration    String?
+  views       Int       @default(0)
+  isPublished Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([type])
+  @@index([isPublished])
+}
+
+model Advertisement {
+  id        Int        @id @default(autoincrement())
+  name      String
+  position  AdPosition
+  type      AdType
+  content   String     
+  link      String?
+  isActive  Boolean    @default(true)
+  startDate DateTime?
+  endDate   DateTime?
+  clicks    Int        @default(0)
+  views     Int        @default(0)
+}
+
+enum AdPosition {
+  HEADER
+  SIDEBAR
+  FOOTER
+  IN_ARTICLE
+  POPUP
+}
+
+enum AdType {
+  IMAGE
+  CODE
+  ADSENSE
+}
+
+model Analytics {
+  id          Int      @id @default(autoincrement())
+  date        DateTime @default(now())
+  articleId   Int?
+  article     Article? @relation(fields: [articleId], references: [id])
+  categoryId  Int?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  pageViews   Int      @default(0)
+  uniqueVisitors Int   @default(0)
+  avgTimeOnPage Int?   // in seconds
+  source      String?  // direct, social, search, etc.
+  createdAt   DateTime @default(now())
+  
+  @@index([date])
+  @@index([articleId])
+  @@index([categoryId])
+}
+
+
+model ActivityLog {
+  id        Int      @id @default(autoincrement())
+  action    String
+  entity    String
+  entityId  Int?
+  details   String?
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+}
+
+
+model Setting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}
+
+
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+
+
+model Donation {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  email     String?
+  amount    Float
+  message   String?
+  paymentId String?  // For tracking if needed
+  details   String?  // UTR, Transaction ID, or Bank Reference
+  status    String   @default("PENDING") // PENDING, SUCCESS, FAILED
+  method    String?  // Form, QR, or Bank
+  createdAt DateTime @default(now())
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  subject   String?
+  phone     String?
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+
+

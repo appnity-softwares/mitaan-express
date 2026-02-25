@@ -1,0 +1,39 @@
+[dotenv@17.2.3] injecting env (2) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+[
+  {
+    "id": 1,
+    "title": "Test Article",
+    "status": "DRAFT",
+    "published": false
+  },
+  {
+    "id": 2,
+    "title": "Test Article",
+    "status": "DRAFT",
+    "published": false
+  },
+  {
+    "id": 3,
+    "title": "The Future of AI in 2026",
+    "status": "PUBLISHED",
+    "published": true
+  },
+  {
+    "id": 4,
+    "title": "Top 10 Gadgets to Watch",
+    "status": "PUBLISHED",
+    "published": true
+  },
+  {
+    "id": 5,
+    "title": "Space Exploration Updates",
+    "status": "PUBLISHED",
+    "published": true
+  },
+  {
+    "id": 6,
+    "title": "Welcome to Mitaan Express",
+    "status": "PUBLISHED",
+    "published": true
+  }
+]

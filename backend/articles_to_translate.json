@@ -1,0 +1,39 @@
+[dotenv@17.2.3] injecting env (2) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+[
+  {
+    "id": 3,
+    "title": "The Future of AI in 2026",
+    "content": "Artificial Intelligence is evolving rapidly...",
+    "shortDescription": "An overview of AI trends.",
+    "categoryId": 1,
+    "authorId": 1,
+    "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1000"
+  },
+  {
+    "id": 4,
+    "title": "Top 10 Gadgets to Watch",
+    "content": "Here are the top gadgets releasing this year...",
+    "shortDescription": "Gadgets aiming to change your life.",
+    "categoryId": 1,
+    "authorId": 1,
+    "image": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=1000"
+  },
+  {
+    "id": 5,
+    "title": "Space Exploration Updates",
+    "content": "NASA announces new mission to Mars...",
+    "shortDescription": "Updates on the Mars mission.",
+    "categoryId": 1,
+    "authorId": 1,
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1000"
+  },
+  {
+    "id": 6,
+    "title": "Welcome to Mitaan Express",
+    "content": "This is the first article on your new local database. Mitaan Express is dedicated to providing quality news.",
+    "shortDescription": "Latest updates from Mitaan Express.",
+    "categoryId": 2,
+    "authorId": 1,
+    "image": null
+  }
+]

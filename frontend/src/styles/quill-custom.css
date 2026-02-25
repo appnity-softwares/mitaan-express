@@ -1,0 +1,87 @@
+/* Quill Editor Dark Mode Support */
+.dark .ql-toolbar {
+    background: rgb(15 23 42 / 0.5) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .ql-container {
+    background: rgb(15 23 42 / 0.5) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+}
+
+.dark .ql-editor {
+    color: white !important;
+}
+
+.dark .ql-stroke {
+    stroke: rgba(255, 255, 255, 0.6) !important;
+}
+
+.dark .ql-fill {
+    fill: rgba(255, 255, 255, 0.6) !important;
+}
+
+.dark .ql-picker-label {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.dark .ql-picker-options {
+    background: rgb(30 41 59) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .ql-picker-item {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.dark .ql-picker-item:hover {
+    background: rgb(51 65 85) !important;
+}
+
+/* Quill Editor Enhancements */
+.ql-toolbar {
+    border-radius: 12px 12px 0 0 !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.ql-container {
+    border-radius: 0 0 12px 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-top: none !important;
+    min-height: 400px !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+.ql-editor {
+    min-height: 400px !important;
+    font-size: 16px !important;
+    line-height: 1.8 !important;
+}
+
+.ql-editor.ql-blank::before {
+    color: #94a3b8 !important;
+    font-style: normal !important;
+}
+
+/* Custom scrollbar for editor */
+.ql-editor::-webkit-scrollbar {
+    width: 8px;
+}
+
+.ql-editor::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ql-editor::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.dark .ql-editor::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+
+.ql-editor::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}

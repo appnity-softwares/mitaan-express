@@ -1,0 +1,75 @@
+[dotenv@17.2.3] injecting env (2) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+[
+  {
+    "id": 1,
+    "name": "Technology",
+    "nameHi": null,
+    "slug": "technology",
+    "description": "Latest tech news",
+    "image": null,
+    "icon": null,
+    "color": null,
+    "sortOrder": 0,
+    "parentId": null
+  },
+  {
+    "id": 2,
+    "name": "National",
+    "nameHi": "राष्ट्रीय",
+    "slug": "national",
+    "description": null,
+    "image": null,
+    "icon": null,
+    "color": null,
+    "sortOrder": 0,
+    "parentId": null
+  },
+  {
+    "id": 3,
+    "name": "State News",
+    "nameHi": "राज्य समाचार",
+    "slug": "state-news",
+    "description": null,
+    "image": null,
+    "icon": null,
+    "color": null,
+    "sortOrder": 0,
+    "parentId": null
+  },
+  {
+    "id": 4,
+    "name": "Politics",
+    "nameHi": "राजनीति",
+    "slug": "politics",
+    "description": null,
+    "image": null,
+    "icon": null,
+    "color": null,
+    "sortOrder": 0,
+    "parentId": null
+  },
+  {
+    "id": 5,
+    "name": "Entertainment",
+    "nameHi": "मनोरंजन",
+    "slug": "entertainment",
+    "description": null,
+    "image": null,
+    "icon": null,
+    "color": null,
+    "sortOrder": 0,
+    "parentId": null
+  },
+  {
+    "id": 6,
+    "name": "Sports",
+    "nameHi": "खेल",
+    "slug": "sports",
+    "description": null,
+    "image": null,
+    "icon": null,
+    "color": null,
+    "sortOrder": 0,
+    "parentId": null
+  }
+]

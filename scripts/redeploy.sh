@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Mitaan Express - Redeployment Script
+# Pulled by CI/CD or manually run on VPS
+
+set -e
+
+echo "🔄 Starting Redeployment..."
+
+# 1. Pull latest code
+# git pull origin main
+
+# 2. Update Backend
+echo "📦 Updating Backend..."
+cd backend
+npm install
+npx prisma generate
+npx prisma migrate deploy
+sudo systemctl restart mitaan-express-backend
+cd ..
+
+# 3. Update Frontend
+echo "📦 Updating Frontend..."
+cd frontend
+npm install
+npm run build
+cd ..
+
+echo "✅ Redeployment Complete!"
