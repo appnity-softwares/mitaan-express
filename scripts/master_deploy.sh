@@ -51,7 +51,7 @@ EOF
 
 # Frontend .env
 cat <<EOF > frontend/.env
-VITE_API_URL="https://www.mitaanexpress.com/api"
+VITE_API_URL="https://api.mitaanexpress.com/api"
 GEMINI_API_KEY="your_gemini_key"
 EOF
 
