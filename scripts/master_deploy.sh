@@ -39,7 +39,7 @@ echo "📝 Generating environment files..."
 cat <<EOF > backend/.env
 DATABASE_URL="postgresql://$DB_USER:$DB_PASS@localhost:5432/$DB_NAME?sslmode=disable"
 JWT_SECRET="$(openssl rand -base64 32)"
-PORT=3000
+PORT=4000
 
 # Cloudflare R2 Credentials (Placeholders)
 R2_ACCOUNT_ID="your_account_id"
