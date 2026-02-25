@@ -63,6 +63,7 @@ cd backend
 npm install --legacy-peer-deps
 npx prisma generate
 npx prisma migrate deploy || echo "No migrations to apply yet"
+npm run seed
 cd ..
 
 echo "🏗️ Building Frontend..."
