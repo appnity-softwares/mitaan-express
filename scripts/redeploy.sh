@@ -13,7 +13,7 @@ echo "🔄 Starting Redeployment..."
 # 2. Update Backend
 echo "📦 Updating Backend..."
 cd backend
-npm install
+npm install --legacy-peer-deps
 npx prisma generate
 npx prisma migrate deploy
 sudo systemctl restart mitaan-express-backend
@@ -22,7 +22,7 @@ cd ..
 # 3. Update Frontend
 echo "📦 Updating Frontend..."
 cd frontend
-npm install
+npm install --legacy-peer-deps
 npm run build
 cd ..
 

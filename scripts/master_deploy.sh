@@ -26,7 +26,7 @@ sudo npm install -g pm2
 echo "🐘 Configuring PostgreSQL..."
 DB_NAME="mitaanexpress"
 DB_USER="mitaan_admin"
-DB_PASS=$(openssl rand -base64 12)
+DB_PASS=$(openssl rand -hex 16)
 
 sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;" || echo "Database already exists"
 sudo -u postgres psql -c "CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASS';" || echo "User already exists"
@@ -60,14 +60,14 @@ echo "✅ Environment files created."
 # 5. Build Application
 echo "🏗️ Building Backend..."
 cd backend
-npm install
+npm install --legacy-peer-deps
 npx prisma generate
 npx prisma migrate deploy || echo "No migrations to apply yet"
 cd ..
 
 echo "🏗️ Building Frontend..."
 cd frontend
-npm install
+npm install --legacy-peer-deps
 npm run build
 cd ..
 
