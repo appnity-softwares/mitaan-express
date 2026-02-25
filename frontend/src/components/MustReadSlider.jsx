@@ -17,7 +17,11 @@ const MustReadSlider = ({ language, onArticleClick }) => {
             // In a real app we'd filter by views > 100 or PRIORITY=HIGH
             try {
                 const response = await fetch(`${API_URL}/articles`);
+                if (!response.ok) throw new Error('Failed to fetch articles');
                 const data = await response.json();
+
+                if (!Array.isArray(data)) throw new Error('Invalid data format');
+
                 // Filter by Priority=HIGH or Sort by Views - let's simulate
                 const simulation = data.filter(a => a.status === 'PUBLISHED').sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 8);
 

@@ -79,7 +79,7 @@ echo "⚙️ Setting up Systemd Service..."
 sudo cp scripts/mitaan-express-backend.service /etc/systemd/system/mitaan-express-backend.service
 sudo systemctl daemon-reload
 sudo systemctl enable mitaan-express-backend
-sudo systemctl start mitaan-express-backend
+sudo systemctl restart mitaan-express-backend
 
 # 7. Nginx Setup
 echo "🌐 Configuring Nginx..."
