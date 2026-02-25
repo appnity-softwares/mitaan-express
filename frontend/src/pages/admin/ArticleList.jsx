@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FileText, Trash2, Eye, EyeOff, Copy, Archive, Download, CheckSquare, Square, Search, Filter, Calendar, TrendingUp, Zap, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useAdminArticles, useCategories } from '../../hooks/useQueries';
+import { API_URL } from '../../services/api';
 import { useAdminTranslation } from '../../context/AdminTranslationContext';
 
 const ArticleList = () => {
@@ -41,7 +42,7 @@ const ArticleList = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/articles/${articleId}`, {
+            const response = await fetch(`${API_URL}/articles/${articleId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -57,7 +58,7 @@ const ArticleList = () => {
     const handleDuplicate = async (article) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/articles', {
+            const response = await fetch(`${API_URL}/articles`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -82,7 +83,7 @@ const ArticleList = () => {
     const handleToggleActive = async (articleId, currentStatus) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/articles/${articleId}/toggle-active`, {
+            const response = await fetch(`${API_URL}/articles/${articleId}/toggle-active`, {
                 method: 'PATCH',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -125,12 +126,12 @@ const ArticleList = () => {
                 if (!article) continue;
 
                 if (action === 'delete') {
-                    await fetch(`http://localhost:3000/api/articles/${article.id}`, {
+                    await fetch(`${API_URL}/articles/${article.id}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                 } else if (action === 'publish' || action === 'unpublish') {
-                    await fetch(`http://localhost:3000/api/articles/${article.id}`, {
+                    await fetch(`${API_URL}/articles/${article.id}`, {
                         method: 'PUT',
                         headers: {
                             'Authorization': `Bearer ${token}`,

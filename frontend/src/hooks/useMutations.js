@@ -8,6 +8,7 @@ import {
     updateBlog,
     deleteBlog,
     updateSettings,
+    API_URL,
 } from '../services/api';
 
 /**
@@ -180,7 +181,7 @@ export const useUpdateComment = () => {
         mutationFn: async ({ id, status, rejectionReason }) => {
             const token = getToken();
             if (!token) throw new Error('No auth token');
-            const response = await fetch(`http://localhost:3000/api/comments/${id}`, {
+            const response = await fetch(`${API_URL}/comments/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -207,7 +208,7 @@ export const useDeleteComment = () => {
         mutationFn: async (id) => {
             const token = getToken();
             if (!token) throw new Error('No auth token');
-            const response = await fetch(`http://localhost:3000/api/comments/${id}`, {
+            const response = await fetch(`${API_URL}/comments/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` },
             });
@@ -232,7 +233,7 @@ export const useCreateComment = () => {
             const headers = { 'Content-Type': 'application/json' };
             if (token) headers['Authorization'] = `Bearer ${token}`;
 
-            const response = await fetch('http://localhost:3000/api/comments', {
+            const response = await fetch(`${API_URL}/comments`, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify(commentData),

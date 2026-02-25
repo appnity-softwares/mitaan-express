@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Zap, Star, TrendingUp, X, Plus } from 'lucide-react';
 import { useAdminArticles } from '../../hooks/useQueries';
+import { API_URL } from '../../services/api';
 
 const FeaturedContent = () => {
     // TanStack Query Hook
@@ -21,7 +22,7 @@ const FeaturedContent = () => {
             const token = localStorage.getItem('token');
             const article = articles.find(a => a.id === articleId);
 
-            const response = await fetch(`http://localhost:3000/api/articles/${article.slug}`, {
+            const response = await fetch(`${API_URL}/articles/${article.slug}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,

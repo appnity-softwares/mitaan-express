@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { API_URL as BASE_API_URL } from '../services/api';
 
-const API_URL = 'http://localhost:3000/api/media';
+const API_URL = `${BASE_API_URL}/media`;
 
 // Fetch published media for frontend (public)
 export const usePublicMedia = (type, category) => {

@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
+import { API_URL } from '../services/api';
 
 // Dummy data removed for API
 
@@ -15,7 +16,7 @@ const MustReadSlider = ({ language, onArticleClick }) => {
         const loadMustRead = async () => {
             // In a real app we'd filter by views > 100 or PRIORITY=HIGH
             try {
-                const response = await fetch('http://localhost:3000/api/articles');
+                const response = await fetch(`${API_URL}/articles`);
                 const data = await response.json();
                 // Filter by Priority=HIGH or Sort by Views - let's simulate
                 const simulation = data.filter(a => a.status === 'PUBLISHED').sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 8);

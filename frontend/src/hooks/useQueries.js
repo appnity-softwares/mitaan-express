@@ -9,6 +9,7 @@ import {
     fetchStats,
     fetchSettings,
     fetchActivityLogs,
+    API_URL,
 } from '../services/api';
 
 // ============================================
@@ -190,7 +191,7 @@ export const useUsers = () => {
         queryFn: async () => {
             const token = getToken();
             if (!token) throw new Error('No auth token');
-            const response = await fetch('http://localhost:3000/api/admin/users', {
+            const response = await fetch(`${API_URL}/admin/users`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!response.ok) throw new Error('Failed to fetch users');
@@ -210,8 +211,8 @@ export const useAdminComments = (status = 'ALL') => {
             const token = getToken();
             if (!token) throw new Error('No auth token');
             const url = status === 'ALL'
-                ? 'http://localhost:3000/api/comments'
-                : `http://localhost:3000/api/comments?status=${status}`;
+                ? `${API_URL}/comments`
+                : `${API_URL}/comments?status=${status}`;
 
             const response = await fetch(url, {
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -230,7 +231,7 @@ export const usePublicComments = ({ articleId, blogId }) => {
     return useQuery({
         queryKey: ['public', 'comments', { articleId, blogId }],
         queryFn: async () => {
-            const baseUrl = 'http://localhost:3000/api/comments';
+            const baseUrl = `${API_URL}/comments`;
             const url = articleId
                 ? `${baseUrl}/article/${articleId}`
                 : `${baseUrl}/blog/${blogId}`;
@@ -253,7 +254,7 @@ export const useAnalytics = (period = 'daily') => {
             const token = getToken();
             console.log('Analytics: Token exists?', !!token);
             if (!token) throw new Error('No auth token');
-            const url = `http://localhost:3000/api/analytics/dashboard?period=${period}`;
+            const url = `${API_URL}/analytics/dashboard?period=${period}`;
             console.log('Analytics: Fetching from', url);
             const response = await fetch(url, {
                 headers: { 'Authorization': `Bearer ${token}` }

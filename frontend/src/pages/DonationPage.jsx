@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSettings } from '../hooks/useQueries';
+import { API_URL } from '../services/api';
 import { Heart, Coffee, CreditCard, QrCode, CheckCircle2, IndianRupee, Landmark, User, Mail, MessageSquare, FileText, Globe } from 'lucide-react';
 
 const DonationPage = ({ language, toggleLanguage }) => {
@@ -39,7 +40,7 @@ const DonationPage = ({ language, toggleLanguage }) => {
                 delete payload.email;
             }
 
-            const response = await fetch('http://localhost:3000/api/donations', {
+            const response = await fetch(`${API_URL}/donations`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

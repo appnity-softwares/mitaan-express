@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Search, Trash2, Users as UsersIcon } from 'lucide-react';
+import { Search, Trash2, Users as UsersIcon } from 'lucide-react';
 import { useUsers } from '../../hooks/useQueries';
+import { API_URL } from '../../services/api';
 
 const Users = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -16,7 +18,7 @@ const Users = () => {
     const handleRoleChange = async (userId, newRole) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/admin/users/${userId}/role`, {
+            const response = await fetch(`${API_URL}/admin/users/${userId}/role`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -39,7 +41,7 @@ const Users = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/admin/users/${userId}`, {
+            const response = await fetch(`${API_URL}/admin/users/${userId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
