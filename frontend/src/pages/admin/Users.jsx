@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Search, Trash2, Users as UsersIcon } from 'lucide-react';
-import { Search, Trash2, Users as UsersIcon } from 'lucide-react';
 import { useUsers } from '../../hooks/useQueries';
 import { API_URL } from '../../services/api';
 
