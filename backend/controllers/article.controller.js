@@ -110,7 +110,7 @@ exports.getArticleBySlug = async (req, res) => {
         res.json(article);
     } catch (error) {
         console.error('Fetch article error:', error);
-        res.status(500).json({ error: 'Failed to fetch article', details: error.message });
+        res.status(500).json({ error: 'Failed to fetch article', details: error.message, prismaError: error.code });
     }
 };
 

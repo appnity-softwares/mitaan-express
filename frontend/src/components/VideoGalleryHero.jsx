@@ -91,7 +91,7 @@ const VideoGalleryHero = ({ language }) => {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[600px] lg:h-[550px]">
                 {/* Main Video Area */}
-                <div className="lg:col-span-8 relative rounded-2xl overflow-hidden group h-full bg-neutral-900 border border-slate-200 dark:border-white/5 shadow-2xl">
+                <div className="lg:col-span-8 relative rounded-2xl overflow-hidden group h-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-white/5 shadow-2xl">
                     {isPlaying ? (
                         <div className="w-full h-full relative">
                             <iframe

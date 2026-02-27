@@ -197,7 +197,7 @@ const Navbar = ({
                             </button>
                             <LanguagePopup onSelect={onLanguageChange} />
                         </div>
-                        <button onClick={toggleTheme} className="transition-all hover:scale-110 text-white hover:text-white/80">
+                        <button onClick={toggleTheme} className={`transition-all hover:scale-110 hover:opacity-80 ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
                             {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
                         </button>
                     </div>

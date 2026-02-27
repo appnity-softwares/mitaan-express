@@ -102,7 +102,7 @@ const HeroSlider = ({ language }) => {
     };
 
     return (
-        <section className="relative h-[85vh] md:h-[95vh] min-h-[600px] bg-black overflow-hidden group/hero">
+        <section className="relative h-[85vh] md:h-[95vh] min-h-[600px] bg-slate-900 dark:bg-black overflow-hidden group/hero">
             <AnimatePresence initial={false} custom={direction} mode="popLayout">
                 <motion.div
                     key={page}

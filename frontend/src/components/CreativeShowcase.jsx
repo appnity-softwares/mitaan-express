@@ -72,7 +72,7 @@ const CreativeShowcase = ({ language, setActiveCategory }) => {
                             viewport={{ once: true }}
                             transition={{ delay: idx * 0.2, type: "spring", stiffness: 100 }}
                             onClick={() => setActiveCategory(card.id)}
-                            className="group relative h-[380px] rounded-[2.5rem] overflow-hidden cursor-pointer w-full bg-slate-900 border border-slate-200/10 dark:border-white/5"
+                            className="group relative h-[380px] rounded-[2.5rem] overflow-hidden cursor-pointer w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/5"
                         >
                             {/* Background Image with Parallax-like Zoom */}
                             <div className="absolute inset-0">

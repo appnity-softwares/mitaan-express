@@ -13,10 +13,7 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    .dark body {
-      background-color: #030712;
-      color: #f8f9fa;
-    }
+
 
     ::-webkit-scrollbar {
       width: 8px;
@@ -51,7 +48,7 @@
   <link rel="stylesheet" href="/src/index.css">
 </head>
 
-<body class="bg-[#f8f9fa] text-[#1a1a1a]">
+<body class="bg-white dark:bg-[#030712] text-slate-900 dark:text-white antialiased transition-colors duration-300">
   <div id="root"></div>
   <script type="module" src="/src/index.jsx"></script>
 </body>
