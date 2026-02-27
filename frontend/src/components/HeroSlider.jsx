@@ -20,7 +20,7 @@ const HeroSlider = ({ language }) => {
         isWelcome: true
     };
 
-    const articleSlides = featured.slice(0, 3).map(a => ({
+    const articleSlides = featured.slice(0, 6).map(a => ({
         id: a.id,
         tag: language === 'hi' ? (a.category?.nameHi || 'विशेष') : (a.category?.name || 'FEATURED'),
         title: a.title,
