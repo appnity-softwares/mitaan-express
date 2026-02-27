@@ -99,6 +99,18 @@ const ArticleDetailPage = ({ language }) => {
         window.open(shareUrls[platform], '_blank', 'width=600,height=400');
     };
 
+    const [scrollProgress, setScrollProgress] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const currentScroll = window.scrollY;
+            setScrollProgress((currentScroll / totalScroll) * 100);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -121,18 +133,6 @@ const ArticleDetailPage = ({ language }) => {
             </div>
         );
     }
-
-    const [scrollProgress, setScrollProgress] = useState(0);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-            const currentScroll = window.scrollY;
-            setScrollProgress((currentScroll / totalScroll) * 100);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     const formattedDate = new Date(article.createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
