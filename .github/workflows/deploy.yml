@@ -46,6 +46,7 @@ jobs:
               exit 1
             fi
             cd "$PROJECT_DIR"
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
             chmod +x scripts/redeploy.sh
             ./scripts/redeploy.sh

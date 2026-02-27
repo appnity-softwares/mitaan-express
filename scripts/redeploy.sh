@@ -11,7 +11,8 @@ cd "$(dirname "$0")/.."
 echo "🔄 Starting Redeployment..."
 
 # 1. Pull latest code
-git pull origin main
+git fetch origin main
+git reset --hard origin/main
 
 # 2. Update Backend
 echo "📦 Updating Backend..."
