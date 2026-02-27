@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSettings } from '../../hooks/useQueries';
 import { useUpdateSettings } from '../../hooks/useMutations';
-import { Save, Globe, Phone, Mail, MapPin, Facebook, Twitter, Instagram, Youtube, Image, Type } from 'lucide-react';
+import {
+    Save, Globe, Phone, Mail, MapPin, Facebook, Twitter, Instagram,
+    Youtube, Image, Type, Megaphone, Zap, Layout, Settings as SettingsIcon,
+    ShieldCheck, BarChart3, Palette
+} from 'lucide-react';
 
 const Settings = () => {
     // TanStack Query Hooks
@@ -27,6 +31,21 @@ const Settings = () => {
         ad_article_top_enabled: 'false',
         ad_article_bottom_code: '',
         ad_article_bottom_enabled: 'false',
+        // Popup Modal Ad
+        ad_popup_enabled: 'true',
+        ad_popup_type: 'promo', // 'promo' (premium) or 'ad' (custom image)
+        ad_popup_image_url: '',
+        ad_popup_link_url: '',
+        // Homepage Section Controls
+        section_hero_enabled: 'true',
+        section_ticker_enabled: 'true',
+        section_indepth_enabled: 'true',
+        section_poetry_enabled: 'true',
+        section_gallery_enabled: 'true',
+        section_live_enabled: 'true',
+        // SEO & Advanced
+        site_keywords: '',
+        google_analytics_id: '',
     });
 
     useEffect(() => {
@@ -43,261 +62,271 @@ const Settings = () => {
     const handleSaveSection = async (keys) => {
         try {
             const updateData = {};
-            let hasData = false;
-
-            // Only collect fields that have content
             keys.forEach(key => {
-                const value = settings[key];
-                if (value && String(value).trim() !== '') {
-                    updateData[key] = value;
-                    hasData = true;
-                }
+                updateData[key] = settings[key];
             });
 
-            // Prevent saving if no data filled
-            if (!hasData) {
-                alert('⚠️ Please fill at least one field before saving!');
-                return;
-            }
-
             await updateMutation.mutateAsync(updateData);
-            alert('✅ Section saved successfully!');
+            alert('✅ Settings updated successfully!');
         } catch (error) {
-            alert('❌ Failed to save section: ' + error.message);
+            alert('❌ Failed to update settings: ' + error.message);
         }
     };
 
     const loading = updateMutation.isPending;
 
-    // Helper: Check if section has any data
-    const hasSectionData = (keys) => {
-        return keys.some(key => settings[key] && String(settings[key]).trim() !== '');
-    };
-
-    if (initialLoading) return <div className="p-8 text-center text-slate-500">Loading settings...</div>;
+    if (initialLoading) return (
+        <div className="p-8 text-center flex flex-col items-center justify-center min-h-[400px] space-y-4">
+            <Zap className="animate-bounce text-red-600" size={48} />
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Loading Master Controls...</p>
+        </div>
+    );
 
     return (
-        <div className="p-4 lg:p-8 space-y-6 max-w-5xl mx-auto">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Website Settings</h2>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Manage global site configuration</p>
+        <div className="p-4 lg:p-8 space-y-12 max-w-7xl mx-auto pb-32">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-900 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/20 blur-[100px] -z-0"></div>
+                <div className="relative z-10">
+                    <h2 className="text-3xl lg:text-5xl font-black uppercase tracking-tighter mb-2 flex items-center gap-4">
+                        <SettingsIcon className="text-red-500 animate-spin-slow" size={40} />
+                        Master Control
+                    </h2>
+                    <p className="text-slate-400 font-medium max-w-md">The central nervous system of Mitaan Express. Manage global branding, ads, and layout architecture here.</p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* General Settings */}
-                <div className="space-y-6">
-                    <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-white/5 shadow-sm space-y-6">
-                        <div className="flex items-center justify-between">
-                            <h3 className="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-white">
-                                <Globe className="text-red-500" /> General Info
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Left Column: Traditional Settings */}
+                <div className="lg:col-span-12 xl:col-span-7 space-y-8">
+
+                    {/* General & Branding */}
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-white/5 shadow-xl space-y-8">
+                        <div className="flex items-center justify-between border-b dark:border-white/5 pb-6">
+                            <h3 className="flex items-center gap-2 font-black text-xl text-slate-900 dark:text-white uppercase tracking-tight">
+                                <Palette className="text-red-500" /> Identity & Branding
                             </h3>
                             <button
                                 onClick={() => handleSaveSection(['site_title', 'site_description', 'logo_url', 'footer_text'])}
-                                disabled={loading || !hasSectionData(['site_title', 'site_description', 'logo_url', 'footer_text'])}
-                                className={`px-4 py-2 font-bold rounded-lg text-xs uppercase tracking-wider transition-all ${hasSectionData(['site_title', 'site_description', 'logo_url', 'footer_text'])
-                                    ? 'bg-red-600 text-white hover:scale-105 hover:shadow-lg'
-                                    : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'
-                                    } disabled:opacity-50`}
-                                title={hasSectionData(['site_title', 'site_description', 'logo_url', 'footer_text']) ? 'Save Section' : 'Fill at least one field'}
+                                className="px-6 py-2 bg-red-600 text-white font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-red-600/20"
                             >
-                                {loading ? 'Saving...' : 'Save General'}
+                                {loading ? 'Saving...' : 'Save Branding'}
                             </button>
                         </div>
 
-                        <div>
-                            <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Site Title</label>
-                            <div className="relative">
-                                <Type className="absolute left-3 top-3 text-slate-400" size={18} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="md:col-span-2">
+                                <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Website Title</label>
+                                <div className="relative">
+                                    <Type className="absolute left-3 top-3.5 text-slate-400" size={18} />
+                                    <input
+                                        name="site_title"
+                                        value={settings.site_title}
+                                        onChange={handleChange}
+                                        className="w-full pl-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 font-bold border border-transparent focus:border-red-500/20 transition-all font-serif italic"
+                                        placeholder="Mitaan Express"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="md:col-span-2">
+                                <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Logo URL (Cloudflare R2 or External)</label>
+                                <div className="relative">
+                                    <Image className="absolute left-3 top-3.5 text-slate-400" size={18} />
+                                    <input
+                                        name="logo_url"
+                                        value={settings.logo_url}
+                                        onChange={handleChange}
+                                        className="w-full pl-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 font-mono text-[10px]"
+                                        placeholder="https://r2.mitaanexpress.com/logo.png"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="md:col-span-2">
+                                <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Footer Rights & Text</label>
                                 <input
-                                    name="site_title"
-                                    value={settings.site_title}
+                                    name="footer_text"
+                                    value={settings.footer_text}
                                     onChange={handleChange}
-                                    className="w-full pl-10 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 focus:ring-red-500/20"
-                                    placeholder="Mitaan Express"
+                                    className="w-full p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 font-medium"
+                                    placeholder="© 2026 Mitaan Express. All rights reserved."
                                 />
                             </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Site Description (SEO)</label>
-                            <textarea
-                                name="site_description"
-                                value={settings.site_description}
-                                onChange={handleChange}
-                                rows={3}
-                                className="w-full p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 focus:ring-red-500/20"
-                                placeholder="Leading news portal..."
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Logo URL</label>
-                            <div className="relative">
-                                <Image className="absolute left-3 top-3 text-slate-400" size={18} />
-                                <input
-                                    name="logo_url"
-                                    value={settings.logo_url}
-                                    onChange={handleChange}
-                                    className="w-full pl-10 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 focus:ring-red-500/20"
-                                    placeholder="https://..."
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Footer Text</label>
-                            <input
-                                name="footer_text"
-                                value={settings.footer_text}
-                                onChange={handleChange}
-                                className="w-full p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 focus:ring-red-500/20"
-                                placeholder="© 2026 Mitaan Express. All rights reserved."
-                            />
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-white/5 shadow-sm space-y-6">
-                        <div className="flex items-center justify-between">
-                            <h3 className="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-white">
-                                <Phone className="text-green-500" /> Contact Info
+                    {/* Homepage Architecture */}
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-white/5 shadow-xl space-y-8">
+                        <div className="flex items-center justify-between border-b dark:border-white/5 pb-6">
+                            <h3 className="flex items-center gap-2 font-black text-xl text-slate-900 dark:text-white uppercase tracking-tight">
+                                <Layout className="text-purple-500" /> Page Architecture
                             </h3>
                             <button
-                                onClick={() => handleSaveSection(['contact_email', 'contact_phone', 'contact_address'])}
-                                disabled={loading || !hasSectionData(['contact_email', 'contact_phone', 'contact_address'])}
-                                className={`px-4 py-2 font-bold rounded-lg text-xs uppercase tracking-wider transition-all ${hasSectionData(['contact_email', 'contact_phone', 'contact_address'])
-                                    ? 'bg-green-600 text-white hover:scale-105 hover:shadow-lg'
-                                    : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'
-                                    } disabled:opacity-50`}
-                                title={hasSectionData(['contact_email', 'contact_phone', 'contact_address']) ? 'Save Section' : 'Fill at least one field'}
+                                onClick={() => handleSaveSection(['section_hero_enabled', 'section_ticker_enabled', 'section_indepth_enabled', 'section_poetry_enabled', 'section_gallery_enabled', 'section_live_enabled'])}
+                                className="px-6 py-2 bg-purple-600 text-white font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-purple-600/20"
                             >
-                                {loading ? 'Saving...' : 'Save Contact'}
+                                {loading ? 'Saving...' : 'Update Layout'}
                             </button>
                         </div>
 
-                        <div>
-                            <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Email</label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-3 text-slate-400" size={18} />
-                                <input
-                                    name="contact_email"
-                                    value={settings.contact_email}
-                                    onChange={handleChange}
-                                    className="w-full pl-10 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 focus:ring-red-500/20"
-                                    placeholder="contact@mitaan.com"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Phone</label>
-                            <div className="relative">
-                                <Phone className="absolute left-3 top-3 text-slate-400" size={18} />
-                                <input
-                                    name="contact_phone"
-                                    value={settings.contact_phone}
-                                    onChange={handleChange}
-                                    className="w-full pl-10 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 focus:ring-red-500/20"
-                                    placeholder="+91 98765 43210"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Address</label>
-                            <div className="relative">
-                                <MapPin className="absolute left-3 top-3 text-slate-400" size={18} />
-                                <textarea
-                                    name="contact_address"
-                                    value={settings.contact_address}
-                                    onChange={handleChange}
-                                    rows={2}
-                                    className="w-full pl-10 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 focus:ring-red-500/20"
-                                    placeholder="Raipur, Chhattisgarh, India"
-                                />
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {[
+                                { key: 'section_hero_enabled', name: 'Premium Hero Slider', desc: 'Floating cinematic slider', icon: <Star className="text-yellow-500" /> },
+                                { key: 'section_ticker_enabled', name: 'Breaking Marquee', desc: 'Live horizontal ticker', icon: <Zap className="text-red-500" /> },
+                                { key: 'section_indepth_enabled', name: 'In-Depth Articles', desc: 'Full-width thematic grids', icon: <BookOpen className="text-blue-500" /> },
+                                { key: 'section_poetry_enabled', name: 'Poetry Showcase', desc: 'Artistic highlighted banner', icon: <Feather className="text-indigo-500" /> },
+                                { key: 'section_gallery_enabled', name: 'Media Gallery', desc: 'Video & Image discovery', icon: <ImageIcon className="text-emerald-500" /> },
+                                { key: 'section_live_enabled', name: 'Live Stream Hub', desc: 'Real-time broadcast feed', icon: <Video className="text-red-600" /> },
+                            ].map((section) => (
+                                <div key={section.key} className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center justify-between group hover:border-purple-500/50 transition-all cursor-default">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                            {section.icon}
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-xs text-slate-900 dark:text-white uppercase tracking-tighter">{section.name}</p>
+                                            <p className="text-[10px] text-slate-500 font-medium">{section.desc}</p>
+                                        </div>
+                                    </div>
+                                    <div className="relative inline-flex items-center cursor-pointer">
+                                        <select
+                                            name={section.key}
+                                            value={settings[section.key]}
+                                            onChange={handleChange}
+                                            className={`appearance-none px-4 py-2 rounded-xl font-black text-[10px] outline-none border-2 transition-all ${settings[section.key] === 'true'
+                                                    ? 'bg-green-500/10 border-green-500 text-green-600'
+                                                    : 'bg-red-500/10 border-red-500 text-red-600'
+                                                }`}
+                                        >
+                                            <option value="true">ACTIVE</option>
+                                            <option value="false">HIDDEN</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
 
-                {/* Social Media */}
-                <div className="space-y-6">
-                    <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-white/5 shadow-sm space-y-6">
-                        <div className="flex items-center justify-between">
-                            <h3 className="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-white">
-                                <Facebook className="text-blue-600" /> Social Media
+                {/* Right Column: Ads & SEO */}
+                <div className="lg:col-span-12 xl:col-span-5 space-y-8">
+
+                    {/* Advertisement Master */}
+                    <div className="bg-slate-900 p-8 rounded-3xl border border-white/10 shadow-2xl space-y-8">
+                        <div className="flex items-center justify-between border-b border-white/10 pb-6">
+                            <h3 className="flex items-center gap-2 font-black text-xl text-white uppercase tracking-tight">
+                                <Megaphone className="text-orange-500" /> Ad Network
                             </h3>
                             <button
-                                onClick={() => handleSaveSection(['social_facebook', 'social_twitter', 'social_instagram', 'social_youtube'])}
-                                disabled={loading || !hasSectionData(['social_facebook', 'social_twitter', 'social_instagram', 'social_youtube'])}
-                                className={`px-4 py-2 font-bold rounded-lg text-xs uppercase tracking-wider transition-all ${hasSectionData(['social_facebook', 'social_twitter', 'social_instagram', 'social_youtube'])
-                                    ? 'bg-blue-600 text-white hover:scale-105 hover:shadow-lg'
-                                    : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'
-                                    } disabled:opacity-50`}
-                                title={hasSectionData(['social_facebook', 'social_twitter', 'social_instagram', 'social_youtube']) ? 'Save Section' : 'Fill at least one field'}
+                                onClick={() => handleSaveSection(['ad_popup_enabled', 'ad_popup_type', 'ad_popup_image_url', 'ad_popup_link_url'])}
+                                className="px-6 py-2 bg-orange-600 text-white font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-all"
                             >
-                                {loading ? 'Saving...' : 'Save Social'}
+                                {loading ? '...' : 'Sync Ads'}
                             </button>
                         </div>
 
-                        <div>
-                            <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Facebook URL</label>
-                            <div className="relative">
-                                <Facebook className="absolute left-3 top-3 text-slate-400" size={18} />
-                                <input
-                                    name="social_facebook"
-                                    value={settings.social_facebook}
-                                    onChange={handleChange}
-                                    className="w-full pl-10 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 focus:ring-red-500/20"
-                                    placeholder="https://facebook.com/..."
-                                />
+                        <div className="space-y-6">
+                            {/* Modal Popup */}
+                            <div className="p-6 bg-white/5 rounded-[2rem] border border-white/5 space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="font-black text-white uppercase text-xs tracking-widest">Entry Ad Popup</h4>
+                                        <p className="text-[10px] text-slate-500">Full-screen modal after 3 seconds</p>
+                                    </div>
+                                    <select
+                                        name="ad_popup_enabled"
+                                        value={settings.ad_popup_enabled}
+                                        onChange={handleChange}
+                                        className={`px-3 py-1.5 rounded-lg font-black text-[10px] uppercase outline-none border transition-all ${settings.ad_popup_enabled === 'true' ? 'border-orange-500 text-orange-500' : 'border-slate-700 text-slate-700'
+                                            }`}
+                                    >
+                                        <option value="true">ENABLE</option>
+                                        <option value="false">DISABLE</option>
+                                    </select>
+                                </div>
+
+                                {settings.ad_popup_enabled === 'true' && (
+                                    <div className="grid grid-cols-1 gap-4 pt-4 border-t border-white/5">
+                                        <select
+                                            name="ad_popup_type"
+                                            value={settings.ad_popup_type}
+                                            onChange={handleChange}
+                                            className="w-full p-3 bg-slate-800 rounded-xl outline-none focus:ring-1 focus:ring-orange-500 text-xs text-white font-bold"
+                                        >
+                                            <option value="promo">Premium Offer (System Default)</option>
+                                            <option value="ad">Custom Visual Ad (External URL)</option>
+                                        </select>
+
+                                        {settings.ad_popup_type === 'ad' && (
+                                            <>
+                                                <input
+                                                    name="ad_popup_image_url"
+                                                    value={settings.ad_popup_image_url}
+                                                    onChange={handleChange}
+                                                    className="w-full p-3 bg-slate-800 rounded-xl outline-none text-xs text-white placeholder-slate-600"
+                                                    placeholder="Custom Ad Image URL"
+                                                />
+                                                <input
+                                                    name="ad_popup_link_url"
+                                                    value={settings.ad_popup_link_url}
+                                                    onChange={handleChange}
+                                                    className="w-full p-3 bg-slate-800 rounded-xl outline-none text-xs text-white placeholder-slate-600"
+                                                    placeholder="Destination Link"
+                                                />
+                                            </>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
+                    </div>
 
-                        <div>
-                            <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Twitter (X) URL</label>
-                            <div className="relative">
-                                <Twitter className="absolute left-3 top-3 text-slate-400" size={18} />
-                                <input
-                                    name="social_twitter"
-                                    value={settings.social_twitter}
-                                    onChange={handleChange}
-                                    className="w-full pl-10 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 focus:ring-red-500/20"
-                                    placeholder="https://twitter.com/..."
-                                />
-                            </div>
+                    {/* Meta & Analytics */}
+                    <div className="bg-slate-50 dark:bg-slate-900/50 p-8 rounded-3xl border border-slate-200 dark:border-white/10 shadow-sm space-y-6">
+                        <div className="flex items-center justify-between">
+                            <h3 className="flex items-center gap-2 font-black text-xs text-slate-800 dark:text-white uppercase tracking-widest">
+                                <BarChart3 className="text-blue-500" /> SEO & Analytics
+                            </h3>
+                            <button
+                                onClick={() => handleSaveSection(['site_keywords', 'google_analytics_id'])}
+                                className="text-[10px] font-black uppercase text-blue-500 border-b-2 border-blue-500/20 hover:border-blue-500 transition-all pb-1"
+                            >
+                                {loading ? '...' : 'Quick Save'}
+                            </button>
                         </div>
 
-                        <div>
-                            <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Instagram URL</label>
+                        <div className="space-y-4">
+                            <textarea
+                                name="site_keywords"
+                                value={settings.site_keywords}
+                                onChange={handleChange}
+                                rows={2}
+                                className="w-full p-4 bg-white dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 text-xs font-bold"
+                                placeholder="Site keywords (SEO)..."
+                            />
                             <div className="relative">
-                                <Instagram className="absolute left-3 top-3 text-slate-400" size={18} />
+                                <ShieldCheck size={16} className="absolute left-3 top-3.5 text-slate-400" />
                                 <input
-                                    name="social_instagram"
-                                    value={settings.social_instagram}
+                                    name="google_analytics_id"
+                                    value={settings.google_analytics_id}
                                     onChange={handleChange}
-                                    className="w-full pl-10 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 focus:ring-red-500/20"
-                                    placeholder="https://instagram.com/..."
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-bold uppercase text-slate-500 mb-2">YouTube URL</label>
-                            <div className="relative">
-                                <Youtube className="absolute left-3 top-3 text-slate-400" size={18} />
-                                <input
-                                    name="social_youtube"
-                                    value={settings.social_youtube}
-                                    onChange={handleChange}
-                                    className="w-full pl-10 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 focus:ring-red-500/20"
-                                    placeholder="https://youtube.com/..."
+                                    className="w-full pl-10 p-4 bg-white dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 text-xs font-mono"
+                                    placeholder="G-Analytics ID"
                                 />
                             </div>
                         </div>
                     </div>
 
+                    {/* Support Section */}
+                    <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-8 rounded-3xl text-white shadow-xl flex items-center justify-between group cursor-pointer overflow-hidden relative">
+                        <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-white/10 blur-2xl rounded-full group-hover:scale-150 transition-transform"></div>
+                        <div className="relative z-10">
+                            <h4 className="font-black uppercase text-xs tracking-widest mb-1">Developer Shield</h4>
+                            <p className="text-[10px] text-white/70 italic">Backend system is running stable</p>
+                        </div>
+                        <ShieldCheck size={32} className="relative z-10" />
+                    </div>
                 </div>
             </div>
         </div>

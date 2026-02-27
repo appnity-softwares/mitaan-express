@@ -9,6 +9,9 @@ const AdSpace = ({ position = 'homepage_top', className = '' }) => {
     const linkUrl = settings?.[`ad_${position}_link_url`] || '';
     const isEnabled = settings?.[`ad_${position}_enabled`] === 'true';
 
+    // If explicitly disabled, return nothing
+    if (settings?.[`ad_${position}_enabled`] === 'false') return null;
+
     if (loading) {
         return (
             <div className={`flex items-center justify-center bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden my-8 w-full h-24 md:h-32 ${className}`}>

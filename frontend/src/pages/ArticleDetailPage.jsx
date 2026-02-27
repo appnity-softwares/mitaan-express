@@ -122,6 +122,18 @@ const ArticleDetailPage = ({ language }) => {
         );
     }
 
+    const [scrollProgress, setScrollProgress] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const currentScroll = window.scrollY;
+            setScrollProgress((currentScroll / totalScroll) * 100);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     const formattedDate = new Date(article.createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -130,6 +142,11 @@ const ArticleDetailPage = ({ language }) => {
 
     return (
         <div className="min-h-screen bg-white dark:bg-[#030712] overflow-x-hidden">
+            {/* Reading Progress Bar */}
+            <div
+                className="fixed top-0 left-0 h-1 bg-red-600 z-[100] transition-all duration-300"
+                style={{ width: `${scrollProgress}%`, boxShadow: '0 0 10px rgba(220, 38, 38, 0.5)' }}
+            />
 
             {/* Back Button */}
             <div className="max-w-4xl mx-auto px-4 py-6">
@@ -158,8 +175,8 @@ const ArticleDetailPage = ({ language }) => {
                     </Link>
 
                     {/* Title */}
-                    <h1 className="text-2xl md:text-2xl lg:text-4xl font-normal text-slate-800 dark:text-white leading-[1.1] mb-8 font-serif tracking-tight max-w-5xl">
-                        <span className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-600 dark:from-white dark:via-slate-200 dark:to-slate-400 bg-clip-text text-transparent">
+                    <h1 className="text-3xl md:text-5xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.05] mb-10 font-serif tracking-tighter max-w-5xl">
+                        <span className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent italic">
                             {article.title}
                         </span>
                     </h1>

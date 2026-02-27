@@ -43,50 +43,61 @@ const HomePage = ({ language }) => {
     return (
         <>
             <AdPopup language={language} />
-            <HeroSlider language={language} />
+
+            {settings?.section_hero_enabled !== 'false' && (
+                <HeroSlider language={language} />
+            )}
 
             <div className="relative z-10 overflow-x-hidden">
                 <div className="space-y-24 pb-32">
                     {/* Breaking News Ticker (Full Width) */}
-                    <div className="bg-red-600/5 dark:bg-red-600/10 border-y border-red-600/10 py-3 overflow-hidden whitespace-nowrap group">
-                        <div className="flex items-center gap-10 animate-marquee-infinite w-max">
-                            <div className="flex items-center gap-10 shrink-0 pr-10">
-                                {(breaking.length > 0 ? breaking : published.slice(0, 5)).map((article, i) => (
-                                    <div
-                                        key={`${article.id}-1`}
-                                        className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity"
-                                        onClick={() => navigate(`/article/${article.id}`)}
-                                    >
-                                        <span className="flex items-center gap-2 text-red-600 font-black text-[10px] uppercase tracking-widest">
-                                            <Zap size={14} fill="currentColor" />
-                                            {language === 'hi' ? (breaking.length > 0 ? 'ब्रेकिंग' : 'ताज़ा ख़बर') : (breaking.length > 0 ? 'BREAKING' : 'LATEST')}
-                                        </span>
-                                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200 hover:text-red-600 transition-colors">
-                                            {article.title}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
-                            {/* Duplicate for seamless loop */}
-                            <div className="flex items-center gap-10 shrink-0 pr-10">
-                                {(breaking.length > 0 ? breaking : published.slice(0, 5)).map((article, i) => (
-                                    <div
-                                        key={`${article.id}-2`}
-                                        className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity"
-                                        onClick={() => navigate(`/article/${article.id}`)}
-                                    >
-                                        <span className="flex items-center gap-2 text-red-600 font-black text-[10px] uppercase tracking-widest">
-                                            <Zap size={14} fill="currentColor" />
-                                            {language === 'hi' ? (breaking.length > 0 ? 'ब्रेकिंग' : 'ताज़ा ख़बर') : (breaking.length > 0 ? 'BREAKING' : 'LATEST')}
-                                        </span>
-                                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200 hover:text-red-600 transition-colors">
-                                            {article.title}
-                                        </p>
-                                    </div>
-                                ))}
+                    {settings?.section_ticker_enabled !== 'false' && (
+                        <div className="bg-white dark:bg-[#030712] border-y border-slate-100 dark:border-white/5 py-4 overflow-hidden whitespace-nowrap group">
+                            <div className="flex items-center gap-16 animate-marquee-infinite w-max px-4">
+                                <div className="flex items-center gap-16 shrink-0">
+                                    {(breaking.length > 0 ? breaking : published.slice(0, 5)).map((article, i) => (
+                                        <div
+                                            key={`${article.id}-1`}
+                                            className="flex items-center gap-6 cursor-pointer group/item"
+                                            onClick={() => navigate(`/article/${article.id}`)}
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+                                                <span className="text-red-600 font-black text-[10px] uppercase tracking-[0.2em]">
+                                                    {language === 'hi' ? (breaking.length > 0 ? 'ब्रेकिंग' : 'ताज़ा ख़बर') : (breaking.length > 0 ? 'BREAKING' : 'LATEST')}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm font-bold text-slate-900 dark:text-slate-100 group-hover/item:text-red-600 transition-colors">
+                                                {article.title}
+                                            </p>
+                                            <span className="text-slate-300 dark:text-white/10 mx-2">|</span>
+                                        </div>
+                                    ))}
+                                </div>
+                                {/* Duplicate for seamless loop */}
+                                <div className="flex items-center gap-16 shrink-0">
+                                    {(breaking.length > 0 ? breaking : published.slice(0, 5)).map((article, i) => (
+                                        <div
+                                            key={`${article.id}-2`}
+                                            className="flex items-center gap-6 cursor-pointer group/item"
+                                            onClick={() => navigate(`/article/${article.id}`)}
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+                                                <span className="text-red-600 font-black text-[10px] uppercase tracking-[0.2em]">
+                                                    {language === 'hi' ? (breaking.length > 0 ? 'ब्रेकिंग' : 'ताज़ा ख़बर') : (breaking.length > 0 ? 'BREAKING' : 'LATEST')}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm font-bold text-slate-900 dark:text-slate-100 group-hover/item:text-red-600 transition-colors">
+                                                {article.title}
+                                            </p>
+                                            <span className="text-slate-300 dark:text-white/10 mx-2">|</span>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Ad Space - Top Banner */}
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -109,9 +120,11 @@ const HomePage = ({ language }) => {
                                     </div>
                                 ))}
                             </div>
-                            <div data-aos="fade-up">
-                                <PromotionalBanner language={language} />
-                            </div>
+                            {settings?.section_poetry_enabled !== 'false' && (
+                                <div data-aos="fade-up">
+                                    <PromotionalBanner language={language} />
+                                </div>
+                            )}
                         </div>
                         <div className="lg:w-[420px] shrink-0" data-aos="fade-left">
                             <Sidebar language={language} />
@@ -119,28 +132,34 @@ const HomePage = ({ language }) => {
                     </div>
 
                     {/* In-Depth: Full Width Background, Centered Content */}
-                    <div className="bg-slate-50 dark:bg-[#030712] py-24 border-y border-slate-100 dark:border-white/5" data-aos="fade-up">
-                        <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <InDepthSection
-                                language={language}
-                                onCategoryChange={handleCategoryChange}
-                                sportsArticles={published.filter(a => a.category?.slug === 'sports')}
-                                economyArticles={published.filter(a => a.category?.slug === 'economic')}
-                                onArticleClick={handleArticleClick}
-                            />
+                    {settings?.section_indepth_enabled !== 'false' && (
+                        <div className="bg-slate-50 dark:bg-[#030712] py-24 border-y border-slate-100 dark:border-white/5" data-aos="fade-up">
+                            <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
+                                <InDepthSection
+                                    language={language}
+                                    onCategoryChange={handleCategoryChange}
+                                    sportsArticles={published.filter(a => a.category?.slug === 'sports')}
+                                    economyArticles={published.filter(a => a.category?.slug === 'economic')}
+                                    onArticleClick={handleArticleClick}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Creative Showcase: New Animated Component */}
-                    <CreativeShowcase language={language} setActiveCategory={handleCategoryChange} />
+                    {settings?.section_gallery_enabled !== 'false' && (
+                        <>
+                            <CreativeShowcase language={language} setActiveCategory={handleCategoryChange} />
 
-                    {/* Video Content: Full Width Background */}
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <VideoGalleryHero language={language} />
-                    </div>
+                            {/* Video Content: Full Width Background */}
+                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                <VideoGalleryHero language={language} />
+                            </div>
 
-                    {/* NEW: Gallery Strip */}
-                    <GalleryStrip language={language} />
+                            {/* NEW: Gallery Strip */}
+                            <GalleryStrip language={language} />
+                        </>
+                    )}
 
                     {/* MUST READ SECTION: Edge-to-Edge Full Width */}
                     <MustReadSlider language={language} onArticleClick={handleArticleClick} />
