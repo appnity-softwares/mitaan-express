@@ -93,7 +93,8 @@ sudo nginx -t && sudo systemctl restart nginx
 
 echo "🏁 Master Setup Complete!"
 echo "--------------------------------------------------"
-echo "Database Password: $DB_PASS"
-echo "Please save this password securely."
+echo "Next Steps:"
+echo "1. Point your domain (mitaanexpress.com) to this VPS IP."
+echo "2. Run the SSL setup: ./scripts/setup_ssl.sh"
+echo "3. SSL will then renew automatically."
 echo "--------------------------------------------------"
-echo "Next: Setup SSL with Certbot"
