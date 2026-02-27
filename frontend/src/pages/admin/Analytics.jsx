@@ -68,7 +68,7 @@ const Analytics = () => {
                     <div className="text-sm opacity-90 uppercase tracking-wide">Published</div>
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl text-white shadow-lg">
+                <div className="bg-gradient-to-br from-teal-500 to-emerald-600 p-6 rounded-2xl text-white shadow-lg">
                     <div className="flex items-center justify-between mb-2">
                         <Eye size={24} className="opacity-80" />
                         <Activity size={20} className="opacity-60" />

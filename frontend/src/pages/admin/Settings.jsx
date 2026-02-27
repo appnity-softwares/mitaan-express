@@ -4,7 +4,8 @@ import { useUpdateSettings } from '../../hooks/useMutations';
 import {
     Save, Globe, Phone, Mail, MapPin, Facebook, Twitter, Instagram,
     Youtube, Image, Type, Megaphone, Zap, Layout, Settings as SettingsIcon,
-    ShieldCheck, BarChart3, Palette
+    ShieldCheck, BarChart3, Palette, BookOpen, Feather, PenTool,
+    Heart as HeartIcon, Video, Star
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -47,6 +48,12 @@ const Settings = () => {
         // SEO & Advanced
         site_keywords: '',
         google_analytics_id: '',
+        // Main Page Visibility
+        page_gallery_enabled: 'true',
+        page_live_enabled: 'true',
+        page_poetry_enabled: 'true',
+        page_blogs_enabled: 'true',
+        page_donation_enabled: 'true',
     });
 
     useEffect(() => {
@@ -126,16 +133,18 @@ const Settings = () => {
                                         onChange={handleChange}
                                         className="w-full pl-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 font-bold border border-transparent focus:border-red-500/20 transition-all font-serif italic"
                                         placeholder="Mitaan Express"
+                                        id="site_title"
                                     />
                                 </div>
                             </div>
 
                             <div className="md:col-span-2">
-                                <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Logo URL (Cloudflare R2 or External)</label>
+                                <label htmlFor="logo_url" className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Logo URL (Cloudflare R2 or External)</label>
                                 <div className="relative">
                                     <Image className="absolute left-3 top-3.5 text-slate-400" size={18} />
                                     <input
                                         name="logo_url"
+                                        id="logo_url"
                                         value={settings.logo_url}
                                         onChange={handleChange}
                                         className="w-full pl-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 font-mono text-[10px]"
@@ -145,9 +154,10 @@ const Settings = () => {
                             </div>
 
                             <div className="md:col-span-2">
-                                <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Footer Rights & Text</label>
+                                <label htmlFor="footer_text" className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Footer Rights & Text</label>
                                 <input
                                     name="footer_text"
+                                    id="footer_text"
                                     value={settings.footer_text}
                                     onChange={handleChange}
                                     className="w-full p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 font-medium"
@@ -157,55 +167,199 @@ const Settings = () => {
                         </div>
                     </div>
 
+                    {/* Contact Intelligence */}
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-white/5 shadow-xl space-y-8">
+                        <div className="flex items-center justify-between border-b dark:border-white/5 pb-6">
+                            <h3 className="flex items-center gap-2 font-black text-xl text-slate-900 dark:text-white uppercase tracking-tight">
+                                <Phone className="text-emerald-500" /> Contact Hub
+                            </h3>
+                            <button
+                                onClick={() => handleSaveSection(['contact_email', 'contact_phone', 'contact_address'])}
+                                className="px-6 py-2 bg-emerald-600 text-white font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-600/20"
+                            >
+                                {loading ? '...' : 'Update Reach'}
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label htmlFor="contact_email" className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">Business Email</label>
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-3.5 text-slate-400" size={18} />
+                                    <input
+                                        name="contact_email"
+                                        id="contact_email"
+                                        value={settings.contact_email}
+                                        onChange={handleChange}
+                                        className="w-full pl-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-bold"
+                                        placeholder="contact@mitaanexpress.com"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label htmlFor="contact_phone" className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">Toll Free / Office</label>
+                                <div className="relative">
+                                    <Phone className="absolute left-3 top-3.5 text-slate-400" size={18} />
+                                    <input
+                                        name="contact_phone"
+                                        id="contact_phone"
+                                        value={settings.contact_phone}
+                                        onChange={handleChange}
+                                        className="w-full pl-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-bold"
+                                        placeholder="+91 000-000-0000"
+                                    />
+                                </div>
+                            </div>
+                            <div className="md:col-span-2">
+                                <label htmlFor="contact_address" className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">Global HQ Address</label>
+                                <div className="relative">
+                                    <MapPin className="absolute left-3 top-3.5 text-slate-400" size={18} />
+                                    <input
+                                        name="contact_address"
+                                        id="contact_address"
+                                        value={settings.contact_address}
+                                        onChange={handleChange}
+                                        className="w-full pl-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-bold"
+                                        placeholder="Raipur, Chhattisgarh, India"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Social Media Link Ecosystem */}
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-white/5 shadow-xl space-y-8">
+                        <div className="flex items-center justify-between border-b dark:border-white/5 pb-6">
+                            <h3 className="flex items-center gap-2 font-black text-xl text-slate-900 dark:text-white uppercase tracking-tight">
+                                <Globe className="text-teal-500" /> Social Ecosystem
+                            </h3>
+                            <button
+                                onClick={() => handleSaveSection(['social_facebook', 'social_twitter', 'social_instagram', 'social_youtube'])}
+                                className="px-6 py-2 bg-teal-600 text-white font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-teal-600/20"
+                            >
+                                {loading ? '...' : 'Link Accounts'}
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {[
+                                { name: 'social_facebook', icon: <Facebook className="text-blue-600" />, label: 'Facebook URL' },
+                                { name: 'social_twitter', icon: <Twitter className="text-sky-500" />, label: 'Twitter / X URL' },
+                                { name: 'social_instagram', icon: <Instagram className="text-pink-600" />, label: 'Instagram URL' },
+                                { name: 'social_youtube', icon: <Youtube className="text-red-600" />, label: 'YouTube Channel' },
+                            ].map(social => (
+                                <div key={social.name}>
+                                    <label htmlFor={social.name} className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">{social.label}</label>
+                                    <div className="relative">
+                                        <div className="absolute left-3 top-4">{social.icon}</div>
+                                        <input
+                                            name={social.name}
+                                            id={social.name}
+                                            value={settings[social.name]}
+                                            onChange={handleChange}
+                                            className="w-full pl-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-teal-500/20 font-bold"
+                                            placeholder="https://..."
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
                     {/* Homepage Architecture */}
                     <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-white/5 shadow-xl space-y-8">
                         <div className="flex items-center justify-between border-b dark:border-white/5 pb-6">
                             <h3 className="flex items-center gap-2 font-black text-xl text-slate-900 dark:text-white uppercase tracking-tight">
-                                <Layout className="text-purple-500" /> Page Architecture
+                                <Layout className="text-emerald-500" /> Global Architecture
                             </h3>
                             <button
-                                onClick={() => handleSaveSection(['section_hero_enabled', 'section_ticker_enabled', 'section_indepth_enabled', 'section_poetry_enabled', 'section_gallery_enabled', 'section_live_enabled'])}
-                                className="px-6 py-2 bg-purple-600 text-white font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-purple-600/20"
+                                onClick={() => handleSaveSection([
+                                    'section_hero_enabled', 'section_ticker_enabled', 'section_indepth_enabled',
+                                    'section_poetry_enabled', 'section_gallery_enabled', 'section_live_enabled',
+                                    'page_gallery_enabled', 'page_live_enabled', 'page_poetry_enabled',
+                                    'page_blogs_enabled', 'page_donation_enabled'
+                                ])}
+                                className="px-6 py-2 bg-emerald-600 text-white font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-600/20"
                             >
-                                {loading ? 'Saving...' : 'Update Layout'}
+                                {loading ? 'Saving...' : 'Lock Layout'}
                             </button>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {[
-                                { key: 'section_hero_enabled', name: 'Premium Hero Slider', desc: 'Floating cinematic slider', icon: <Star className="text-yellow-500" /> },
-                                { key: 'section_ticker_enabled', name: 'Breaking Marquee', desc: 'Live horizontal ticker', icon: <Zap className="text-red-500" /> },
-                                { key: 'section_indepth_enabled', name: 'In-Depth Articles', desc: 'Full-width thematic grids', icon: <BookOpen className="text-blue-500" /> },
-                                { key: 'section_poetry_enabled', name: 'Poetry Showcase', desc: 'Artistic highlighted banner', icon: <Feather className="text-indigo-500" /> },
-                                { key: 'section_gallery_enabled', name: 'Media Gallery', desc: 'Video & Image discovery', icon: <ImageIcon className="text-emerald-500" /> },
-                                { key: 'section_live_enabled', name: 'Live Stream Hub', desc: 'Real-time broadcast feed', icon: <Video className="text-red-600" /> },
-                            ].map((section) => (
-                                <div key={section.key} className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center justify-between group hover:border-purple-500/50 transition-all cursor-default">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                                            {section.icon}
+                        <div className="space-y-6">
+                            <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Homepage Modules</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {[
+                                    { key: 'section_hero_enabled', name: 'Premium Hero Slider', desc: 'Floating cinematic slider', icon: <Star className="text-yellow-500" /> },
+                                    { key: 'section_ticker_enabled', name: 'Breaking Marquee', desc: 'Live horizontal ticker', icon: <Zap className="text-red-500" /> },
+                                    { key: 'section_indepth_enabled', name: 'In-Depth Articles', desc: 'Full-width thematic grids', icon: <BookOpen className="text-blue-500" /> },
+                                    { key: 'section_poetry_enabled', name: 'Poetry Showcase', desc: 'Artistic highlighted banner', icon: <Feather className="text-indigo-500" /> },
+                                    { key: 'section_gallery_enabled', name: 'Media Gallery', desc: 'Video & Image discovery', icon: <Image className="text-emerald-500" /> },
+                                    { key: 'section_live_enabled', name: 'Live Stream Hub', desc: 'Real-time broadcast feed', icon: <Video className="text-red-600" /> },
+                                ].map((section) => (
+                                    <div key={section.key} className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center justify-between group hover:border-emerald-500/50 transition-all cursor-default">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                                {section.icon}
+                                            </div>
+                                            <div>
+                                                <p className="font-black text-xs text-slate-900 dark:text-white uppercase tracking-tighter">{section.name}</p>
+                                                <p className="text-[10px] text-slate-500 font-medium">{section.desc}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="font-black text-xs text-slate-900 dark:text-white uppercase tracking-tighter">{section.name}</p>
-                                            <p className="text-[10px] text-slate-500 font-medium">{section.desc}</p>
+                                        <div className="relative inline-flex items-center cursor-pointer">
+                                            <select
+                                                name={section.key}
+                                                aria-label={section.name}
+                                                value={settings[section.key]}
+                                                onChange={handleChange}
+                                                className={`appearance-none px-4 py-2 rounded-xl font-black text-[10px] outline-none border-2 transition-all ${settings[section.key] === 'true'
+                                                    ? 'bg-green-500/10 border-green-500 text-green-600'
+                                                    : 'bg-red-500/10 border-red-500 text-red-600'
+                                                    }`}
+                                            >
+                                                <option value="true">ACTIVE</option>
+                                                <option value="false">HIDDEN</option>
+                                            </select>
                                         </div>
                                     </div>
-                                    <div className="relative inline-flex items-center cursor-pointer">
-                                        <select
-                                            name={section.key}
-                                            value={settings[section.key]}
-                                            onChange={handleChange}
-                                            className={`appearance-none px-4 py-2 rounded-xl font-black text-[10px] outline-none border-2 transition-all ${settings[section.key] === 'true'
-                                                ? 'bg-green-500/10 border-green-500 text-green-600'
-                                                : 'bg-red-500/10 border-red-500 text-red-600'
-                                                }`}
-                                        >
-                                            <option value="true">ACTIVE</option>
-                                            <option value="false">HIDDEN</option>
-                                        </select>
+                                ))}
+                            </div>
+
+                            <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] pt-4">Main Navigation Pages</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {[
+                                    { key: 'page_gallery_enabled', name: 'Gallery Page', desc: 'Visual archive portal', icon: <Image className="text-blue-500" /> },
+                                    { key: 'page_poetry_enabled', name: 'Poetry Page', desc: 'Dedicated artistic section', icon: <PenTool className="text-indigo-600" /> },
+                                    { key: 'page_blogs_enabled', name: 'Blogs Section', desc: 'User-generated stories', icon: <BookOpen className="text-emerald-500" /> },
+                                    { key: 'page_live_enabled', name: 'Video Library', desc: 'Broadcast video archive', icon: <Video className="text-red-500" /> },
+                                    { key: 'page_donation_enabled', name: 'Donation Portal', desc: 'Support & Contributions', icon: <HeartIcon className="text-pink-500" /> },
+                                ].map((page) => (
+                                    <div key={page.key} className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center justify-between group hover:border-emerald-500/50 transition-all cursor-default">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                                {page.icon}
+                                            </div>
+                                            <div>
+                                                <p className="font-black text-xs text-slate-900 dark:text-white uppercase tracking-tighter">{page.name}</p>
+                                                <p className="text-[10px] text-slate-500 font-medium">{page.desc}</p>
+                                            </div>
+                                        </div>
+                                        <div className="relative inline-flex items-center cursor-pointer">
+                                            <select
+                                                name={page.key}
+                                                aria-label={page.name}
+                                                value={settings[page.key]}
+                                                onChange={handleChange}
+                                                className={`appearance-none px-4 py-2 rounded-xl font-black text-[10px] outline-none border-2 transition-all ${settings[page.key] === 'true'
+                                                    ? 'bg-green-500/10 border-green-500 text-green-600'
+                                                    : 'bg-red-500/10 border-red-500 text-red-600'
+                                                    }`}
+                                            >
+                                                <option value="true">ENABLED</option>
+                                                <option value="false">LOCKED</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -320,7 +474,7 @@ const Settings = () => {
                     </div>
 
                     {/* Support Section */}
-                    <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-8 rounded-3xl text-white shadow-xl flex items-center justify-between group cursor-pointer overflow-hidden relative">
+                    <div className="bg-gradient-to-br from-teal-600 to-emerald-700 p-8 rounded-3xl text-white shadow-xl flex items-center justify-between group cursor-pointer overflow-hidden relative">
                         <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-white/10 blur-2xl rounded-full group-hover:scale-150 transition-transform"></div>
                         <div className="relative z-10">
                             <h4 className="font-black uppercase text-xs tracking-widest mb-1">Developer Shield</h4>

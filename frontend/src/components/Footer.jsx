@@ -26,10 +26,10 @@ const Footer = ({ language, onCategoryChange }) => {
     }, [published]);
 
     const socialLinks = [
-        { icon: <Twitter size={18} />, bg: 'hover:bg-[#1da1f2]', color: 'text-[#1da1f2]' },
-        { icon: <Facebook size={18} />, bg: 'hover:bg-[#3b5998]', color: 'text-[#3b5998]' },
-        { icon: <Instagram size={18} />, bg: 'hover:bg-[#e1306c]', color: 'text-[#e1306c]' },
-        { icon: <Youtube size={18} />, bg: 'hover:bg-[#ff0000]', color: 'text-[#ff0000]' }
+        { icon: <Twitter size={18} />, bg: 'hover:bg-[#1da1f2]', color: 'text-[#1da1f2]', href: settings?.social_twitter || '#' },
+        { icon: <Facebook size={18} />, bg: 'hover:bg-[#3b5998]', color: 'text-[#3b5998]', href: settings?.social_facebook || '#' },
+        { icon: <Instagram size={18} />, bg: 'hover:bg-[#e1306c]', color: 'text-[#e1306c]', href: settings?.social_instagram || '#' },
+        { icon: <Youtube size={18} />, bg: 'hover:bg-[#ff0000]', color: 'text-[#ff0000]', href: settings?.social_youtube || '#' }
     ];
 
     const quickLinks = useMemo(() => {
@@ -65,9 +65,9 @@ const Footer = ({ language, onCategoryChange }) => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-20 pb-20 border-b border-slate-200 dark:border-white/5">
                     <div className="lg:col-span-5 space-y-8">
                         <div onClick={() => onCategoryChange('home')} className="flex items-center gap-4 cursor-pointer group">
-                            <img src={logo} alt="Mitaan Logo" className="w-12 h-12 object-contain shadow-lg shadow-red-600/20 rounded-xl bg-white group-hover:scale-110 transition-transform" />
-                            <h2 className="text-3xl font-black font-serif tracking-tighter">
-                                MITAAN <span className="text-red-600">EXPRESS.</span>
+                            <img src={settings?.logo_url || logo} alt="Mitaan Logo" className="w-12 h-12 object-contain shadow-lg shadow-red-600/20 rounded-xl bg-white group-hover:scale-110 transition-transform" />
+                            <h2 className="text-3xl font-black font-serif tracking-tighter uppercase">
+                                {settings?.site_title?.split(' ')[0] || 'MITAAN'} <span className="text-red-600">{settings?.site_title?.split(' ').slice(1).join(' ') || 'EXPRESS.'}</span>
                             </h2>
                         </div>
                         <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed max-w-md">
@@ -79,7 +79,9 @@ const Footer = ({ language, onCategoryChange }) => {
                             {socialLinks.map((social, idx) => (
                                 <a
                                     key={idx}
-                                    href="#"
+                                    href={social.href || '#'}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className={`w-12 h-12 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl flex items-center justify-center transition-all hover:scale-110 hover:border-transparent hover:text-white ${social.bg} group`}
                                 >
                                     {social.icon}
@@ -106,13 +108,13 @@ const Footer = ({ language, onCategoryChange }) => {
                                             <div className="w-10 h-10 rounded-full bg-red-600/10 flex items-center justify-center text-red-600">
                                                 <Phone size={18} />
                                             </div>
-                                            <span className="font-bold">+91 11 2345 6789</span>
+                                            <span className="font-bold">{settings?.contact_phone || '+91 11 2345 6789'}</span>
                                         </div>
                                         <div className="flex items-center gap-4 text-slate-700 dark:text-slate-300">
                                             <div className="w-10 h-10 rounded-full bg-red-600/10 flex items-center justify-center text-red-600">
                                                 <Mail size={18} />
                                             </div>
-                                            <span className="font-bold">contact@mitaanexpress.in</span>
+                                            <span className="font-bold">{settings?.contact_email || 'contact@mitaanexpress.in'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -122,14 +124,14 @@ const Footer = ({ language, onCategoryChange }) => {
                                     </p>
                                     <div className="flex flex-wrap gap-3">
                                         <button
-                                            onClick={() => window.open('https://whatsapp.com', '_blank')}
+                                            onClick={() => window.open(settings?.social_whatsapp || 'https://whatsapp.com', '_blank')}
                                             className="px-6 py-3 bg-red-600 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-red-600/20 hover:bg-red-700 transition-all flex items-center gap-2"
                                         >
                                             <Send size={14} />
                                             WhatsApp
                                         </button>
                                         <button
-                                            onClick={() => window.open('https://instagram.com', '_blank')}
+                                            onClick={() => window.open(settings?.social_instagram || 'https://instagram.com', '_blank')}
                                             className="px-6 py-3 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-white/10 transition-all"
                                         >
                                             Instagram
@@ -237,7 +239,7 @@ const Footer = ({ language, onCategoryChange }) => {
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Office</p>
-                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-red-600 transition-colors">New Delhi, India</p>
+                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-red-600 transition-colors">{settings?.contact_address || 'New Delhi, India'}</p>
                                 </div>
                             </div>
                             <div onClick={() => onCategoryChange('contact')} className="flex gap-4 cursor-pointer group">
@@ -246,7 +248,7 @@ const Footer = ({ language, onCategoryChange }) => {
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Support</p>
-                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-red-600 transition-colors">contact@mitaanexpress.in</p>
+                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-red-600 transition-colors">{settings?.contact_email || 'contact@mitaanexpress.in'}</p>
                                 </div>
                             </div>
                         </div>
@@ -256,9 +258,9 @@ const Footer = ({ language, onCategoryChange }) => {
                 {/* Bottom Section */}
                 <div className="mt-24 pt-12 border-t border-slate-200 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-slate-500 text-sm font-medium">
-                        {language === 'hi'
+                        {settings?.footer_text || (language === 'hi'
                             ? `© 2026 मिटान एक्सप्रेस। सभी अधिकार सुरक्षित।`
-                            : `© 2026 Mitaan Express. All Rights Reserved.`}
+                            : `© 2026 Mitaan Express. All Rights Reserved.`)}
                     </p>
                     <div className="flex gap-8">
                         <button onClick={() => window.location.href = '/terms'} className="text-xs font-bold text-slate-500 hover:text-red-600 transition-colors uppercase tracking-widest">
@@ -270,7 +272,7 @@ const Footer = ({ language, onCategoryChange }) => {
                     </div>
                 </div>
             </div>
-        </footer>
+        </footer >
     );
 };
 

@@ -135,9 +135,9 @@ const Navbar = ({
     const isDonationEnabled = !settings || settings.page_donation_enabled !== 'false';
 
     const socialLinks = [
-        { name: 'Twitter', icon: <Twitter size={18} />, href: '#' },
-        { name: 'Facebook', icon: <Facebook size={18} />, href: '#' },
-        { name: 'Instagram', icon: <Instagram size={18} />, href: '#' },
+        { name: 'Twitter', icon: <Twitter size={18} />, href: settings?.social_twitter || '#' },
+        { name: 'Facebook', icon: <Facebook size={18} />, href: settings?.social_facebook || '#' },
+        { name: 'Instagram', icon: <Instagram size={18} />, href: settings?.social_instagram || '#' },
     ];
 
     return (
@@ -168,10 +168,10 @@ const Navbar = ({
                 {/* Center Section: Logo/Title */}
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center w-full max-w-fit pointer-events-auto">
                     <button onClick={() => handleLinkClick('home')} className="group flex items-center gap-2.5 lg:gap-3">
-                        <img src={logo} alt="Mitaan Logo" className="w-8 h-8 lg:w-10 lg:h-10 object-contain shadow-lg shadow-black/10 rounded-lg bg-white" />
+                        <img src={settings?.logo_url || logo} alt="Mitaan Logo" className="w-8 h-8 lg:w-10 lg:h-10 object-contain shadow-lg shadow-black/10 rounded-lg bg-white" />
                         <div className="flex flex-col items-start leading-none">
                             <h1 className={`text-lg sm:text-xl lg:text-3xl font-black tracking-tighter font-serif transition-all duration-300 drop-shadow-sm whitespace-nowrap ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
-                                Mitaan Express
+                                {settings?.site_title || 'Mitaan Express'}
                             </h1>
                         </div>
                     </button>
