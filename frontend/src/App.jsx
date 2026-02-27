@@ -105,12 +105,14 @@ const App = () => {
     }, [language]);
 
     useEffect(() => {
-        if (isAdminRoute) return; // Don't interfere with Admin theme
+        if (isAdminRoute) return;
         localStorage.setItem('theme', theme);
         if (theme === 'dark') {
             document.documentElement.classList.add('dark');
+            document.documentElement.style.backgroundColor = '#030712';
         } else {
             document.documentElement.classList.remove('dark');
+            document.documentElement.style.backgroundColor = '#ffffff';
         }
     }, [theme, isAdminRoute]);
 

@@ -89,19 +89,20 @@ const MediaLibrary = () => {
                     </button>
                     <label className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:opacity-90 transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95">
                         <Upload size={20} />
-                        Upload Images
+                        Upload Files
                         <input
                             type="file"
                             multiple
-                            accept="image/*"
+                            accept="image/*,video/*"
                             className="hidden"
                             onChange={(e) => {
                                 if (e.target.files) {
                                     Array.from(e.target.files).forEach(file => {
+                                        const isVideo = file.type.startsWith('video/');
                                         const reader = new FileReader();
                                         reader.onload = (re) => {
                                             createMediaMutation.mutate({
-                                                type: 'IMAGE',
+                                                type: isVideo ? 'VIDEO' : 'IMAGE',
                                                 title: file.name,
                                                 url: re.target.result,
                                                 category: 'GALLERY',

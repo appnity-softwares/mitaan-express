@@ -295,8 +295,8 @@ const Navbar = ({
                                         </div>
                                     </div>
 
-                                    {/* Column 2: Categories Grid (Hierarchical) - Hidden on Mobile */}
-                                    <div className="hidden lg:block lg:col-span-6 space-y-10 border-x border-slate-100 dark:border-white/5 px-0 lg:px-12">
+                                    {/* Column 2: Categories Grid (Hierarchical) */}
+                                    <div className="lg:col-span-6 space-y-10 lg:border-x border-slate-100 dark:border-white/5 px-0 lg:px-12 pt-8 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-white/5">
                                         <div className="space-y-8">
                                             <span className="text-[10px] font-black text-red-600 uppercase tracking-[0.4em] block opacity-60 mb-8">
                                                 {language === 'hi' ? 'विशेष श्रेणियां' : 'Featured Categories'}
@@ -305,17 +305,20 @@ const Navbar = ({
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
                                                 {categoryTree.map((parent, pIdx) => (
                                                     <div key={parent.id} className="space-y-4">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: parent.color || '#ef4444' }}></div>
-                                                            <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">
+                                                        <button
+                                                            onClick={() => handleLinkClick(parent.slug || parent.id)}
+                                                            className="flex items-center gap-3 group/parent w-full text-left"
+                                                        >
+                                                            <div className="w-1.5 h-6 rounded-full transition-all group-hover/parent:h-8" style={{ backgroundColor: parent.color || '#ef4444' }}></div>
+                                                            <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white group-hover/parent:text-red-600 transition-colors">
                                                                 {language === 'hi' ? parent.nameHi : parent.name}
                                                             </h3>
-                                                        </div>
+                                                        </button>
                                                         <div className="flex flex-col gap-3 pl-4">
                                                             {parent.children.map((child, cIdx) => (
                                                                 <button
                                                                     key={child.id}
-                                                                    onClick={() => handleLinkClick(child.slug)}
+                                                                    onClick={() => handleLinkClick(child.slug || child.id)}
                                                                     className={`group flex items-center gap-3 text-xs font-bold transition-all text-left ${activeCategory === child.slug
                                                                         ? 'text-red-600'
                                                                         : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'

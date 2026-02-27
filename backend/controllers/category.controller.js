@@ -20,9 +20,16 @@ exports.getAllCategories = async (req, res) => {
     }
 };
 
+const { uploadToR2, isR2Enabled } = require('../utils/r2');
+
 exports.createCategory = async (req, res) => {
-    const { name, nameHi, slug, description, image, icon, color, sortOrder, parentId } = req.body;
+    let { name, nameHi, slug, description, image, icon, color, sortOrder, parentId } = req.body;
     try {
+        if (isR2Enabled && image && image.startsWith('data:image')) {
+            const fileName = `category-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.jpg`;
+            image = await uploadToR2(image, fileName);
+        }
+
         const category = await prisma.category.create({
             data: {
                 name,
@@ -44,8 +51,13 @@ exports.createCategory = async (req, res) => {
 
 exports.updateCategory = async (req, res) => {
     const { id } = req.params;
-    const { name, nameHi, slug, description, image, icon, color, sortOrder, parentId } = req.body;
+    let { name, nameHi, slug, description, image, icon, color, sortOrder, parentId } = req.body;
     try {
+        if (isR2Enabled && image && image.startsWith('data:image')) {
+            const fileName = `category-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.jpg`;
+            image = await uploadToR2(image, fileName);
+        }
+
         const category = await prisma.category.update({
             where: { id: parseInt(id) },
             data: {

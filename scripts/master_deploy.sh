@@ -51,7 +51,7 @@ R2_ACCOUNT_ID="your_account_id"
 R2_ACCESS_KEY_ID="your_access_key"
 R2_SECRET_ACCESS_KEY="your_secret_key"
 R2_BUCKET_NAME="your_bucket_name"
-R2_ACCOUNT_URL="your_account_url"
+R2_ACCOUNT_URL="https://your-custom-domain.com" # Or leave empty for default pub- bucket
 EOF
 
 # Frontend .env

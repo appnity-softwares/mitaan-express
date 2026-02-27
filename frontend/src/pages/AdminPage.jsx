@@ -64,8 +64,10 @@ const AdminContent = () => {
         localStorage.setItem('adminTheme', theme);
         if (theme === 'dark') {
             document.documentElement.classList.add('dark');
+            document.documentElement.style.backgroundColor = '#0b0f1a';
         } else {
             document.documentElement.classList.remove('dark');
+            document.documentElement.style.backgroundColor = '#f1f5f9';
         }
     }, [theme]);
 

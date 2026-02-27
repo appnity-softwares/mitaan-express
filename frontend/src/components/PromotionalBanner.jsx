@@ -8,7 +8,7 @@ const PromotionalBanner = ({ language }) => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="w-full bg-white dark:bg-black rounded-3xl overflow-hidden relative p-10 lg:p-16 flex flex-col lg:flex-row items-center justify-between gap-12 group shadow-xl dark:shadow-2xl border border-slate-200 dark:border-white/5 transition-colors"
+            className="w-full bg-white dark:bg-[#030712] rounded-3xl overflow-hidden relative p-10 lg:p-16 flex flex-col lg:flex-row items-center justify-between gap-12 group shadow-xl dark:shadow-2xl border border-slate-200 dark:border-white/5 transition-colors"
         >
             {/* Animated Background Elements */}
             <div className="absolute inset-0 overflow-hidden">

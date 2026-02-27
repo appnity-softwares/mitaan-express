@@ -129,7 +129,7 @@ const ArticleDetailPage = ({ language }) => {
     });
 
     return (
-        <div className="min-h-screen bg-white dark:bg-black overflow-x-hidden">
+        <div className="min-h-screen bg-white dark:bg-[#030712] overflow-x-hidden">
 
             {/* Back Button */}
             <div className="max-w-4xl mx-auto px-4 py-6">

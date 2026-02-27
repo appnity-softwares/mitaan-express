@@ -119,7 +119,7 @@ const HomePage = ({ language }) => {
                     </div>
 
                     {/* In-Depth: Full Width Background, Centered Content */}
-                    <div className="bg-slate-50 dark:bg-black py-24 border-y border-slate-100 dark:border-white/5" data-aos="fade-up">
+                    <div className="bg-slate-50 dark:bg-[#030712] py-24 border-y border-slate-100 dark:border-white/5" data-aos="fade-up">
                         <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
                             <InDepthSection
                                 language={language}

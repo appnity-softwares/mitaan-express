@@ -54,15 +54,32 @@ exports.getAdminMedia = async (req, res) => {
     }
 };
 
+const { uploadToR2, isR2Enabled } = require('../utils/r2');
+
 // Create new media
 exports.createMedia = async (req, res) => {
     try {
-        const { type, title, description, url, thumbnail, category, size, duration } = req.body;
-        console.log('📦 Create Media Request:', { type, title, url, category });
+        let { type, title, description, url, thumbnail, category, size, duration } = req.body;
+        console.log('📦 Create Media Request:', { type, title, category });
 
         if (!type || !title || !url) {
-            console.error('❌ Missing required fields:', { type, title, url });
             return res.status(400).json({ error: 'Type, title, and URL are required' });
+        }
+
+        // Auto-upload to R2 if it's a data-URL (base64)
+        if (isR2Enabled && typeof url === 'string' && url.startsWith('data:')) {
+            const isVideo = url.startsWith('data:video');
+            const ext = isVideo ? '.mp4' : '.jpg';
+            const fileName = `media-${Date.now()}-${Math.random().toString(36).substring(2, 7)}${ext}`;
+
+            console.log(`☁️ Uploading ${isVideo ? 'video' : 'image'} to R2...`);
+            url = await uploadToR2(url, fileName);
+            console.log('✅ R2 URL:', url);
+        }
+
+        if (isR2Enabled && typeof thumbnail === 'string' && thumbnail.startsWith('data:image')) {
+            const thumbName = `thumb-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.jpg`;
+            thumbnail = await uploadToR2(thumbnail, thumbName);
         }
 
         const media = await prisma.media.create({

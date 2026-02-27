@@ -114,18 +114,32 @@ exports.getArticleBySlug = async (req, res) => {
     }
 };
 
+const { uploadToR2, processContentImages, isR2Enabled } = require('../utils/r2');
+
 exports.createArticle = async (req, res) => {
-    const {
+    let {
         title, slug, content, shortDescription, image, videoUrl, categoryId,
         tags, isBreaking, isTrending, isFeatured,
         metaTitle, metaDescription, metaKeywords, status, metadata,
         priority, scheduledAt, language
     } = req.body;
+
     if (!categoryId || isNaN(parseInt(categoryId))) {
         return res.status(400).json({ error: 'Please select a valid category.' });
     }
 
     try {
+        // Handle Featured Image Upload to R2
+        if (isR2Enabled && image && image.startsWith('data:image')) {
+            const fileName = `article-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.jpg`;
+            image = await uploadToR2(image, fileName);
+        }
+
+        // Process Content Images
+        if (isR2Enabled && content) {
+            content = await processContentImages(content);
+        }
+
         // Improved slug generation
         let finalSlug = slug;
         if (!finalSlug || finalSlug.trim() === '') {
@@ -184,7 +198,7 @@ exports.createArticle = async (req, res) => {
         // Return specific error message if it's a unique constraint violation
         if (error.code === 'P2002') {
             return res.status(400).json({
-                error: `Failed: An article with slug "${slug}" already exists. Please change the title or URL slug.`
+                error: `Failed: An article with slug already exists. Please change the title or URL slug.`
             });
         }
 
@@ -194,7 +208,7 @@ exports.createArticle = async (req, res) => {
 
 exports.updateArticle = async (req, res) => {
     const { id } = req.params;
-    const {
+    let {
         title, slug, content, shortDescription, image, videoUrl, categoryId,
         tags, isBreaking, isTrending, isFeatured,
         metaTitle, metaDescription, metaKeywords, status, metadata,
@@ -202,18 +216,23 @@ exports.updateArticle = async (req, res) => {
     } = req.body;
 
     try {
-        // Handle tags update (disconnect all and connect new?) 
-        // For simplicity, we just set the new tags (which overwrites relations in Prisma if using set/connect properly, but replace logic is complex)
-        // Simplest is explicit disconnect if needed, but for now let's just add new ones or rely on UI to send full list.
+        // Handle Featured Image Upload to R2
+        if (isR2Enabled && image && image.startsWith('data:image')) {
+            const fileName = `article-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.jpg`;
+            image = await uploadToR2(image, fileName);
+        }
 
-        // Better: user sends current tags.
+        // Process Content Images
+        if (isR2Enabled && content) {
+            content = await processContentImages(content);
+        }
 
         const updateData = {
             title, slug, content, shortDescription, image, videoUrl,
             isBreaking, isTrending, isFeatured,
             language: language || 'en',
             metaTitle, metaDescription, metaKeywords,
-            metadata: metadata || undefined, // Only update if provided
+            metadata: metadata || undefined,
             status,
             published: status === 'PUBLISHED',
             priority: priority || undefined,

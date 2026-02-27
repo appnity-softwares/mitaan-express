@@ -47,9 +47,22 @@ exports.getBlogBySlug = async (req, res) => {
     }
 };
 
+const { uploadToR2, processContentImages, isR2Enabled } = require('../utils/r2');
+
 exports.createBlog = async (req, res) => {
     try {
-        const { title, content, status, language, tags, categoryId, image, shortDescription } = req.body;
+        let { title, content, status, language, tags, categoryId, image, shortDescription } = req.body;
+
+        // Handle Featured Image Upload to R2
+        if (isR2Enabled && image && image.startsWith('data:image')) {
+            const fileName = `blog-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.jpg`;
+            image = await uploadToR2(image, fileName);
+        }
+
+        // Process Content Images
+        if (isR2Enabled && content) {
+            content = await processContentImages(content);
+        }
 
         // Improved slug generation: support Hindi and avoid empty/invalid slugs
         let slug = req.body.slug;
@@ -105,7 +118,18 @@ exports.createBlog = async (req, res) => {
 exports.updateBlog = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, content, status, language, tags, categoryId, image, shortDescription } = req.body;
+        let { title, content, status, language, tags, categoryId, image, shortDescription } = req.body;
+
+        // Handle Featured Image Upload to R2
+        if (isR2Enabled && image && image.startsWith('data:image')) {
+            const fileName = `blog-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.jpg`;
+            image = await uploadToR2(image, fileName);
+        }
+
+        // Process Content Images
+        if (isR2Enabled && content) {
+            content = await processContentImages(content);
+        }
 
         const blog = await prisma.blog.update({
             where: { id: parseInt(id) },

@@ -15,7 +15,7 @@ const CategoryPage = ({ language }) => {
 
     // Find the current category object from context
     const currentCategory = useMemo(() => {
-        return categories.find(c => c.slug === categoryId);
+        return categories.find(c => c.slug === categoryId || c.id === parseInt(categoryId));
     }, [categoryId, categories]);
 
     // Get subcategories if this is a parent category
