@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
 import { Plus, Play, Image as ImageIcon, Globe, Eye, EyeOff, Search, Grid, List, Upload, Trash2, Copy } from 'lucide-react';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { useAdminMedia, useCreateMedia, useUpdateMedia, useDeleteMedia } from '../../hooks/useMedia';
 
 const MediaLibrary = () => {
@@ -265,7 +265,7 @@ const MediaLibrary = () => {
 
                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
                                     <div className="flex gap-2">
-                                        <button onClick={() => { navigator.clipboard.writeText(item.url); alert('URL Copied!') }} className="p-3 bg-white text-slate-900 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-xl">
+                                        <button onClick={() => { navigator.clipboard.writeText(item.url); toast.success('URL Copied!') }} className="p-3 bg-white text-slate-900 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-xl">
                                             <Copy size={18} />
                                         </button>
                                         <button onClick={() => togglePublish(item)} className={`p-3 rounded-xl transition-all shadow-xl ${item.isPublished ? 'bg-green-600 text-white' : 'bg-slate-600 text-white'}`}>
@@ -333,7 +333,7 @@ const MediaLibrary = () => {
                                     </td>
                                     <td className="px-8 py-4 text-right">
                                         <div className="flex justify-end gap-2">
-                                            <button onClick={() => { navigator.clipboard.writeText(item.url); alert('URL Copied!') }} className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors text-slate-400">
+                                            <button onClick={() => { navigator.clipboard.writeText(item.url); toast.success('URL Copied!') }} className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors text-slate-400">
                                                 <Copy size={18} />
                                             </button>
                                             <button onClick={() => handleDelete(item.id)} className="p-2 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors text-red-600">

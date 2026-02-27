@@ -8,6 +8,7 @@ import { useCreateArticle, useUpdateArticle } from '../../hooks/useMutations';
 import { useCreateMedia } from '../../hooks/useMedia';
 import { useAdminTranslation } from '../../context/AdminTranslationContext';
 import TransliteratedInput from '../../components/admin/TransliteratedInput';
+import toast from 'react-hot-toast';
 
 const ArticleEditor = () => {
     const { t, adminLang } = useAdminTranslation();
@@ -156,16 +157,16 @@ const ArticleEditor = () => {
             if (articleId) {
                 // Use mutation hook for update with cache invalidation
                 await updateArticleMutation.mutateAsync({ id: articleId, formData: submitData });
-                alert('Article updated successfully!');
+                toast.success('Article updated successfully!');
             } else {
                 // Use mutation hook for create with cache invalidation
                 await createArticleMutation.mutateAsync(submitData);
-                alert('Article created successfully!');
+                toast.success('Article created successfully!');
             }
             navigate('/admin/articles');
         } catch (error) {
             console.error('Save error:', error);
-            alert('Failed to save article: ' + error.message);
+            toast.error('Failed to save article: ' + error.message);
         } finally {
             setLoading(false);
         }
@@ -210,7 +211,7 @@ const ArticleEditor = () => {
             };
         } catch (error) {
             console.error('Image upload failed:', error);
-            alert('Failed to upload image. Please try again.');
+            toast.error('Failed to upload image. Please try again.');
         } finally {
             // Reset input
             e.target.value = '';
@@ -245,7 +246,7 @@ const ArticleEditor = () => {
             };
         } catch (error) {
             console.error('Featured image upload failed:', error);
-            alert('Failed to upload featured image. Please try again.');
+            toast.error('Failed to upload featured image. Please try again.');
         } finally {
             // Reset input
             e.target.value = '';

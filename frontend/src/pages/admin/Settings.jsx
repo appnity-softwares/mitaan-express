@@ -6,6 +6,7 @@ import {
     Youtube, Image, Type, Megaphone, Zap, Layout, Settings as SettingsIcon,
     ShieldCheck, BarChart3, Palette
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Settings = () => {
     // TanStack Query Hooks
@@ -67,9 +68,9 @@ const Settings = () => {
             });
 
             await updateMutation.mutateAsync(updateData);
-            alert('✅ Settings updated successfully!');
+            toast.success('Settings updated successfully!');
         } catch (error) {
-            alert('❌ Failed to update settings: ' + error.message);
+            toast.error('Failed to update settings: ' + error.message);
         }
     };
 
@@ -195,8 +196,8 @@ const Settings = () => {
                                             value={settings[section.key]}
                                             onChange={handleChange}
                                             className={`appearance-none px-4 py-2 rounded-xl font-black text-[10px] outline-none border-2 transition-all ${settings[section.key] === 'true'
-                                                    ? 'bg-green-500/10 border-green-500 text-green-600'
-                                                    : 'bg-red-500/10 border-red-500 text-red-600'
+                                                ? 'bg-green-500/10 border-green-500 text-green-600'
+                                                : 'bg-red-500/10 border-red-500 text-red-600'
                                                 }`}
                                         >
                                             <option value="true">ACTIVE</option>

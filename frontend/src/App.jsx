@@ -3,6 +3,7 @@ import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-
 import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import { Toaster } from 'react-hot-toast';
 
 import BackToTop from './components/BackToTop';
 import { ArticlesProvider } from './context/ArticlesContext';
@@ -177,6 +178,7 @@ const App = () => {
 
                     </>
                 )}
+                <Toaster position="top-center" reverseOrder={false} />
             </div>
         </ArticlesProvider>
     );

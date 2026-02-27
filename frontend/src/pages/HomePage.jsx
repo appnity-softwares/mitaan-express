@@ -11,12 +11,14 @@ import VideoGalleryHero from '../components/VideoGalleryHero';
 import GalleryStrip from '../components/GalleryStrip';
 import MustReadSlider from '../components/MustReadSlider';
 import { useArticles } from '../context/ArticlesContext';
+import { useSettings } from '../hooks/useQueries';
 import AdSpace from '../components/AdSpace';
 import AdPopup from '../components/AdPopup';
 
 const HomePage = ({ language }) => {
     const navigate = useNavigate();
     const { published, breaking, loading } = useArticles();
+    const { data: settings } = useSettings();
 
     // Map articles to component format
     const homeArticles = published.slice(0, 5).map(a => ({

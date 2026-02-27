@@ -13,6 +13,7 @@ import { useSettings } from '../hooks/useQueries';
 import LiveCounter from './LiveCounter';
 import LanguagePopup from './LanguagePopup';
 import logo from '../assets/logo.png';
+import toast from 'react-hot-toast';
 
 const Navbar = ({
     activeCategory,
@@ -30,8 +31,8 @@ const Navbar = ({
     const { data: settings } = useSettings();
 
     const handleSubscribe = () => {
-        if (!email) return alert('Please enter your email address');
-        alert(`Thank you for subscribing with ${email}!`);
+        if (!email) return toast.error('Please enter your email address');
+        toast.success(`Thank you for subscribing!`);
         setEmail('');
     };
 

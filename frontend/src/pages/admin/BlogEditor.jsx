@@ -6,6 +6,7 @@ import 'react-quill/dist/quill.snow.css';
 import { useCategories, useBlog } from '../../hooks/useQueries';
 import { createBlog, updateBlog } from '../../services/api';
 import { useAdminTranslation } from '../../context/AdminTranslationContext';
+import toast from 'react-hot-toast';
 
 class ErrorBoundary extends React.Component {
     constructor(props) {
@@ -104,15 +105,15 @@ const BlogEditorContent = () => {
 
             if (articleId) {
                 await updateBlog(token, articleId, submitData);
-                alert('Blog updated successfully!');
+                toast.success('Blog updated successfully!');
             } else {
                 await createBlog(token, submitData);
-                alert('Blog published successfully!');
+                toast.success('Blog published successfully!');
             }
             navigate('/admin/my-blogs');
         } catch (error) {
             console.error('Save error:', error);
-            alert('Failed to save blog: ' + error.message);
+            toast.error('Failed to save blog: ' + error.message);
         } finally {
             setLoading(false);
         }

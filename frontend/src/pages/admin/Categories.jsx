@@ -9,6 +9,7 @@ import {
     TrendingUp, Trophy, Cpu, BookOpen, Brain,
     Feather, Search, Smile, Sunrise, X, Smartphone, Code
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const icons = [
     { name: 'Newspaper', icon: <Newspaper size={18} /> },
@@ -117,14 +118,14 @@ const Categories = () => {
             });
 
             if (response.ok) {
-                setIsModalOpen(false);
                 loadCategories();
+                toast.success(editingCategory ? 'Category updated!' : 'Category created!');
             } else {
                 const err = await response.json();
-                alert(err.error || 'Failed to save category');
+                toast.error(err.error || 'Failed to save category');
             }
         } catch (err) {
-            alert('Error connecting to server');
+            toast.error('Error connecting to server');
         }
     };
 
@@ -139,12 +140,13 @@ const Categories = () => {
 
             if (response.ok) {
                 loadCategories();
+                toast.success('Category deleted successfully');
             } else {
                 const err = await response.json();
-                alert(err.error || 'Failed to delete');
+                toast.error(err.error || 'Failed to delete');
             }
         } catch (e) {
-            alert('Error deleting category');
+            toast.error('Error deleting category');
         }
     };
 

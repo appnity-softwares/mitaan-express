@@ -3,6 +3,7 @@ import { useSettings } from '../../hooks/useQueries';
 import { useUpdateSettings } from '../../hooks/useMutations';
 import { DollarSign, Image, Link as LinkIcon, Upload, Zap, X } from 'lucide-react';
 import { useAdminTranslation } from '../../context/AdminTranslationContext';
+import toast from 'react-hot-toast';
 
 const AdminAds = () => {
     const { t } = useAdminTranslation();
@@ -66,9 +67,9 @@ const AdminAds = () => {
     const handleSaveAds = async () => {
         try {
             await updateMutation.mutateAsync(settings);
-            alert('Advertisement settings saved successfully!');
+            toast.success('Advertisement settings saved successfully!');
         } catch (error) {
-            alert('Failed to save settings: ' + error.message);
+            toast.error('Failed to save settings: ' + error.message);
         }
     };
 
@@ -80,7 +81,7 @@ const AdminAds = () => {
         const file = e.target.files[0];
         if (file) {
             if (file.size > 5000000) { // 5MB limit
-                alert('File is too large. Base64 support is limited. Please use an image under 5MB or an external URL.');
+                toast.error('File is too large. Base64 support is limited. Please use an image under 5MB or an external URL.');
                 return;
             }
             const reader = new FileReader();
