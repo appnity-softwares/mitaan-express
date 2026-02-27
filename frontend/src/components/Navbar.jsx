@@ -8,7 +8,7 @@ import {
     Brain, Palette, Award, Star, Sunrise, Smile, Smartphone, Code, Heart as HeartIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fetchCategories } from '../services/api';
+import { fetchCategories, formatImageUrl, PLACEHOLDER_IMAGE } from '../services/api';
 import { useSettings } from '../hooks/useQueries';
 import LiveCounter from './LiveCounter';
 import LanguagePopup from './LanguagePopup';
@@ -168,7 +168,15 @@ const Navbar = ({
                 {/* Center Section: Logo/Title */}
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center w-full max-w-fit pointer-events-auto">
                     <button onClick={() => handleLinkClick('home')} className="group flex items-center gap-2.5 lg:gap-3">
-                        <img src={settings?.logo_url || logo} alt="Mitaan Logo" className="w-8 h-8 lg:w-10 lg:h-10 object-contain shadow-lg shadow-black/10 rounded-lg bg-white" />
+                        <img
+                            src={formatImageUrl(settings?.logo_url) || logo}
+                            alt="Mitaan Logo"
+                            className="w-8 h-8 lg:w-10 lg:h-10 object-contain shadow-lg shadow-black/10 rounded-lg bg-white"
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = logo;
+                            }}
+                        />
                         <div className="flex flex-col items-start leading-none">
                             <h1 className={`text-lg sm:text-xl lg:text-3xl font-black tracking-tighter font-serif transition-all duration-300 drop-shadow-sm whitespace-nowrap ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
                                 {settings?.site_title || 'Mitaan Express'}

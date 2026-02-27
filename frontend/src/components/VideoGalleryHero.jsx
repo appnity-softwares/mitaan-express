@@ -4,6 +4,7 @@ import { Play, Clock, MessageSquare, User, ChevronUp, ChevronDown, X } from 'luc
 import { usePublicMedia } from '../hooks/useMedia';
 import { useArticles } from '../context/ArticlesContext';
 import { getVideoEmbedUrl, getVideoThumbnail } from '../utils/videoUtils';
+import { formatImageUrl, PLACEHOLDER_IMAGE } from '../services/api';
 
 const VideoGalleryHero = ({ language }) => {
     const [activeIndex, setActiveIndex] = useState(0);
@@ -34,7 +35,7 @@ const VideoGalleryHero = ({ language }) => {
             author: a.author?.name || 'Mitaan',
             time: new Date(a.createdAt).toLocaleDateString(),
             comments: 0,
-            image: a.image || 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=1600',
+            image: formatImageUrl(a.image),
             duration: a.metadata?.duration || "00:00",
             url: a.videoUrl
         }));
@@ -113,6 +114,10 @@ const VideoGalleryHero = ({ language }) => {
                                 src={activeVideo.image}
                                 alt={activeVideo.title}
                                 className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-500"
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = PLACEHOLDER_IMAGE;
+                                }}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
 
@@ -172,7 +177,15 @@ const VideoGalleryHero = ({ language }) => {
                                     className={`relative flex gap-4 p-3 rounded-xl cursor-pointer transition-all border group ${activeVideo.id === video.id ? 'bg-red-50 dark:bg-white/10 border-red-600' : 'bg-slate-50 dark:bg-white/5 border-transparent hover:bg-slate-100 dark:hover:bg-white/10'}`}
                                 >
                                     <div className="w-32 h-20 rounded-lg overflow-hidden shrink-0 relative">
-                                        <img src={video.image} className="w-full h-full object-cover" alt="" />
+                                        <img
+                                            src={video.image}
+                                            className="w-full h-full object-cover"
+                                            alt=""
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = PLACEHOLDER_IMAGE;
+                                            }}
+                                        />
                                         <div className="absolute bottom-1 right-1 bg-black/80 px-1.5 py-0.5 rounded text-[10px] font-bold">
                                             {video.duration}
                                         </div>

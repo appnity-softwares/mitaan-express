@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Plus, Play, Image as ImageIcon, Globe, Eye, EyeOff, Search, Grid, List, Upload, Trash2, Copy } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';

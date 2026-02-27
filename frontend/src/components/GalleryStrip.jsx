@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { usePublicMedia } from '../hooks/useMedia';
 import { useNavigate } from 'react-router-dom';
+import { formatImageUrl, PLACEHOLDER_IMAGE } from '../services/api';
 
 const GalleryStrip = ({ language }) => {
     const navigate = useNavigate();
@@ -11,7 +12,10 @@ const GalleryStrip = ({ language }) => {
     const [width, setWidth] = React.useState(0);
 
     // Filter valid images and limit to 10
-    const displayImages = images.filter(img => img.url).slice(0, 10);
+    const displayImages = images.map(img => ({
+        ...img,
+        url: formatImageUrl(img.url)
+    })).slice(0, 10);
 
     React.useEffect(() => {
         if (containerRef.current) {
@@ -85,6 +89,10 @@ const GalleryStrip = ({ language }) => {
                                     src={img.url}
                                     alt={img.title || 'Gallery Image'}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = PLACEHOLDER_IMAGE;
+                                    }}
                                 />
 
                                 {/* Overlay Gradient */}

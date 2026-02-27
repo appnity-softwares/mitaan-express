@@ -5,9 +5,10 @@ import {
     Save, Globe, Phone, Mail, MapPin, Facebook, Twitter, Instagram,
     Youtube, Image, Type, Megaphone, Zap, Layout, Settings as SettingsIcon,
     ShieldCheck, BarChart3, Palette, BookOpen, Feather, PenTool,
-    Heart as HeartIcon, Video, Star
+    Heart as HeartIcon, Video, Star, ShieldAlert, Lock, Fingerprint
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { API_URL } from '../../services/api';
 
 const Settings = () => {
     // TanStack Query Hooks
@@ -55,6 +56,12 @@ const Settings = () => {
         page_blogs_enabled: 'true',
         page_donation_enabled: 'true',
     });
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+    });
+    const [isPasswordChanging, setIsPasswordChanging] = useState(false);
 
     useEffect(() => {
         if (initialData) {
@@ -80,7 +87,41 @@ const Settings = () => {
             toast.error('Failed to update settings: ' + error.message);
         }
     };
+    const handlePasswordChange = async (e) => {
+        e.preventDefault();
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            return toast.error('Passwords do not match');
+        }
+        if (passwordData.newPassword.length < 6) {
+            return toast.error('Password must be at least 6 characters');
+        }
 
+        setIsPasswordChanging(true);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/auth/change-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    currentPassword: passwordData.currentPassword,
+                    newPassword: passwordData.newPassword
+                })
+            });
+
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Failed to change password');
+
+            toast.success('Password updated successfully!');
+            setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        } catch (error) {
+            toast.error(error.message);
+        } finally {
+            setIsPasswordChanging(false);
+        }
+    };
     const loading = updateMutation.isPending;
 
     if (initialLoading) return (
@@ -481,6 +522,72 @@ const Settings = () => {
                             <p className="text-[10px] text-white/70 italic">Backend system is running stable</p>
                         </div>
                         <ShieldCheck size={32} className="relative z-10" />
+                    </div>
+
+                    {/* Security & Access Management */}
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-white/5 shadow-xl space-y-8">
+                        <div className="flex items-center justify-between border-b dark:border-white/5 pb-6">
+                            <h3 className="flex items-center gap-2 font-black text-xl text-slate-900 dark:text-white uppercase tracking-tight">
+                                <Lock className="text-red-600" /> Cybersecurity & Access
+                            </h3>
+                            <button
+                                form="password-form"
+                                type="submit"
+                                disabled={isPasswordChanging}
+                                className="px-6 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg active:scale-95 disabled:opacity-50"
+                            >
+                                {isPasswordChanging ? 'Processing...' : 'Secure Access'}
+                            </button>
+                        </div>
+
+                        <form id="password-form" onSubmit={handlePasswordChange} className="space-y-6">
+                            <div className="grid grid-cols-1 gap-6">
+                                <div>
+                                    <label className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">Current Master Key</label>
+                                    <div className="relative">
+                                        <Fingerprint className="absolute left-3 top-3.5 text-slate-400" size={18} />
+                                        <input
+                                            type="password"
+                                            value={passwordData.currentPassword}
+                                            onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
+                                            required
+                                            className="w-full pl-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 font-bold"
+                                            placeholder="Current Password"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">New Deployment Key</label>
+                                        <input
+                                            type="password"
+                                            value={passwordData.newPassword}
+                                            onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                                            required
+                                            className="w-full p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 font-bold"
+                                            placeholder="New Password"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">Confirm New Key</label>
+                                        <input
+                                            type="password"
+                                            value={passwordData.confirmPassword}
+                                            onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                                            required
+                                            className="w-full p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 font-bold"
+                                            placeholder="Confirm Password"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="p-4 bg-red-50 dark:bg-red-900/10 rounded-2xl border border-red-100 dark:border-red-900/20 flex items-start gap-4">
+                                <ShieldAlert className="text-red-600 shrink-0" size={20} />
+                                <p className="text-[10px] text-red-700 dark:text-red-400 font-medium italic">
+                                    Changing your password will enhance security. Ensure you have stored your new credentials safely. System sessions will remain active but future logins will require the new key.
+                                </p>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,20 @@
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 export const SOCKET_URL = API_URL.replace('/api', '');
+export const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1585829365294-bb8c6f045b88?auto=format&fit=crop&q=80&w=800';
+
+/**
+ * Formats image URLs to handle local assets, R2 URLs, and base64
+ * @param {string} url - The image URL or path
+ * @returns {string} - Formatted URL
+ */
+export const formatImageUrl = (url) => {
+    if (!url) return PLACEHOLDER_IMAGE;
+    if (url.startsWith('http') || url.startsWith('data:')) return url;
+
+    // Clean up path and join with SOCKET_URL
+    const cleanPath = url.startsWith('/') ? url.slice(1) : url;
+    return `${SOCKET_URL}/${cleanPath}`;
+};
 
 export const fetchCategories = async () => {
     try {

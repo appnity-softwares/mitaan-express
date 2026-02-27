@@ -12,6 +12,7 @@ import GalleryStrip from '../components/GalleryStrip';
 import MustReadSlider from '../components/MustReadSlider';
 import { useArticles } from '../context/ArticlesContext';
 import { useSettings } from '../hooks/useQueries';
+import { formatImageUrl } from '../services/api';
 import AdSpace from '../components/AdSpace';
 import AdPopup from '../components/AdPopup';
 
@@ -25,7 +26,7 @@ const HomePage = ({ language }) => {
         id: a.id,
         title: a.title,
         description: a.shortDescription || a.content?.substring(0, 150) + '...' || '',
-        image: a.image || 'https://images.unsplash.com/photo-1476242906366-d8eb64c2f661?auto=format&fit=crop&q=80&w=2000',
+        image: formatImageUrl(a.image),
         category: language === 'hi' ? (a.category?.nameHi || a.category?.name) : a.category?.name,
         author: a.author?.name || 'Mitaan',
         date: new Date(a.createdAt).toLocaleDateString(),

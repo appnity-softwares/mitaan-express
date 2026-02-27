@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { fetchCategories } from '../../services/api';
 import { useSettings } from '../../hooks/useQueries';
+import { formatImageUrl } from '../../services/api';
 import logo from '../../assets/logo.png';
 import { useAdminTranslation } from '../../context/AdminTranslationContext';
 
@@ -116,7 +117,15 @@ const AdminSidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout, theme, to
                     {/* Logo Area */}
                     <div className="p-6 border-b border-slate-100 dark:border-white/5 flex-shrink-0">
                         <div className="flex items-center gap-3">
-                            <img src={settings?.logo_url || logo} alt="Mitaan Logo" className="w-10 h-10 object-contain shadow-sm rounded-lg bg-white" />
+                            <img
+                                src={formatImageUrl(settings?.logo_url) || logo}
+                                alt="Mitaan Logo"
+                                className="w-10 h-10 object-contain shadow-sm rounded-lg bg-white"
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = logo;
+                                }}
+                            />
                             <div>
                                 <h1 className="text-xl gap-2 font-black text-slate-900 dark:text-white uppercase tracking-tighter line-clamp-1">
                                     {settings?.site_title || 'Mitaan Express'}

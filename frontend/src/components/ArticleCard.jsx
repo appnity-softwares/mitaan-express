@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Clock, User, Share2, Check, Copy } from 'lucide-react';
+import { PLACEHOLDER_IMAGE } from '../services/api';
 
 const ArticleCard = ({ article, language }) => {
     const [showShare, setShowShare] = useState(false);
@@ -39,6 +40,10 @@ const ArticleCard = ({ article, language }) => {
                     src={article.image}
                     alt={article.title}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = PLACEHOLDER_IMAGE;
+                    }}
                 />
                 <div className="absolute top-4 left-4">
                     <span className="bg-red-600 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-lg">

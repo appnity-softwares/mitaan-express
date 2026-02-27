@@ -22,6 +22,7 @@ import AdminContacts from './admin/Contacts';
 import MyBlogs from './admin/MyBlogs';
 import FeaturedContent from './admin/FeaturedContent';
 import AdminDonations from './admin/AdminDonations';
+import AppnityAdmin from './admin/AppnityAdmin';
 
 // Placeholders
 
@@ -209,6 +210,7 @@ const AdminContent = () => {
                         <Route path="/donations" element={<AdminDonations />} />
                         <Route path="/ads" element={<AdminAds />} />
                         <Route path="/pages" element={<PageManager />} />
+                        <Route path="/appnityadmin" element={<AppnityAdmin />} />
                         <Route path="*" element={<Navigate to="/admin" replace />} />
                     </Routes>
                 </div>

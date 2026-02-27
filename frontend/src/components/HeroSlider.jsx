@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlayCircle, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { useArticles } from '../context/ArticlesContext';
+import { formatImageUrl, PLACEHOLDER_IMAGE } from '../services/api';
 
 const HeroSlider = ({ language }) => {
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ const HeroSlider = ({ language }) => {
         tag: language === 'hi' ? (a.category?.nameHi || 'विशेष') : (a.category?.name || 'FEATURED'),
         title: a.title,
         description: a.shortDescription || a.content?.substring(0, 100) || '',
-        image: a.image || 'https://images.unsplash.com/photo-1476242906366-d8eb64c2f661?auto=format&fit=crop&q=80&w=2000',
+        image: formatImageUrl(a.image),
         articleId: a.id
     }));
 
@@ -119,6 +120,10 @@ const HeroSlider = ({ language }) => {
                         initial={{ scale: 1.2 }}
                         animate={{ scale: 1 }}
                         transition={{ duration: 8, ease: "linear" }}
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = PLACEHOLDER_IMAGE;
+                        }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent"></div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>

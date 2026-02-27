@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Facebook, Twitter, Instagram, MapPin, Phone, Send, Youtube, MessageCircle, ArrowRight, Mail } from 'lucide-react';
 import { useSettings } from '../hooks/useQueries';
 import { useArticles } from '../context/ArticlesContext';
+import { formatImageUrl, PLACEHOLDER_IMAGE } from '../services/api';
 import logo from '../assets/logo.png';
 
 const Footer = ({ language, onCategoryChange }) => {
@@ -17,7 +18,7 @@ const Footer = ({ language, onCategoryChange }) => {
         const sorted = [...published].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         return sorted.slice(0, 2).map(article => ({
             id: article.id,
-            image: article.image || 'https://images.unsplash.com/photo-1585829365294-bb8c6f045b88?auto=format&fit=crop&q=80&w=300',
+            image: formatImageUrl(article.image),
             title: article.title,
             date: new Date(article.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
             category: article.category?.name || 'News',
@@ -160,7 +161,15 @@ const Footer = ({ language, onCategoryChange }) => {
                                     className="flex gap-4 group cursor-pointer"
                                 >
                                     <div className="w-24 h-24 shrink-0 overflow-hidden rounded-xl border border-slate-200 dark:border-white/5">
-                                        <img src={news.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                        <img
+                                            src={news.image}
+                                            alt=""
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = PLACEHOLDER_IMAGE;
+                                            }}
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <div className="flex items-center gap-3">

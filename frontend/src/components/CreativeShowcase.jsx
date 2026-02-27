@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Feather, FileText } from 'lucide-react';
+import { PLACEHOLDER_IMAGE } from '../services/api';
 
 const CreativeShowcase = ({ language, setActiveCategory }) => {
     // Simplified static links to sections, as these are "Hubs"
@@ -79,6 +80,10 @@ const CreativeShowcase = ({ language, setActiveCategory }) => {
                                     src={card.image}
                                     className="w-full h-full object-cover opacity-60 transition-transform duration-1000 group-hover:scale-110"
                                     alt={card.title}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = PLACEHOLDER_IMAGE;
+                                    }}
                                 />
                                 <div className={`absolute inset-0 bg-gradient-to-br ${card.id === 'poetry' ? 'from-purple-900/40 to-blue-900/40' : 'from-orange-900/40 to-red-900/40'} opacity-40`} />
                             </div>
