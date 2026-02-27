@@ -51,14 +51,17 @@ exports.createBlog = async (req, res) => {
     try {
         const { title, content, status, language, tags, categoryId, image, shortDescription } = req.body;
 
-        // Ensure slug
-        console.log("Create Blog Request. Model available?", !!prisma.blog);
-        if (!prisma.blog) {
-            throw new Error("Prisma Blog model is not initialized. Please restart the server.");
+        // Improved slug generation: support Hindi and avoid empty/invalid slugs
+        let slug = req.body.slug;
+        if (!slug || slug.trim() === '') {
+            slug = title.toLowerCase()
+                .replace(/[^a-z0-9\u0900-\u097F]+/g, '-') // Support Hindi characters
+                .replace(/^-+|-+$/g, '');
         }
 
-        let slug = req.body.slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        // Simple duplicate check (should be more robust in prod)
+        if (!slug || slug === '-') slug = 'post-' + Math.random().toString(36).substring(2, 7);
+
+        // Simple duplicate check before create
         const exists = await prisma.blog.findUnique({ where: { slug } });
         if (exists) slug = `${slug}-${Date.now()}`;
 
@@ -74,16 +77,27 @@ exports.createBlog = async (req, res) => {
                 author: { connect: { id: req.user.id } },
                 category: categoryId ? { connect: { id: parseInt(categoryId) } } : undefined,
                 tags: tags && tags.length > 0 ? {
-                    connectOrCreate: tags.map(tag => ({
-                        where: { name: tag },
-                        create: { name: tag, slug: tag.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
-                    }))
+                    connectOrCreate: tags.map(tag => {
+                        const tagSlug = tag.toLowerCase()
+                            .replace(/[^a-z0-9\u0900-\u097F]+/g, '-')
+                            .replace(/^-+|-+$/g, '');
+                        return {
+                            where: { name: tag },
+                            create: {
+                                name: tag,
+                                slug: tagSlug || 'tag-' + Math.random().toString(36).substring(2, 7)
+                            }
+                        };
+                    })
                 } : undefined
             }
         });
         res.json(blog);
     } catch (error) {
         console.error("Create Blog Error:", error);
+        if (error.code === 'P2002') {
+            return res.status(400).json({ error: "A blog or tag with this name/slug already exists." });
+        }
         res.status(500).json({ error: error.message });
     }
 };

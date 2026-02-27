@@ -126,11 +126,25 @@ exports.createArticle = async (req, res) => {
     }
 
     try {
+        // Improved slug generation
+        let finalSlug = slug;
+        if (!finalSlug || finalSlug.trim() === '') {
+            finalSlug = title.toLowerCase()
+                .replace(/[^a-z0-9\u0900-\u097F]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+        if (!finalSlug || finalSlug === '-') finalSlug = 'article-' + Math.random().toString(36).substring(2, 7);
+
+        // Simple duplicate check
+        const exists = await prisma.article.findUnique({ where: { slug: finalSlug } });
+        if (exists) finalSlug = `${finalSlug}-${Date.now()}`;
+
         // Handle tags: array of strings => create or connect
         let tagConnect = [];
         if (tags && Array.isArray(tags)) {
             for (const tagName of tags) {
-                const tagSlug = tagName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                let tagSlug = tagName.toLowerCase().replace(/[^a-z0-9\u0900-\u097F]+/g, '-').replace(/^-+|-+$/g, '');
+                if (!tagSlug || tagSlug === '-') tagSlug = 'tag-' + Math.random().toString(36).substring(2, 7);
                 tagConnect.push({
                     where: { slug: tagSlug },
                     create: { name: tagName, slug: tagSlug }
@@ -143,10 +157,10 @@ exports.createArticle = async (req, res) => {
             return res.status(401).json({ error: 'User authentication failed. Please login again.' });
         }
 
-        console.log('Creating article with data:', { title, slug, categoryId, userId: req.user.id });
+        console.log('Creating article with data:', { title, slug: finalSlug, categoryId, userId: req.user.id });
         const article = await prisma.article.create({
             data: {
-                title, slug, content, shortDescription, image, videoUrl,
+                title, slug: finalSlug, content, shortDescription, image, videoUrl,
                 isBreaking: isBreaking || false,
                 isTrending: isTrending || false,
                 isFeatured: isFeatured || false,

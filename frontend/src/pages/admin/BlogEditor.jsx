@@ -68,7 +68,7 @@ const BlogEditorContent = () => {
 
         if (name === 'title' && !id) {
             const slug = value.toLowerCase()
-                .replace(/[^\w\s-]/g, '')
+                .replace(/[^a-z0-9\u0900-\u097F\s-]/g, '') // Allow Hindi
                 .replace(/\s+/g, '-')
                 .replace(/--+/g, '-')
                 .trim();
@@ -82,6 +82,7 @@ const BlogEditorContent = () => {
 
     const handleSubmit = async (e, statusOverride) => {
         e.preventDefault();
+        if (loading) return;
         setLoading(true);
 
         try {
