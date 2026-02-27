@@ -5,6 +5,9 @@
 
 set -e
 
+# Path awareness: Move to project root
+cd "$(dirname "$0")/.."
+
 echo "🚀 Starting Master Deployment Setup..."
 
 # 1. Update and Install System Dependencies
