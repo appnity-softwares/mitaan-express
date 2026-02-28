@@ -73,7 +73,7 @@ const Footer = ({ language, onCategoryChange }) => {
                         </div>
                         <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed max-w-md">
                             {language === 'hi'
-                                ? 'मिटान का अर्थ है "मित्र"। हम निष्पक्ष पत्रकारिता और गहरी कहानियों के माध्यम से समाज को जोड़ने में विश्वास रखते हैं।'
+                                ? 'मितान का अर्थ है "मित्र"। हम निष्पक्ष पत्रकारिता और गहरी कहानियों के माध्यम से समाज को जोड़ने में विश्वास रखते हैं।'
                                 : 'Mitaan means "Friend". We believe in connecting society through impartial journalism and deep-dive storytelling.'}
                         </p>
                         <div className="flex gap-4">
@@ -268,7 +268,7 @@ const Footer = ({ language, onCategoryChange }) => {
                 <div className="mt-24 pt-12 border-t border-slate-200 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-slate-500 text-sm font-medium">
                         {settings?.footer_text || (language === 'hi'
-                            ? `© 2026 मिटान एक्सप्रेस। सभी अधिकार सुरक्षित।`
+                            ? `© 2026 मितान एक्सप्रेस। सभी अधिकार सुरक्षित।`
                             : `© 2026 Mitaan Express. All Rights Reserved.`)}
                     </p>
                     <div className="flex gap-8">

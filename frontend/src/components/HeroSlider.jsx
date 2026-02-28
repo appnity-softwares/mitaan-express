@@ -14,7 +14,7 @@ const HeroSlider = ({ language }) => {
     const welcomeSlide = {
         id: 'welcome',
         tag: language === 'hi' ? 'स्वागत' : 'WELCOME',
-        title: language === 'hi' ? 'मिटान एक्सप्रेस में आपका स्वागत है' : 'Welcome to Mitaan Express',
+        title: language === 'hi' ? 'मितान एक्सप्रेस में आपका स्वागत है' : 'Welcome to Mitaan Express',
         description: language === 'hi' ? 'समाचार और कहानियों के लिए आपका विश्वसनीय स्रोत।' : 'Your trusted source for news and stories.',
         image: 'https://images.unsplash.com/photo-1476242906366-d8eb64c2f661?auto=format&fit=crop&q=80&w=2000',
         isWelcome: true

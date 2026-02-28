@@ -115,6 +115,13 @@ const AdminContent = () => {
                     </div>
                     <div className="flex items-center gap-2">
                         <button
+                            onClick={toggleTheme}
+                            className="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-all"
+                            title={theme === 'light' ? 'Switch to Dark' : 'Switch to Light'}
+                        >
+                            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} className="text-yellow-400" />}
+                        </button>
+                        <button
                             onClick={() => window.location.reload()}
                             className="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-all"
                             title="Refresh"

@@ -60,7 +60,7 @@ const TermsPage = ({ language }) => {
                     <Section icon={Globe} title={language === 'hi' ? 'परिचय' : 'Introduction'}>
                         <p>
                             {language === 'hi'
-                                ? 'मिटान एक्सप्रेस ("हम", "हमारा") में आपका स्वागत है। हमारी वेबसाइट का उपयोग करके, आप इन नियमों और शर्तों का पालन करने के लिए सहमत हैं। यदि आप सहमत नहीं हैं, तो कृपया हमारे पोर्टल का उपयोग न करें।'
+                                ? 'मितान एक्सप्रेस ("हम", "हमारा") में आपका स्वागत है। हमारी वेबसाइट का उपयोग करके, आप इन नियमों और शर्तों का पालन करने के लिए सहमत हैं। यदि आप सहमत नहीं हैं, तो कृपया हमारे पोर्टल का उपयोग न करें।'
                                 : 'Welcome to Mitaan Express ("we," "our," "us"). By accessing or using our news portal, you agree to comply with and be bound by these Terms of Use. If you do not agree, please do not use our services.'}
                         </p>
                     </Section>
@@ -68,7 +68,7 @@ const TermsPage = ({ language }) => {
                     <Section icon={Copyright} title={language === 'hi' ? 'बौद्धिक संपदा' : 'Intellectual Property Rights'}>
                         <p>
                             {language === 'hi'
-                                ? 'इस साइट पर मौजूद सभी सामग्री (समाचार लेख, तस्वीरें, वीडियो, ग्राफिक्स, लोगो) मिटान एक्सप्रेस की संपत्ति है। कॉपीराइट कानूनों द्वारा इसकी रक्षा की जाती है।'
+                                ? 'इस साइट पर मौजूद सभी सामग्री (समाचार लेख, तस्वीरें, वीडियो, ग्राफिक्स, लोगो) मितान एक्सप्रेस की संपत्ति है। कॉपीराइट कानूनों द्वारा इसकी रक्षा की जाती है।'
                                 : 'All content on this site, including news articles, photographs, videos, graphics, and logos, is the property of Mitaan Express and is protected by copyright laws.'}
                         </p>
                         <ul className="list-disc pl-5 space-y-2 mt-2">

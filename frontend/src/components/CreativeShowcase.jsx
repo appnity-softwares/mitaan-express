@@ -12,7 +12,7 @@ const CreativeShowcase = ({ language, setActiveCategory }) => {
             subtitle: language === 'hi' ? 'काव्य कोना' : 'Poetry Corner',
             desc: language === 'hi' ? 'शब्दों के जादू में खो जाएं। बेहतरीन कवियों की रचनाएं पढ़ें।' : 'Explore raw human emotion through the lens of modern poetry.',
             icon: Feather,
-            image: "https://images.unsplash.com/photo-1518173946687-a4c8a9833d8e?auto=format&fit=crop&q=80&w=1000",
+            image: "https://images.unsplash.com/photo-1455390582262-044cdead2708?auto=format&fit=crop&q=80&w=1000",
             color: "from-purple-600 to-blue-600"
         },
         {
@@ -21,7 +21,7 @@ const CreativeShowcase = ({ language, setActiveCategory }) => {
             subtitle: language === 'hi' ? 'ब्लॉग पढ़ें' : 'Read Blogs',
             desc: language === 'hi' ? 'गहन विश्लेषण और नवीनतम तकनीकी अपडेट्स के लिए हमारा ब्लॉग देखें।' : 'Expert opinions on technology, politics, and the future of journalism.',
             icon: FileText,
-            image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1000",
+            image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1000",
             color: "from-orange-600 to-red-600"
         }
     ];

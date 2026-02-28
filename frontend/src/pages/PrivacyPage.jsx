@@ -60,7 +60,7 @@ const PrivacyPage = ({ language }) => {
                     <Section icon={ShieldCheck} title={language === 'hi' ? 'हमारा प्रतिबद्धता' : 'Our Commitment'}>
                         <p>
                             {language === 'hi'
-                                ? 'मिटान एक्सप्रेस आपकी गोपनीयता का सम्मान करता है। हम आपके द्वारा साझा की गई किसी भी जानकारी की सुरक्षा के लिए प्रतिबद्ध हैं। यह नीति बताती है कि हम डेटा कैसे एकत्र और उपयोग करते हैं।'
+                                ? 'मितान एक्सप्रेस आपकी गोपनीयता का सम्मान करता है। हम आपके द्वारा साझा की गई किसी भी जानकारी की सुरक्षा के लिए प्रतिबद्ध हैं। यह नीति बताती है कि हम डेटा कैसे एकत्र और उपयोग करते हैं।'
                                 : 'Mitaan Express respects your privacy. We are committed to protecting any personal information you share with us. This policy explains how we collect, use, and safeguard your data.'}
                         </p>
                     </Section>

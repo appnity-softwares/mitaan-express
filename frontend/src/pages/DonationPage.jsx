@@ -77,7 +77,7 @@ const DonationPage = ({ language, toggleLanguage }) => {
                     </h1>
                     <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
                         {language === 'hi'
-                            ? 'मिटान एक्सप्रेस को स्वतंत्र रखने में हमारी मदद करें। आपकी छोटी सी मदद हमें बेहतर पत्रकारिता करने की शक्ति देती है।'
+                            ? 'मितान एक्सप्रेस को स्वतंत्र रखने में हमारी मदद करें। आपकी छोटी सी मदद हमें बेहतर पत्रकारिता करने की शक्ति देती है।'
                             : 'Help us keep Mitaan Express independent. Your contribution empowers us to continue delivering high-quality, unbiased journalism.'}
                     </p>
                 </div>
@@ -162,7 +162,7 @@ const DonationPage = ({ language, toggleLanguage }) => {
                                                     </p>
                                                     <p className="font-serif text-lg text-slate-900 dark:text-white">
                                                         {language === 'hi'
-                                                            ? (settings?.donation_account_holder_hi || 'मिटान एक्सप्रेस मीडिया ट्रस्ट')
+                                                            ? (settings?.donation_account_holder_hi || 'मितान एक्सप्रेस मीडिया ट्रस्ट')
                                                             : (settings?.donation_account_holder || 'Mitaan Express Media Trust')}
                                                     </p>
                                                 </div>

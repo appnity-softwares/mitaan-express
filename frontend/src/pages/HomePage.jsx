@@ -55,9 +55,9 @@ const HomePage = ({ language }) => {
                 <div className="space-y-24 pb-32">
                     {/* Breaking News Ticker (Full Width) */}
                     {settings?.section_ticker_enabled !== 'false' && (
-                        <div className="bg-white dark:bg-[#030712] border-y border-slate-100 dark:border-white/5 py-4 overflow-hidden whitespace-nowrap group">
-                            <div className="flex items-center gap-16 animate-marquee-infinite w-max px-4">
-                                <div className="flex items-center gap-16 shrink-0">
+                        <div className="bg-white dark:bg-[#030712] border-y border-slate-100 dark:border-white/5 py-3 md:py-4 overflow-hidden whitespace-nowrap group">
+                            <div className="flex items-center gap-8 md:gap-16 animate-marquee-infinite w-max px-4">
+                                <div className="flex items-center gap-8 md:gap-16 shrink-0">
                                     {(breaking.length > 0 ? breaking : published.slice(0, 5)).map((article, i) => (
                                         <div
                                             key={`${article.id}-1`}
@@ -78,7 +78,7 @@ const HomePage = ({ language }) => {
                                     ))}
                                 </div>
                                 {/* Duplicate for seamless loop */}
-                                <div className="flex items-center gap-16 shrink-0">
+                                <div className="flex items-center gap-8 md:gap-16 shrink-0">
                                     {(breaking.length > 0 ? breaking : published.slice(0, 5)).map((article, i) => (
                                         <div
                                             key={`${article.id}-2`}
@@ -108,9 +108,9 @@ const HomePage = ({ language }) => {
                     </div>
 
                     {/* Main Grid: Centered Content */}
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-20">
-                        <div className="flex-1 space-y-24">
-                            <div className="space-y-12">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-8 lg:gap-20">
+                        <div className="flex-1 space-y-12 lg:space-y-24">
+                            <div className="space-y-8 lg:space-y-12">
                                 <h2 className="text-[11px] font-black text-red-600 uppercase tracking-[0.4em]">
                                     {language === 'hi' ? 'विशेष रिपोर्ट' : 'Top Feature'}
                                 </h2>
@@ -129,15 +129,15 @@ const HomePage = ({ language }) => {
                                 </div>
                             )}
                         </div>
-                        <div className="lg:w-[420px] shrink-0" data-aos="fade-left">
+                        <div className="w-full lg:w-[380px] xl:w-[420px] shrink-0" data-aos="fade-left">
                             <Sidebar language={language} />
                         </div>
                     </div>
 
                     {/* In-Depth: Full Width Background, Centered Content */}
                     {settings?.section_indepth_enabled !== 'false' && (
-                        <div className="bg-slate-50 dark:bg-[#030712] py-24 border-y border-slate-100 dark:border-white/5" data-aos="fade-up">
-                            <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="bg-slate-50 dark:bg-[#030712] py-16 lg:py-24 border-y border-slate-100 dark:border-white/5" data-aos="fade-up">
+                            <div className="max-w-7xl 2xl:max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
                                 <InDepthSection
                                     language={language}
                                     onCategoryChange={handleCategoryChange}

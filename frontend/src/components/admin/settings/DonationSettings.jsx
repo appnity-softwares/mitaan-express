@@ -69,7 +69,7 @@ const DonationSettings = ({ settings, handleChange, onSave, loading }) => {
                             onChange={handleChange}
                             enabled={true}
                             className="w-full p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 focus:ring-red-500/20"
-                            placeholder="मिटान एक्सप्रेस मीडिया ट्रस्ट"
+                            placeholder="मितान एक्सप्रेस मीडिया ट्रस्ट"
                         />
                     </div>
                     <div>
