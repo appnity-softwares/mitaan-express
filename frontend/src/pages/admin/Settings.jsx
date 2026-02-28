@@ -137,7 +137,7 @@ const Settings = () => {
     return (
         <div className="p-4 lg:p-8 space-y-12 max-w-7xl mx-auto pb-32">
             {/* Page Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-900 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] text-slate-900 dark:text-white border border-slate-100 dark:border-white/10 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/20 blur-[100px] -z-0"></div>
                 <div className="relative z-10">
                     <h2 className="text-3xl lg:text-5xl font-black uppercase tracking-tighter mb-2 flex items-center gap-4">
@@ -412,9 +412,9 @@ const Settings = () => {
                 <div className="lg:col-span-12 xl:col-span-5 space-y-8">
 
                     {/* Advertisement Master */}
-                    <div className="bg-slate-900 p-8 rounded-3xl border border-white/10 shadow-2xl space-y-8">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-6">
-                            <h3 className="flex items-center gap-2 font-black text-xl text-white uppercase tracking-tight">
+                    <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-white/10 shadow-2xl space-y-8">
+                        <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-6">
+                            <h3 className="flex items-center gap-2 font-black text-xl text-slate-900 dark:text-white uppercase tracking-tight">
                                 <Megaphone className="text-orange-500" /> Ad Network
                             </h3>
                             <button
@@ -427,10 +427,10 @@ const Settings = () => {
 
                         <div className="space-y-6">
                             {/* Modal Popup */}
-                            <div className="p-6 bg-white/5 rounded-[2rem] border border-white/5 space-y-6">
+                            <div className="p-6 bg-slate-50 dark:bg-white/5 rounded-[2rem] border border-slate-100 dark:border-white/5 space-y-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <h4 className="font-black text-white uppercase text-xs tracking-widest">Entry Ad Popup</h4>
+                                        <h4 className="font-black text-slate-900 dark:text-white uppercase text-xs tracking-widest">Entry Ad Popup</h4>
                                         <p className="text-[10px] text-slate-500">Full-screen modal after 3 seconds</p>
                                     </div>
                                     <select
@@ -451,7 +451,7 @@ const Settings = () => {
                                             name="ad_popup_type"
                                             value={settings.ad_popup_type}
                                             onChange={handleChange}
-                                            className="w-full p-3 bg-slate-800 rounded-xl outline-none focus:ring-1 focus:ring-orange-500 text-xs text-white font-bold"
+                                            className="w-full p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-transparent outline-none focus:ring-1 focus:ring-orange-500 text-xs text-slate-900 dark:text-white font-bold"
                                         >
                                             <option value="promo">Premium Offer (System Default)</option>
                                             <option value="ad">Custom Visual Ad (External URL)</option>
@@ -463,14 +463,14 @@ const Settings = () => {
                                                     name="ad_popup_image_url"
                                                     value={settings.ad_popup_image_url}
                                                     onChange={handleChange}
-                                                    className="w-full p-3 bg-slate-800 rounded-xl outline-none text-xs text-white placeholder-slate-600"
+                                                    className="w-full p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-transparent outline-none text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600"
                                                     placeholder="Custom Ad Image URL"
                                                 />
                                                 <input
                                                     name="ad_popup_link_url"
                                                     value={settings.ad_popup_link_url}
                                                     onChange={handleChange}
-                                                    className="w-full p-3 bg-slate-800 rounded-xl outline-none text-xs text-white placeholder-slate-600"
+                                                    className="w-full p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-transparent outline-none text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600"
                                                     placeholder="Destination Link"
                                                 />
                                             </>

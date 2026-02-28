@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { RefreshCw, User, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useActivityLogs } from '../../hooks/useQueries';
+import { useAdminTranslation } from '../../context/AdminTranslationContext';
 
 const ActivityLogs = () => {
+    const { t } = useAdminTranslation();
     const [currentPage, setCurrentPage] = useState(1);
 
     // TanStack Query Hook
@@ -30,7 +32,7 @@ const ActivityLogs = () => {
         <div className="p-4 lg:p-8 space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Activity Logs</h2>
+                    <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{t('activityLogs') || 'Activity Logs'}</h2>
                     <p className="text-sm text-slate-500 dark:text-slate-400">Track all admin actions and system events.</p>
                 </div>
                 <button

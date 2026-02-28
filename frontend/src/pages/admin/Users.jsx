@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Search, Trash2, Users as UsersIcon } from 'lucide-react';
 import { useUsers } from '../../hooks/useQueries';
 import { API_URL } from '../../services/api';
+import { useAdminTranslation } from '../../context/AdminTranslationContext';
 
 const Users = () => {
+    const { t } = useAdminTranslation();
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('ALL');
 
@@ -83,7 +85,7 @@ const Users = () => {
         <div className="p-4 lg:p-8 space-y-6">
             {/* Header */}
             <div>
-                <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">User Management</h2>
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{t('users') || 'User Management'}</h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400">Manage users and their roles</p>
             </div>
 
@@ -113,7 +115,7 @@ const Users = () => {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                     <input
                         type="text"
-                        placeholder="Search users by name or email..."
+                        placeholder={t('search') || "Search users by name or email..."}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 ring-red-600 text-slate-900 dark:text-white"

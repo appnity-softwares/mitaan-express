@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Zap, Star, TrendingUp, X, Plus } from 'lucide-react';
 import { useAdminArticles } from '../../hooks/useQueries';
 import { API_URL } from '../../services/api';
+import { useAdminTranslation } from '../../context/AdminTranslationContext';
 
 const FeaturedContent = () => {
+    const { t } = useAdminTranslation();
     // TanStack Query Hook
     const {
         data: articles = [],
@@ -118,16 +120,16 @@ const FeaturedContent = () => {
     if (loading) return <div className="p-8 text-center text-slate-500">Loading...</div>;
 
     const tabs = [
-        { id: 'breaking', label: 'Breaking News', icon: Zap, color: 'text-red-600', count: breakingNews.length },
-        { id: 'featured', label: 'Featured', icon: Star, color: 'text-yellow-600', count: featured.length },
-        { id: 'trending', label: 'Trending', icon: TrendingUp, color: 'text-orange-600', count: trending.length },
+        { id: 'breaking', label: t('breakingNews') || 'Breaking News', icon: Zap, color: 'text-red-600', count: breakingNews.length },
+        { id: 'featured', label: t('featured') || 'Featured', icon: Star, color: 'text-yellow-600', count: featured.length },
+        { id: 'trending', label: t('trending') || 'Trending', icon: TrendingUp, color: 'text-orange-600', count: trending.length },
     ];
 
     return (
         <div className="p-4 lg:p-8 space-y-6">
             {/* Header */}
             <div>
-                <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Featured Content</h2>
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{t('featured') || 'Featured Content'}</h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400">Manage breaking news, featured articles, and trending content</p>
             </div>
 

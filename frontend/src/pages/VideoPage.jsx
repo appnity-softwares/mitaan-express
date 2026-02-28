@@ -15,7 +15,8 @@ const VideoPage = ({ language }) => {
 
     // Fetch videos from API
     const { data: mediaResponse, isLoading } = usePublicMedia('VIDEO');
-    const mediaData = mediaResponse?.media || [];
+    const rawMediaData = mediaResponse?.media || [];
+    const mediaData = useMemo(() => rawMediaData.filter(v => !v.language || v.language === language || v.language === 'both'), [rawMediaData, language]);
     const incrementViewsMutation = useIncrementViews();
 
     // Extract unique categories

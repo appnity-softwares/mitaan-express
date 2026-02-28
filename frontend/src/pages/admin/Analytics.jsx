@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { FileText, Activity, TrendingUp, Eye, MessageSquare, BarChart3 } from 'lucide-react';
 import { useAnalytics } from '../../hooks/useQueries';
+import { useAdminTranslation } from '../../context/AdminTranslationContext';
 
 const Analytics = () => {
+    const { t } = useAdminTranslation();
     const [period, setPeriod] = useState('daily');
 
     // TanStack Query Hook
@@ -29,7 +31,7 @@ const Analytics = () => {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Analytics Dashboard</h2>
+                    <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{t('analytics') || 'Analytics Dashboard'}</h2>
                     <p className="text-sm text-slate-500 dark:text-slate-400">Track your website performance</p>
                 </div>
                 <div className="flex gap-2">
@@ -56,7 +58,7 @@ const Analytics = () => {
                         <Activity size={20} className="opacity-60" />
                     </div>
                     <div className="text-3xl font-black mb-1">{stats.overview.totalArticles}</div>
-                    <div className="text-sm opacity-90 uppercase tracking-wide">Total Articles</div>
+                    <div className="text-sm opacity-90 uppercase tracking-wide">{t('totalArticles') || 'Total Articles'}</div>
                 </div>
 
                 <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl text-white shadow-lg">
@@ -65,7 +67,7 @@ const Analytics = () => {
                         <Activity size={20} className="opacity-60" />
                     </div>
                     <div className="text-3xl font-black mb-1">{stats.overview.publishedArticles}</div>
-                    <div className="text-sm opacity-90 uppercase tracking-wide">Published</div>
+                    <div className="text-sm opacity-90 uppercase tracking-wide">{t('published') || 'Published'}</div>
                 </div>
 
                 <div className="bg-gradient-to-br from-teal-500 to-emerald-600 p-6 rounded-2xl text-white shadow-lg">
@@ -74,7 +76,7 @@ const Analytics = () => {
                         <Activity size={20} className="opacity-60" />
                     </div>
                     <div className="text-3xl font-black mb-1">{stats.overview.totalViews.toLocaleString()}</div>
-                    <div className="text-sm opacity-90 uppercase tracking-wide">Total Views</div>
+                    <div className="text-sm opacity-90 uppercase tracking-wide">{t('views') || 'Total Views'}</div>
                 </div>
 
                 <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 p-6 rounded-2xl text-white shadow-lg">

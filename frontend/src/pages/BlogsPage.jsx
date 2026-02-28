@@ -47,7 +47,8 @@ import { useBlogs } from '../hooks/useQueries';
 const BlogsPage = ({ language }) => {
     // TanStack Query Hook
     const { data, isLoading: loading } = useBlogs({ status: 'PUBLISHED' });
-    const articles = data?.articles || data || [];
+    const rawArticles = data?.articles || data || [];
+    const articles = React.useMemo(() => rawArticles.filter(a => !a.language || a.language === language || a.language === 'both'), [rawArticles, language]);
     const [contentRef, isShort] = useIsShort(200);
 
     if (loading) {

@@ -3,8 +3,10 @@ import { Plus, Play, Image as ImageIcon, Globe, Eye, EyeOff, Search, Grid, List,
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useAdminMedia, useCreateMedia, useUpdateMedia, useDeleteMedia } from '../../hooks/useMedia';
+import { useAdminTranslation } from '../../context/AdminTranslationContext';
 
 const MediaLibrary = () => {
+    const { t } = useAdminTranslation();
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState('grid');
     const [selectedMedia, setSelectedMedia] = useState([]);
@@ -120,7 +122,7 @@ const MediaLibrary = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight font-serif italic">Media Hub</h2>
+                    <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight font-serif italic">{t('media') || 'Media Hub'}</h2>
                     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
                         {stats.total} assets • {stats.images} images • {stats.videos} videos
                     </p>
@@ -241,7 +243,7 @@ const MediaLibrary = () => {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                     <input
                         type="text"
-                        placeholder="Search assets by title..."
+                        placeholder={t('search') || "Search assets by title..."}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 ring-red-600 transition-all"

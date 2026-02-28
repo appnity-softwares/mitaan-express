@@ -32,7 +32,7 @@ export const ArticlesProvider = ({ children, language }) => {
 
     // Derived data - memoized for performance
     const { featured, trending, breaking, videos, published } = useMemo(() => {
-        const publishedBase = articles.filter(a => a.status === 'PUBLISHED');
+        const publishedBase = articles.filter(a => a.status === 'PUBLISHED' && (!a.language || a.language === language || a.language === 'both'));
         return {
             published: publishedBase,
             featured: publishedBase.filter(a => a.isFeatured),
