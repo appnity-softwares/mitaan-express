@@ -2,16 +2,31 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Target, Users, Award, Shield, CheckCircle2, Heart, Globe, Zap, BookOpen, TrendingUp, Trophy } from 'lucide-react';
+import { useSettings } from '../hooks/useQueries';
 
-const AboutPage = ({ language }) => {
-    const stats = [
-        { label: language === 'hi' ? 'सालों का अनुभव' : 'Years of Excellence', value: '15+', icon: <Award size={24} /> },
-        { label: language === 'hi' ? 'मासिक पाठक' : 'Monthly Readers', value: '2M+', icon: <Users size={24} /> },
-        { label: language === 'hi' ? 'पुरस्कार' : 'Awards Won', value: '25', icon: <Trophy size={24} /> },
-        { label: language === 'hi' ? 'रिपोर्टर्स' : 'Global Reporters', value: '150+', icon: <Globe size={24} /> },
+const AboutPage = ({ language, previewSettings }) => {
+    const { data: dbSettings } = useSettings();
+    const settings = previewSettings || dbSettings || {};
+
+    const fallbackStats = [
+        { label: language === 'hi' ? 'सालों का अनुभव' : 'Years of Excellence', value: '15+', icon: 'Award' },
+        { label: language === 'hi' ? 'मासिक पाठक' : 'Monthly Readers', value: '2M+', icon: 'Users' },
+        { label: language === 'hi' ? 'पुरस्कार' : 'Awards Won', value: '25', icon: 'Trophy' },
+        { label: language === 'hi' ? 'रिपोर्टर्स' : 'Global Reporters', value: '150+', icon: 'Globe' },
     ];
 
-    const team = [
+    let parsedStats = fallbackStats;
+    try { if (settings.about_stats_json) parsedStats = JSON.parse(settings.about_stats_json); } catch (e) { }
+
+    const stats = parsedStats.map(s => {
+        let IconComponent = Award;
+        if (s.icon === 'Users') IconComponent = Users;
+        if (s.icon === 'Trophy') IconComponent = Trophy;
+        if (s.icon === 'Globe') IconComponent = Globe;
+        return { ...s, icon: <IconComponent size={24} /> };
+    });
+
+    const fallbackTeam = [
         {
             name: "Vikram Mehta",
             role: language === 'hi' ? "प्रधान संपादक" : "Editor in Chief",
@@ -37,8 +52,10 @@ const AboutPage = ({ language }) => {
             bio: language === 'hi' ? 'राजनीति विज्ञान में पीएचडी' : 'PhD in Political Science'
         }
     ];
+    let team = fallbackTeam;
+    try { if (settings.about_team_json) team = JSON.parse(settings.about_team_json); } catch (e) { }
 
-    const values = [
+    const fallbackValues = [
         {
             icon: <Shield size={32} />,
             title: language === 'hi' ? 'भरोसा और ईमानदारी' : 'Trust & Integrity',
@@ -61,13 +78,24 @@ const AboutPage = ({ language }) => {
         }
     ];
 
+    let parsedValues = fallbackValues;
+    try { if (settings.about_values_json) parsedValues = JSON.parse(settings.about_values_json); } catch (e) { }
+
+    const values = parsedValues.map(v => {
+        let IconComponent = Shield;
+        if (v.icon === 'Target') IconComponent = Target;
+        if (v.icon === 'Users') IconComponent = Users;
+        if (v.icon === 'Award') IconComponent = Award;
+        return { ...v, icon: <IconComponent size={32} /> };
+    });
+
     return (
         <div className="min-h-screen bg-white dark:bg-[#030712] transition-colors">
             {/* Hero Section - Enhanced */}
             <section className="relative h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0">
                     <img
-                        src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=2000"
+                        src={settings.about_hero_image || "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=2000"}
                         className="w-full h-full object-cover"
                         alt="Newsroom"
                     />
@@ -91,17 +119,12 @@ const AboutPage = ({ language }) => {
                             {language === 'hi' ? 'मितान एक्सप्रेस के बारे में' : 'ABOUT MITAAN EXPRESS'}
                         </motion.span>
 
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white font-serif tracking-tighter leading-[1.1]">
-                            {language === 'hi' ? 'सच्चाई की' : 'The Voice of'} <br />
-                            <span className="bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
-                                {language === 'hi' ? 'आवाज़' : 'Truth'}
-                            </span>
-                        </h1>
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white font-serif tracking-tighter leading-[1.1]" dangerouslySetInnerHTML={{ __html: language === 'hi' ? (settings.about_hero_title_hi || 'सच्चाई की <br/><span class="bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">आवाज़</span>') : (settings.about_hero_title_en || 'The Voice of <br/><span class="bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Truth</span>') }}></h1>
 
                         <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed">
                             {language === 'hi'
-                                ? 'निष्पक्ष पत्रकारिता के माध्यम से समाज को सशक्त बनाना। 15+ वर्षों से भारत की सबसे विश्वसनीय न्यूज़ पोर्टल।'
-                                : 'Empowering society through unbiased journalism. India\'s most trusted news portal for over 15 years.'}
+                                ? (settings.about_hero_subtitle_hi || 'निष्पक्ष पत्रकारिता के माध्यम से समाज को सशक्त बनाना। 15+ वर्षों से भारत की सबसे विश्वसनीय न्यूज़ पोर्टल।')
+                                : (settings.about_hero_subtitle_en || 'Empowering society through unbiased journalism. India\'s most trusted news portal for over 15 years.')}
                         </p>
                     </motion.div>
                 </div>
@@ -163,14 +186,14 @@ const AboutPage = ({ language }) => {
                                 {language === 'hi' ? 'हमारा मिशन' : 'OUR MISSION'}
                             </span>
                             <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white font-serif leading-tight">
-                                {language === 'hi' ? 'समाज को जागरूक और सशक्त बनाना' : 'Empowering Society Through Information'}
+                                {language === 'hi' ? (settings.about_mission_title_hi || 'समाज को जागरूक और सशक्त बनाना') : (settings.about_mission_title_en || 'Empowering Society Through Information')}
                             </h2>
                         </div>
 
-                        <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
+                        <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed whitespace-pre-line">
                             {language === 'hi'
-                                ? 'मितान एक्सप्रेस केवल एक न्यूज़ पोर्टल नहीं है - यह सच्चाई का एक मंच है। हम उन कहानियों को सामने लाते हैं जो अक्सर दब जाती हैं। हमारी समर्पित टीम दिन-रात काम करती है ताकि आप तक सबसे सटीक, तेज़ और निष्पक्ष खबरें पहुँचें।'
-                                : 'Mitaan Express is not just a news portal - it is a platform for truth. We bring forward stories that are often suppressed. Our dedicated team works around the clock to ensure the most accurate, fast, and unbiased news reaches you.'}
+                                ? (settings.about_mission_desc_hi || 'मितान एक्सप्रेस केवल एक न्यूज़ पोर्टल नहीं है - यह सच्चाई का एक मंच है। हम उन कहानियों को सामने लाते हैं जो अक्सर दब जाती हैं। हमारी समर्पित टीम दिन-रात काम करती है ताकि आप तक सबसे सटीक, तेज़ और निष्पक्ष खबरें पहुँचें।')
+                                : (settings.about_mission_desc_en || 'Mitaan Express is not just a news portal - it is a platform for truth. We bring forward stories that are often suppressed. Our dedicated team works around the clock to ensure the most accurate, fast, and unbiased news reaches you.')}
                         </p>
 
                         <div className="grid grid-cols-2 gap-6 pt-4">
@@ -196,7 +219,7 @@ const AboutPage = ({ language }) => {
                     >
                         <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl">
                             <img
-                                src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=800"
+                                src={settings.about_mission_image || "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=800"}
                                 className="w-full h-full object-cover"
                                 alt="Our Culture"
                             />
@@ -323,15 +346,12 @@ const AboutPage = ({ language }) => {
                     </div>
 
                     <div className="relative z-10 text-center space-y-8">
-                        <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white font-serif tracking-tighter leading-tight">
-                            {language === 'hi' ? 'सत्य के साथ' : 'Join Us in'} <br />
-                            {language === 'hi' ? 'खड़े रहें' : 'Standing with Truth'}
-                        </h2>
+                        <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white font-serif tracking-tighter leading-tight" dangerouslySetInnerHTML={{ __html: language === 'hi' ? (settings.about_cta_title_hi || 'सत्य के साथ <br/> खड़े रहें') : (settings.about_cta_title_en || 'Join Us in <br/> Standing with Truth') }}></h2>
 
                         <p className="text-white/90 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
                             {language === 'hi'
-                                ? 'हमारे मिशन का हिस्सा बनें और समाज में सकारात्मक बदलाव लाने में योगदान दें।'
-                                : 'Be part of our mission and contribute to bringing positive change in society.'}
+                                ? (settings.about_cta_desc_hi || 'हमारे मिशन का हिस्सा बनें और समाज में सकारात्मक बदलाव लाने में योगदान दें।')
+                                : (settings.about_cta_desc_en || 'Be part of our mission and contribute to bringing positive change in society.')}
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">

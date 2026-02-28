@@ -12,4 +12,7 @@ router.get('/', authenticateToken, authorizeRoles('ADMIN'), contactController.li
 // Admin: mark as read
 router.put('/:id/read', authenticateToken, authorizeRoles('ADMIN'), contactController.markRead);
 
+// Admin: delete contact
+router.delete('/:id', authenticateToken, authorizeRoles('ADMIN'), contactController.deleteContact);
+
 module.exports = router;

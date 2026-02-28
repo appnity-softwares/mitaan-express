@@ -24,8 +24,15 @@ const AdminAds = () => {
         ad_in_article_link_url: '',
         ad_in_article_enabled: 'false',
         ad_skyscraper_image_url: '',
+        ad_skyscraper_image_url: '',
         ad_skyscraper_link_url: '',
         ad_skyscraper_enabled: 'false',
+        ad_sidebar_type: 'promo', // 'promo' or 'ad'
+        ad_sidebar_promo_title: 'Mitaan Express',
+        ad_sidebar_promo_subtitle: 'Download our app for best experience',
+        ad_sidebar_promo_cta: 'Download',
+        ad_sidebar_promo_icon: 'smartphone',
+        ad_sidebar_promo_link: '#',
         ad_popup_enabled: 'true',
         ad_popup_type: 'promo', // 'promo' or 'ad'
         ad_popup_image_url: '',
@@ -51,6 +58,12 @@ const AdminAds = () => {
                 ad_skyscraper_image_url: initialData.ad_skyscraper_image_url || '',
                 ad_skyscraper_link_url: initialData.ad_skyscraper_link_url || '',
                 ad_skyscraper_enabled: initialData.ad_skyscraper_enabled || 'false',
+                ad_sidebar_type: initialData.ad_sidebar_type || 'promo',
+                ad_sidebar_promo_title: initialData.ad_sidebar_promo_title || '',
+                ad_sidebar_promo_subtitle: initialData.ad_sidebar_promo_subtitle || '',
+                ad_sidebar_promo_cta: initialData.ad_sidebar_promo_cta || '',
+                ad_sidebar_promo_icon: initialData.ad_sidebar_promo_icon || '',
+                ad_sidebar_promo_link: initialData.ad_sidebar_promo_link || '',
                 ad_popup_enabled: initialData.ad_popup_enabled || 'true',
                 ad_popup_type: initialData.ad_popup_type || 'promo',
                 ad_popup_image_url: initialData.ad_popup_image_url || '',
@@ -316,12 +329,53 @@ const AdminAds = () => {
                     enabledKey="ad_in_article_enabled"
                 />
 
-                <AdSection
-                    title={t('article_sidebar')}
-                    imageKey="ad_sidebar_image_url"
-                    linkKey="ad_sidebar_link_url"
-                    enabledKey="ad_sidebar_enabled"
-                />
+                <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-xl border border-slate-100 dark:border-white/5 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300">Sidebar 'App Promo' Card</label>
+                        <select
+                            name="ad_sidebar_enabled"
+                            value={settings.ad_sidebar_enabled}
+                            onChange={handleChange}
+                            className={`px-3 py-1.5 rounded-lg font-black text-[10px] uppercase outline-none border transition-all ${settings.ad_sidebar_enabled === 'true' ? 'bg-green-500/10 border-green-500 text-green-600' : 'bg-red-500/10 border-red-500 text-red-600'}`}
+                        >
+                            <option value="true">{t('enabled')}</option>
+                            <option value="false">{t('disabled')}</option>
+                        </select>
+                    </div>
+                    {settings.ad_sidebar_enabled === 'true' && (
+                        <div className="space-y-4">
+                            <select
+                                name="ad_sidebar_type"
+                                value={settings.ad_sidebar_type}
+                                onChange={handleChange}
+                                className="w-full p-3 bg-white dark:bg-slate-800 rounded-lg outline-none text-xs font-bold focus:ring-2 focus:ring-red-500/20"
+                            >
+                                <option value="promo">Premium Text Promo (Red Card)</option>
+                                <option value="ad">Custom Default Banner (Image)</option>
+                            </select>
+
+                            {settings.ad_sidebar_type === 'promo' ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input type="text" name="ad_sidebar_promo_title" value={settings.ad_sidebar_promo_title} onChange={handleChange} placeholder="Promo Title (e.g. Mitaan Express)" className="w-full p-3 bg-white dark:bg-slate-800 rounded-lg outline-none focus:ring-2 focus:ring-red-500/20 text-sm" />
+                                    <input type="text" name="ad_sidebar_promo_subtitle" value={settings.ad_sidebar_promo_subtitle} onChange={handleChange} placeholder="Subtitle" className="w-full p-3 bg-white dark:bg-slate-800 rounded-lg outline-none focus:ring-2 focus:ring-red-500/20 text-sm" />
+                                    <input type="text" name="ad_sidebar_promo_cta" value={settings.ad_sidebar_promo_cta} onChange={handleChange} placeholder="Button Text (e.g. Download)" className="w-full p-3 bg-white dark:bg-slate-800 rounded-lg outline-none focus:ring-2 focus:ring-red-500/20 text-sm" />
+                                    <input type="text" name="ad_sidebar_promo_link" value={settings.ad_sidebar_promo_link} onChange={handleChange} placeholder="Link URL" className="w-full p-3 bg-white dark:bg-slate-800 rounded-lg outline-none focus:ring-2 focus:ring-red-500/20 text-sm" />
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <div className="flex gap-2">
+                                        <input type="text" name="ad_sidebar_image_url" value={settings.ad_sidebar_image_url} onChange={handleChange} className="flex-1 p-3 bg-white dark:bg-slate-800 rounded-lg outline-none focus:ring-2 focus:ring-red-500/20 text-sm" placeholder={t('upload_placeholder')} />
+                                        <label className="p-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 rounded-lg cursor-pointer transition-colors" title="Upload Image">
+                                            <Upload size={20} className="text-slate-600 dark:text-slate-300" />
+                                            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'ad_sidebar_image_url')} />
+                                        </label>
+                                    </div>
+                                    <input type="text" name="ad_sidebar_link_url" value={settings.ad_sidebar_link_url} onChange={handleChange} className="w-full p-3 bg-white dark:bg-slate-800 rounded-lg outline-none focus:ring-2 focus:ring-red-500/20 text-sm" placeholder={t('target_url')} />
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
 
                 <AdSection
                     title={t('article_bottom')}

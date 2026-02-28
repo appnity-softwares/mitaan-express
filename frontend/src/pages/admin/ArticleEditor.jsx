@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Save, Type, Globe, Tag, Zap, TrendingUp, Eye, Calendar, Image as ImageIcon, Upload, X } from 'lucide-react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import QuillEditor from '../../components/admin/QuillEditor';
 import { useCategories, useArticle } from '../../hooks/useQueries';
 import { useCreateArticle, useUpdateArticle } from '../../hooks/useMutations';
 import { useCreateMedia } from '../../hooks/useMedia';
@@ -540,14 +539,11 @@ const ArticleEditor = () => {
                                         className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 ring-red-600 text-slate-900 dark:text-white resize-none font-medium leading-relaxed"
                                     />
                                 ) : (
-                                    <ReactQuill
+                                    <QuillEditor
                                         ref={quillRef}
-                                        theme="snow"
                                         value={formData.content}
                                         onChange={handleContentChange}
                                         modules={modules}
-                                        className="bg-white dark:bg-slate-900 rounded-xl"
-                                        style={{ minHeight: '400px' }}
                                     />
                                 )}
                             </div>

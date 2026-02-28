@@ -144,7 +144,7 @@ exports.createArticle = async (req, res) => {
         let finalSlug = slug;
         if (!finalSlug || finalSlug.trim() === '') {
             finalSlug = title.toLowerCase()
-                .replace(/[^a-z0-9\u0900-\u097F]+/g, '-')
+                .replace(/[^a-z0-9]+/g, '-')
                 .replace(/^-+|-+$/g, '');
         }
         if (!finalSlug || finalSlug === '-') finalSlug = 'article-' + Math.random().toString(36).substring(2, 7);
@@ -157,7 +157,7 @@ exports.createArticle = async (req, res) => {
         let tagConnect = [];
         if (tags && Array.isArray(tags)) {
             for (const tagName of tags) {
-                let tagSlug = tagName.toLowerCase().replace(/[^a-z0-9\u0900-\u097F]+/g, '-').replace(/^-+|-+$/g, '');
+                let tagSlug = tagName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
                 if (!tagSlug || tagSlug === '-') tagSlug = 'tag-' + Math.random().toString(36).substring(2, 7);
                 tagConnect.push({
                     where: { slug: tagSlug },

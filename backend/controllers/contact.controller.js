@@ -36,3 +36,14 @@ exports.markRead = async (req, res) => {
         res.status(500).json({ error: 'Failed to update contact' });
     }
 };
+
+exports.deleteContact = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await prisma.contact.delete({ where: { id: Number(id) } });
+        res.status(204).json({ message: 'Contact deleted' });
+    } catch (error) {
+        console.error('Delete contact error:', error);
+        res.status(500).json({ error: 'Failed to delete contact' });
+    }
+};

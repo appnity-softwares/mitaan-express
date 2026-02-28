@@ -23,6 +23,9 @@ import MyBlogs from './admin/MyBlogs';
 import FeaturedContent from './admin/FeaturedContent';
 import AdminDonations from './admin/AdminDonations';
 import AppnityAdmin from './admin/AppnityAdmin';
+import AdminAbout from './admin/AdminAbout';
+import AdminNavbar from './admin/AdminNavbar';
+import AdminPoetry from './admin/AdminPoetry';
 
 // Placeholders
 
@@ -97,7 +100,7 @@ const AdminContent = () => {
     }
 
     return (
-        <div className="min-h-screen bg-slate-200 dark:bg-black flex lg:gap-4 transition-colors duration-300 font-sans">
+        <div className="min-h-screen bg-slate-100 dark:bg-black flex transition-colors duration-300 font-sans">
             <AdminSidebar
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -226,6 +229,9 @@ const AdminContent = () => {
                         <Route path="/contacts" element={<AdminRoute><AdminContacts /></AdminRoute>} />
                         <Route path="/donations" element={<AdminRoute><AdminDonations /></AdminRoute>} />
                         <Route path="/ads" element={<AdminRoute><AdminAds /></AdminRoute>} />
+                        <Route path="/about" element={<AdminRoute><AdminAbout /></AdminRoute>} />
+                        <Route path="/navbar" element={<AdminRoute><AdminNavbar /></AdminRoute>} />
+                        <Route path="/poetry" element={<AdminRoute><AdminPoetry /></AdminRoute>} />
                         <Route path="/pages" element={<AdminRoute><PageManager /></AdminRoute>} />
                         <Route path="/appnityadmin" element={<AdminRoute><AppnityAdmin /></AdminRoute>} />
 

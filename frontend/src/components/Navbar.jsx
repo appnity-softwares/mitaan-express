@@ -12,6 +12,7 @@ import { fetchCategories, formatImageUrl, PLACEHOLDER_IMAGE } from '../services/
 import { useSettings } from '../hooks/useQueries';
 import LiveCounter from './LiveCounter';
 import LanguagePopup from './LanguagePopup';
+import SpotlightSearch from './SpotlightSearch';
 import logo from '../assets/logo.png';
 import toast from 'react-hot-toast';
 
@@ -28,7 +29,20 @@ const Navbar = ({
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [categories, setCategories] = useState([]);
     const [email, setEmail] = useState('');
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const { data: settings } = useSettings();
+
+    // Keyboard shortcut for search: Cmd/Ctrl + K
+    useEffect(() => {
+        const handler = (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                setIsSearchOpen(prev => !prev);
+            }
+        };
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, []);
 
     const handleSubscribe = () => {
         if (!email) return toast.error('Please enter your email address');
@@ -113,23 +127,51 @@ const Navbar = ({
 
     const isNavbarSolid = isScrolled || activeCategory !== 'home' || isMenuOpen;
 
-    const handleLinkClick = (id) => {
-        onCategoryChange(id);
+    const handleLinkClick = (id, customPath) => {
+        if (customPath) {
+            window.location.href = customPath;
+        } else {
+            onCategoryChange(id);
+        }
         setIsMenuOpen(false);
     };
 
     const mainPages = useMemo(() => {
-        const pages = [
-            { id: 'home', name: language === 'hi' ? 'मुख्य पृष्ठ' : 'Home', icon: <Home size={17} /> },
-            { id: 'about', name: language === 'hi' ? 'हमारे बारे में' : 'About Us', icon: <Info size={20} /> },
-            { id: 'gallery', name: language === 'hi' ? 'गैलरी' : 'Gallery', icon: <ImageIcon size={20} />, key: 'page_gallery_enabled' },
-            { id: 'video', name: language === 'hi' ? 'वीडियो' : 'Videos', icon: <Video size={20} />, key: 'page_live_enabled' },
-            { id: 'contact', name: language === 'hi' ? 'संपर्क करें' : 'Contact Us', icon: <Mail size={20} /> },
-            { id: 'poetry', name: language === 'hi' ? 'काव्य' : 'Poetry', icon: <Feather size={20} />, key: 'page_poetry_enabled' },
-            { id: 'blogs', name: language === 'hi' ? 'ब्लॉग' : 'Blog', icon: <FileText size={20} />, key: 'page_blogs_enabled' },
+        const defaultPages = [
+            { id: 'home', name: language === 'hi' ? 'मुख्य पृष्ठ' : 'Home', icon: <Home size={17} />, order: 0 },
+            { id: 'about', name: language === 'hi' ? 'हमारे बारे में' : 'About Us', icon: <Info size={20} />, order: 1 },
+            { id: 'gallery', name: language === 'hi' ? 'गैलरी' : 'Gallery', icon: <ImageIcon size={20} />, key: 'page_gallery_enabled', order: 2 },
+            { id: 'video', name: language === 'hi' ? 'वीडियो' : 'Videos', icon: <Video size={20} />, key: 'page_live_enabled', order: 3 },
+            { id: 'contact', name: language === 'hi' ? 'संपर्क करें' : 'Contact Us', icon: <Mail size={20} />, order: 4 },
+            { id: 'poetry', name: language === 'hi' ? 'काव्य' : 'Poetry', icon: <Feather size={20} />, key: 'page_poetry_enabled', order: 5 },
+            { id: 'blogs', name: language === 'hi' ? 'ब्लॉग' : 'Blog', icon: <FileText size={20} />, key: 'page_blogs_enabled', order: 6 },
         ];
 
-        return pages.filter(p => !p.key || !settings || settings[p.key] !== 'false');
+        let pages = defaultPages;
+        try {
+            if (settings?.navbar_items_json) {
+                const customItems = JSON.parse(settings.navbar_items_json);
+                if (Array.isArray(customItems) && customItems.length > 0) {
+                    const navIconMap = { Home, Info, ImageIcon, Video, Mail, Feather, FileText, BookOpen, Star, Globe, Heart: HeartIcon, Trophy, Users };
+                    pages = customItems.map((item, idx) => {
+                        const IconComp = navIconMap[item.icon] || Star;
+                        return {
+                            id: item.id || item.path || `custom-${idx}`,
+                            name: language === 'hi' ? (item.nameHi || item.name) : item.name,
+                            icon: <IconComp size={20} />,
+                            key: item.pageKey || undefined,
+                            order: item.order ?? idx,
+                            path: item.path || undefined,
+                            children: item.children || undefined,
+                        };
+                    });
+                }
+            }
+        } catch (e) { }
+
+        return pages
+            .filter(p => !p.key || !settings || settings[p.key] !== 'false')
+            .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
     }, [language, settings]);
 
     const isDonationEnabled = !settings || settings.page_donation_enabled !== 'false';
@@ -189,6 +231,17 @@ const Navbar = ({
                 <div className="flex items-center justify-end gap-3 lg:gap-8 z-10">
                     <div className="hidden lg:flex items-center gap-6">
                         <LiveCounter />
+                        {/* Search Button */}
+                        <button
+                            onClick={() => setIsSearchOpen(true)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all cursor-pointer group ${isNavbarSolid ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-600 dark:text-white'}`}
+                        >
+                            <Search size={15} />
+                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-70 group-hover:opacity-100 transition">
+                                {language === 'hi' ? 'खोजें' : 'Search'}
+                            </span>
+                            <kbd className={`text-[9px] font-bold px-1.5 py-0.5 rounded hidden xl:inline-block ${isNavbarSolid ? 'bg-white/10' : 'bg-slate-200 dark:bg-white/10'}`}>⌘K</kbd>
+                        </button>
                         <div className="relative">
                             <button onClick={toggleLanguage} className="bg-white text-red-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.15em] flex items-center gap-1.5 shadow-sm hover:scale-105 transition-all active:scale-95 border border-white/10">
                                 <span className={language === 'en' ? 'opacity-100' : 'opacity-40'}>EN</span>
@@ -201,6 +254,14 @@ const Navbar = ({
                             {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
                         </button>
                     </div>
+
+                    {/* Mobile Search Button */}
+                    <button
+                        onClick={() => setIsSearchOpen(true)}
+                        className={`p-2 rounded-full transition-all md:hidden ${isNavbarSolid ? 'text-white hover:bg-white/10' : 'text-red-600 hover:bg-red-50'}`}
+                    >
+                        <Search size={20} />
+                    </button>
 
                     {isDonationEnabled && (
                         <button
@@ -284,21 +345,35 @@ const Navbar = ({
                                             </span>
                                             <div className="flex flex-col gap-4">
                                                 {mainPages.map((p, idx) => (
-                                                    <motion.button
-                                                        key={p.id}
-                                                        initial={{ opacity: 0, x: -20 }}
-                                                        animate={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: idx * 0.05 }}
-                                                        onClick={() => handleLinkClick(p.id)}
-                                                        className={`group text-2xl font-black font-serif tracking-tighter text-left transition-all relative ${activeCategory === p.id
-                                                            ? 'text-red-600'
-                                                            : 'text-slate-900 dark:text-white hover:text-red-600'
-                                                            }`}
-                                                    >
-                                                        <span className="relative z-10 group-hover:pl-4 transition-all duration-300 inline-block">
-                                                            {p.name}
-                                                        </span>
-                                                    </motion.button>
+                                                    <div key={p.id}>
+                                                        <motion.button
+                                                            initial={{ opacity: 0, x: -20 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            transition={{ delay: idx * 0.05 }}
+                                                            onClick={() => handleLinkClick(p.id, p.path)}
+                                                            className={`group text-2xl font-black font-serif tracking-tighter text-left transition-all relative ${activeCategory === p.id
+                                                                ? 'text-red-600'
+                                                                : 'text-slate-900 dark:text-white hover:text-red-600'
+                                                                }`}
+                                                        >
+                                                            <span className="relative z-10 group-hover:pl-4 transition-all duration-300 inline-block">
+                                                                {p.name}
+                                                            </span>
+                                                        </motion.button>
+                                                        {p.children && p.children.length > 0 && (
+                                                            <div className="ml-6 mt-2 flex flex-col gap-2 border-l-2 border-red-200 dark:border-red-900/30 pl-4">
+                                                                {p.children.map((child, cIdx) => (
+                                                                    <button
+                                                                        key={cIdx}
+                                                                        onClick={() => handleLinkClick(child.id || child.path, child.path)}
+                                                                        className="text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-red-600 transition text-left"
+                                                                    >
+                                                                        {language === 'hi' ? (child.nameHi || child.name) : child.name}
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 ))}
                                             </div>
                                         </div>
@@ -403,6 +478,9 @@ const Navbar = ({
                     </>
                 )}
             </AnimatePresence>
+
+            {/* Spotlight Search Modal */}
+            <SpotlightSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} language={language} />
         </header >
     );
 };

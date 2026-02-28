@@ -4,19 +4,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PlayCircle, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { useArticles } from '../context/ArticlesContext';
 import { formatImageUrl, PLACEHOLDER_IMAGE } from '../services/api';
+import { useSettings } from '../hooks/useQueries';
 
 const HeroSlider = ({ language }) => {
     const navigate = useNavigate();
     const { featured, loading } = useArticles();
+    const { data: settings } = useSettings();
     const [[page, direction], setPage] = useState([0, 0]);
 
     // Prepare slides: Always start with Welcome, then featured articles
     const welcomeSlide = {
         id: 'welcome',
         tag: language === 'hi' ? 'स्वागत' : 'WELCOME',
-        title: language === 'hi' ? 'मितान एक्सप्रेस में आपका स्वागत है' : 'Welcome to Mitaan Express',
-        description: language === 'hi' ? 'समाचार और कहानियों के लिए आपका विश्वसनीय स्रोत।' : 'Your trusted source for news and stories.',
-        image: 'https://images.unsplash.com/photo-1476242906366-d8eb64c2f661?auto=format&fit=crop&q=80&w=2000',
+        title: settings?.hero_welcome_title || (language === 'hi' ? 'मितान एक्सप्रेस में आपका स्वागत है' : 'Welcome to Mitaan Express'),
+        description: settings?.hero_welcome_subtitle || (language === 'hi' ? 'समाचार और कहानियों के लिए आपका विश्वसनीय स्रोत।' : 'Your trusted source for news and stories.'),
+        image: settings?.hero_welcome_image || 'https://images.unsplash.com/photo-1476242906366-d8eb64c2f661?auto=format&fit=crop&q=80&w=2000',
+        fallbackLink: settings?.hero_welcome_link || '/about',
         isWelcome: true
     };
 
@@ -156,7 +159,7 @@ const HeroSlider = ({ language }) => {
                         <motion.div variants={itemVariants} className="flex flex-row gap-3 sm:gap-5 pt-4 sm:pt-6 w-full sm:w-auto">
                             {/* Primary Button: Read Story / Get Started */}
                             <button
-                                onClick={() => currentSlide.isWelcome ? navigate('/about') : navigate(`/article/${currentSlide.articleId}`)}
+                                onClick={() => currentSlide.isWelcome ? navigate(currentSlide.fallbackLink || '/about') : navigate(`/article/${currentSlide.articleId}`)}
                                 className="group relative px-4 py-3 sm:px-8 sm:py-4 overflow-hidden rounded-xl transition-all duration-500 flex-1 sm:flex-none sm:w-auto cursor-pointer"
                             >
                                 <span className="absolute inset-0 bg-red-600 transition-transform duration-500 group-hover:scale-105"></span>

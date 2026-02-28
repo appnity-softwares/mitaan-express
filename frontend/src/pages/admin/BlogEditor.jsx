@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Upload } from 'lucide-react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import QuillEditor from '../../components/admin/QuillEditor';
 import { useCategories, useBlog } from '../../hooks/useQueries';
 import { useCreateMedia } from '../../hooks/useMedia';
 import { createBlog, updateBlog } from '../../services/api';
@@ -180,13 +179,11 @@ const BlogEditorContent = () => {
                     />
 
                     <div className="prose-editor-simple">
-                        <ReactQuill
-                            theme="snow"
+                        <QuillEditor
                             value={formData.content}
                             onChange={handleContentChange}
                             modules={modules}
                             placeholder="Tell your story..."
-                            className="bg-transparent text-lg"
                         />
                     </div>
                 </div>

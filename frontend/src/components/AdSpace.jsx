@@ -12,6 +12,8 @@ const AdSpace = ({ position = 'homepage_top', className = '' }) => {
     // If explicitly disabled, return nothing
     if (settings?.[`ad_${position}_enabled`] === 'false') return null;
 
+    const isPromoType = settings?.[`ad_${position}_type`] === 'promo';
+
     if (loading) {
         return (
             <div className={`flex items-center justify-center bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden my-8 w-full h-24 md:h-32 ${className}`}>
@@ -49,12 +51,24 @@ const AdSpace = ({ position = 'homepage_top', className = '' }) => {
     const adIndex = position.length % mockAds.length;
     const ad = mockAds[adIndex];
 
-    // If ads are disabled or no image, show a premium House Ad
-    if (!isEnabled || !imageUrl) {
+    // Override with custom text promo if configured
+    if (position === 'sidebar' && (isPromoType || !imageUrl)) {
+        ad.title = settings?.ad_sidebar_promo_title || ad.title;
+        ad.subtitle = settings?.ad_sidebar_promo_subtitle || ad.subtitle;
+        ad.cta = settings?.ad_sidebar_promo_cta || ad.cta;
+        ad.icon = settings?.ad_sidebar_promo_icon || ad.icon;
+        ad.link = settings?.ad_sidebar_promo_link || '#';
+    }
+
+    // If ads are disabled or no image or forced promo, show the Promo Card
+    if (!isEnabled || !imageUrl || isPromoType) {
         const isSkyscraper = position === 'skyscraper';
 
         return (
-            <div className={`relative overflow-hidden ${ad.bg} rounded-xl shadow-lg w-full ${isSkyscraper ? 'min-h-[400px] flex-col' : 'min-h-[200px] flex-col md:flex-row'} items-center justify-between p-8 md:p-12 group cursor-pointer hover:shadow-2xl transition-all duration-500 ${className}`}>
+            <div
+                onClick={() => ad.link ? window.open(ad.link, '_blank') : null}
+                className={`relative overflow-hidden ${ad.bg} rounded-xl shadow-lg w-full ${isSkyscraper ? 'min-h-[400px] flex-col' : 'min-h-[200px] flex-col md:flex-row'} items-center justify-between p-8 md:p-12 group cursor-pointer hover:shadow-2xl transition-all duration-500 ${className}`}
+            >
                 {/* Background Pattern */}
                 <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
 

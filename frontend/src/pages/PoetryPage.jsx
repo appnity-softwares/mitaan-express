@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Quote } from 'lucide-react';
+import { Quote, Feather } from 'lucide-react';
 import { useArticles } from '../context/ArticlesContext';
 
 const PoetryPage = ({ language }) => {

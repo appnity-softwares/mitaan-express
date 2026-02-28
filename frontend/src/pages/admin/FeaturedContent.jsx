@@ -24,7 +24,7 @@ const FeaturedContent = () => {
             const token = localStorage.getItem('token');
             const article = articles.find(a => a.id === articleId);
 
-            const response = await fetch(`${API_URL}/articles/${article.slug}`, {
+            const response = await fetch(`${API_URL}/articles/${article.id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,

@@ -15,10 +15,12 @@ const MyBlogs = () => {
 
     // TanStack Query Hook
     const {
-        data: articles = [],
+        data: blogsData,
         isLoading: loading,
         refetch: loadData
     } = useAdminBlogs({ author: user.id });
+
+    const articles = Array.isArray(blogsData) ? blogsData : (blogsData?.blogs || []);
 
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this blog?')) return;

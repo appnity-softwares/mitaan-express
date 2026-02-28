@@ -13,10 +13,17 @@ const AdPopup = ({ language = 'en' }) => {
         const isEnabled = settings?.ad_popup_enabled !== 'false';
 
         if (isEnabled) {
-            const timer = setTimeout(() => {
-                setIsOpen(true);
-            }, 3000);
-            return () => clearTimeout(timer);
+            const lastShown = localStorage.getItem('adPopupLastShown');
+            const now = new Date().getTime();
+            const tenMinutes = 10 * 60 * 1000;
+
+            if (!lastShown || now - parseInt(lastShown, 10) > tenMinutes) {
+                const timer = setTimeout(() => {
+                    setIsOpen(true);
+                    localStorage.setItem('adPopupLastShown', now.toString());
+                }, 3000);
+                return () => clearTimeout(timer);
+            }
         }
     }, [settings]);
 

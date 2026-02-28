@@ -46,7 +46,7 @@ import { useBlogs } from '../hooks/useQueries';
 
 const BlogsPage = ({ language }) => {
     const [page, setPage] = useState(1);
-    const limit = 10;
+    const limit = 10; // Set to 2 to demonstrate pagination with 5 blogs
 
     // TanStack Query Hook
     const { data, isLoading: loading } = useBlogs({ status: 'PUBLISHED', page, limit });
@@ -222,8 +222,8 @@ const BlogsPage = ({ language }) => {
                                 </motion.div>
                             )}
 
-                            {/* Standard Articles Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
+                            {/* Standard Articles List */}
+                            <div className="flex flex-col gap-10">
                                 {standardArticles.map((article, idx) => (
                                     <motion.div
                                         key={article.id}
@@ -231,24 +231,19 @@ const BlogsPage = ({ language }) => {
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true }}
                                         transition={{ delay: idx * 0.1 }}
-                                        className="group"
+                                        className="group pt-10 border-t border-slate-100 dark:border-white/10 first:border-0 first:pt-0"
                                     >
-                                        <Link to={`/blog/${article.slug}`} className="block space-y-6">
-                                            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl shadow-lg">
-                                                <img
-                                                    src={article.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&q=80&w=800"}
-                                                    alt={article.title}
-                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                                />
-                                                <div className="absolute top-4 left-4">
-                                                    <span className="px-3 py-1 text-[8px] font-black uppercase tracking-widest bg-white/90 dark:bg-black/80 backdrop-blur-md rounded-full shadow-lg">
-                                                        {article.category?.name || 'Blog'}
-                                                    </span>
+                                        <Link to={`/blog/${article.slug}`} className="flex flex-row gap-4 md:gap-8 justify-between items-start">
+                                            <div className="flex-1 space-y-2 md:space-y-4 py-1">
+                                                <div className="text-lg md:text-2xl font-bold font-sans text-slate-900 dark:text-white leading-snug group-hover:text-red-600 transition-colors">
+                                                    {article.title}
                                                 </div>
-                                            </div>
 
-                                            <div className="space-y-4">
-                                                <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                                <p className="text-slate-500 dark:text-gray-400 line-clamp-2 md:line-clamp-3 text-sm md:text-base leading-relaxed">
+                                                    {article.summary || article.shortDescription || article.content?.substring(0, 150) + "..."}
+                                                </p>
+
+                                                <div className="flex items-center gap-3 text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest hidden md:flex">
                                                     <div className="flex items-center gap-1.5 focus:text-slate-900 group-hover:text-red-600 transition-colors">
                                                         <Clock size={12} />
                                                         <span>{Math.ceil((article.content?.length || 0) / 1000) || 1} min read</span>
@@ -256,14 +251,14 @@ const BlogsPage = ({ language }) => {
                                                     <span>•</span>
                                                     <span>{new Date(article.createdAt).toLocaleDateString()}</span>
                                                 </div>
+                                            </div>
 
-                                                <div className="text-xl font-black font-serif leading-tight group-hover:text-red-600 transition-colors line-clamp-2 underline decoration-red-600/0 group-hover:decoration-red-600 decoration-2 underline-offset-4 decoration-skip-ink">
-                                                    {article.title}
-                                                </div>
-
-                                                <p className="text-slate-500 dark:text-gray-400 line-clamp-3 text-sm leading-relaxed">
-                                                    {article.summary || article.shortDescription || article.content?.substring(0, 100) + "..."}
-                                                </p>
+                                            <div className="relative w-32 md:w-56 xl:w-64 shrink-0 aspect-[4/3] md:aspect-[16/10] overflow-hidden rounded-xl md:rounded-2xl shadow-sm">
+                                                <img
+                                                    src={article.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&q=80&w=800"}
+                                                    alt={article.title}
+                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                />
                                             </div>
                                         </Link>
                                     </motion.div>
@@ -293,8 +288,8 @@ const BlogsPage = ({ language }) => {
                                                     window.scrollTo({ top: 300, behavior: 'smooth' });
                                                 }}
                                                 className={`w-10 h-10 rounded-full font-black text-xs transition-all ${page === i + 1
-                                                        ? 'bg-red-600 text-white shadow-lg shadow-red-600/20'
-                                                        : 'hover:bg-slate-100 dark:hover:bg-white/10'
+                                                    ? 'bg-red-600 text-white shadow-lg shadow-red-600/20'
+                                                    : 'hover:bg-slate-100 dark:hover:bg-white/10'
                                                     }`}
                                             >
                                                 {i + 1}

@@ -81,11 +81,11 @@ exports.createBlog = async (req, res) => {
             content = await processContentImages(content);
         }
 
-        // Improved slug generation: support Hindi and avoid empty/invalid slugs
+        // Improved slug generation: generate English-only alphanumeric slugs to avoid ugly URL encoding
         let slug = req.body.slug;
         if (!slug || slug.trim() === '') {
             slug = title.toLowerCase()
-                .replace(/[^a-z0-9\u0900-\u097F]+/g, '-') // Support Hindi characters
+                .replace(/[^a-z0-9]+/g, '-') // Only ASCII
                 .replace(/^-+|-+$/g, '');
         }
 
@@ -109,7 +109,7 @@ exports.createBlog = async (req, res) => {
                 tags: tags && tags.length > 0 ? {
                     connectOrCreate: tags.map(tag => {
                         const tagSlug = tag.toLowerCase()
-                            .replace(/[^a-z0-9\u0900-\u097F]+/g, '-')
+                            .replace(/[^a-z0-9]+/g, '-')
                             .replace(/^-+|-+$/g, '');
                         return {
                             where: { name: tag },

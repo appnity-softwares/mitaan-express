@@ -317,4 +317,32 @@ export const fetchContacts = async (token) => {
     }
 };
 
+export const toggleContactRead = async (id, token) => {
+    const response = await fetch(`${API_URL}/contacts/${id}/read`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error('Failed to update contact');
+    return await response.json();
+};
 
+export const deleteContact = async (id, token) => {
+    const response = await fetch(`${API_URL}/contacts/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error('Failed to delete contact');
+    return true;
+};
+
+// Global Search
+export const globalSearch = async (query) => {
+    try {
+        const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
+        if (!response.ok) throw new Error('Search failed');
+        return await response.json();
+    } catch (error) {
+        console.error('Search error:', error);
+        return { articles: [], blogs: [], categories: [] };
+    }
+};
