@@ -109,13 +109,13 @@ const Footer = ({ language, onCategoryChange }) => {
                                             <div className="w-10 h-10 rounded-full bg-red-600/10 flex items-center justify-center text-red-600">
                                                 <Phone size={18} />
                                             </div>
-                                            <span className="font-bold">{settings?.contact_phone || '+91 11 2345 6789'}</span>
+                                            <span className="font-bold">{settings?.contact_phone || '+91 93290 11157'}</span>
                                         </div>
                                         <div className="flex items-center gap-4 text-slate-700 dark:text-slate-300">
                                             <div className="w-10 h-10 rounded-full bg-red-600/10 flex items-center justify-center text-red-600">
                                                 <Mail size={18} />
                                             </div>
-                                            <span className="font-bold">{settings?.contact_email || 'contact@mitaanexpress.in'}</span>
+                                            <span className="font-bold">{settings?.contact_email || 'mitaanexpress@gmail.com'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -248,7 +248,7 @@ const Footer = ({ language, onCategoryChange }) => {
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Office</p>
-                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-red-600 transition-colors">{settings?.contact_address || 'New Delhi, India'}</p>
+                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-red-600 transition-colors">{settings?.contact_address || 'B-259, SMIRTI NAGAR, BHILAI, Chhattisgarh'}</p>
                                 </div>
                             </div>
                             <div onClick={() => onCategoryChange('contact')} className="flex gap-4 cursor-pointer group">
@@ -257,7 +257,7 @@ const Footer = ({ language, onCategoryChange }) => {
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Support</p>
-                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-red-600 transition-colors">{settings?.contact_email || 'contact@mitaanexpress.in'}</p>
+                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-red-600 transition-colors">{settings?.contact_email || 'mitaanexpress@gmail.com'}</p>
                                 </div>
                             </div>
                         </div>

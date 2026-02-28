@@ -88,7 +88,7 @@ const ContactPage = ({ language }) => {
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-black uppercase tracking-widest opacity-60">{language === 'hi' ? 'फोन' : 'Phone'}</p>
-                                        <p className="font-bold text-lg">+91 11 2345 6789</p>
+                                        <p className="font-bold text-lg">+91 93290 11157</p>
                                     </div>
                                 </div>
 
@@ -98,7 +98,7 @@ const ContactPage = ({ language }) => {
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-black uppercase tracking-widest opacity-60">{language === 'hi' ? 'ईमेल' : 'Email'}</p>
-                                        <p className="font-bold text-lg">contact@mitaanexpress.in</p>
+                                        <p className="font-bold text-lg">mitaanexpress@gmail.com</p>
                                     </div>
                                 </div>
 
@@ -108,7 +108,7 @@ const ContactPage = ({ language }) => {
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-black uppercase tracking-widest opacity-60">{language === 'hi' ? 'कार्यालय' : 'Office'}</p>
-                                        <p className="font-bold text-lg leading-tight">Mitaan Express, Connectivity Hub, <br /> New Delhi, 110001</p>
+                                        <p className="font-bold text-lg leading-tight">Mitaan Express. A unit of Mitaan India Media Pvt.Ltd <br /> 2nd floor, B-259, Street-5, SMRITI NAGAR, BHILAI NAGAR, Dist-DURG, CHHATTISGARH - 490020</p>
                                     </div>
                                 </div>
                             </div>
