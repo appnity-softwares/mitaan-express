@@ -2,12 +2,14 @@ const prisma = require('../prisma');
 
 exports.getAllBlogs = async (req, res) => {
     try {
-        const { lang, search, author } = req.query;
+        const { lang, search, author, page = 1, limit = 10, status } = req.query;
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+        const take = parseInt(limit);
         const where = {};
 
         if (lang) where.language = lang;
         if (author) where.authorId = parseInt(author);
-        if (req.query.status) where.status = req.query.status;
+        if (status) where.status = status;
         if (search) {
             where.OR = [
                 { title: { contains: search, mode: 'insensitive' } },
@@ -15,17 +17,32 @@ exports.getAllBlogs = async (req, res) => {
             ];
         }
 
-        const blogs = await prisma.blog.findMany({
-            where,
-            include: {
-                category: true,
-                author: { select: { id: true, name: true, image: true } },
-                tags: true
-            },
-            orderBy: { createdAt: 'desc' }
+        const [blogs, total] = await Promise.all([
+            prisma.blog.findMany({
+                where,
+                include: {
+                    category: true,
+                    author: { select: { id: true, name: true, image: true } },
+                    tags: true
+                },
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take
+            }),
+            prisma.blog.count({ where })
+        ]);
+
+        res.json({
+            blogs,
+            pagination: {
+                total,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                pages: Math.ceil(total / take)
+            }
         });
-        res.json(blogs);
     } catch (error) {
+        console.error('Error fetching blogs:', error);
         res.status(500).json({ error: 'Failed to fetch blogs' });
     }
 };

@@ -108,9 +108,9 @@ const BlogDetailPage = ({ language }) => {
                         {blog.category?.name || 'BLOG'}
                     </div>
 
-                    <h1 className="text-2xl md:text-3xl lg:text-3xl font-black text-slate-900 dark:text-white leading-tight mb-6 font-serif">
+                    <div className="text-2xl md:text-3xl lg:text-3xl font-black text-slate-900 dark:text-white leading-tight mb-6 font-serif">
                         {blog.title}
-                    </h1>
+                    </div>
 
                     <div className="flex flex-wrap items-center gap-6 mb-8 pb-8 border-b border-slate-200 dark:border-slate-800">
                         <div className="flex items-center gap-3">

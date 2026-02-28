@@ -165,19 +165,21 @@ export const deleteArticle = async (token, id) => {
 }
 
 
-export const fetchBlogs = async (search = '', author = '', lang = '', status = '') => {
+export const fetchBlogs = async (search = '', author = '', lang = '', status = '', page = 1, limit = 10) => {
     try {
         const params = new URLSearchParams();
         if (search) params.append('search', search);
         if (author) params.append('author', author);
         if (lang) params.append('lang', lang);
         if (status) params.append('status', status);
+        if (page) params.append('page', page);
+        if (limit) params.append('limit', limit);
         const response = await fetch(`${API_URL}/blogs?${params.toString()}`);
         if (!response.ok) throw new Error('Failed to fetch blogs');
         return await response.json();
     } catch (error) {
         console.error('Error fetching blogs:', error);
-        return [];
+        return { blogs: [], pagination: { total: 0, pages: 0, page: 1, limit: 10 } };
     }
 };
 

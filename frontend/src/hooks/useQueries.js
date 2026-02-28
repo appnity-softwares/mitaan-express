@@ -75,7 +75,9 @@ export const useBlogs = (filters = {}) => {
             filters.search,
             filters.author,
             filters.lang,
-            filters.status
+            filters.status,
+            filters.page || 1,
+            filters.limit || 10
         ),
     });
 };
