@@ -83,21 +83,25 @@ const AdminSidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout, theme, to
     };
 
     const navItems = [
-        { name: t('dashboard'), path: '/admin', icon: <LayoutDashboard size={18} />, end: true },
-        { name: t('articles'), path: '/admin/articles', icon: <FileText size={18} /> },
-        { name: t('myBlogs'), path: '/admin/my-blogs', icon: <FileText size={18} /> },
-        { name: t('categories'), path: '/admin/categories', icon: <FolderTree size={18} /> },
-        { name: t('featured'), path: '/admin/featured', icon: <Star size={18} /> },
-        { name: t('analytics'), path: '/admin/analytics', icon: <BarChart3 size={18} /> },
-        { name: t('activityLogs') || 'Activity Logs', path: '/admin/activity', icon: <Activity size={18} /> },
-        { name: t('users'), path: '/admin/users', icon: <Users size={18} /> },
-        { name: t('mediaLibrary') || 'Gallery', path: '/admin/media', icon: <ImageIcon size={18} /> },
-        { name: t('ads'), path: '/admin/ads', icon: <DollarSign size={18} /> },
-        { name: t('contacts') || 'Contacts', path: '/admin/contacts', icon: <MessageSquare size={18} /> },
-        { name: t('settings'), path: '/admin/settings', icon: <Settings size={18} /> },
-        { name: t('donations'), path: '/admin/donations', icon: <HeartIcon size={18} /> },
-        { name: t('pageManager') || 'Page Manager', path: '/admin/pages', icon: <Layout size={18} /> },
-    ];
+        { name: t('dashboard'), path: '/admin', icon: <LayoutDashboard size={18} />, end: true, adminOnly: false },
+        { name: t('articles'), path: '/admin/articles', icon: <FileText size={18} />, adminOnly: false },
+        { name: t('myBlogs'), path: '/admin/my-blogs', icon: <FileText size={18} />, adminOnly: false },
+        { name: t('categories'), path: '/admin/categories', icon: <FolderTree size={18} />, adminOnly: false },
+        { name: t('featured'), path: '/admin/featured', icon: <Star size={18} />, adminOnly: false },
+        { name: t('analytics'), path: '/admin/analytics', icon: <BarChart3 size={18} />, adminOnly: true },
+        { name: t('activityLogs') || 'Activity Logs', path: '/admin/activity', icon: <Activity size={18} />, adminOnly: true },
+        { name: t('users'), path: '/admin/users', icon: <Users size={18} />, adminOnly: true },
+        { name: t('mediaLibrary') || 'Gallery', path: '/admin/media', icon: <ImageIcon size={18} />, adminOnly: false },
+        { name: t('ads'), path: '/admin/ads', icon: <DollarSign size={18} />, adminOnly: true },
+        { name: t('contacts') || 'Contacts', path: '/admin/contacts', icon: <MessageSquare size={18} />, adminOnly: true },
+        { name: t('settings'), path: '/admin/settings', icon: <Settings size={18} />, adminOnly: true },
+        { name: t('donations'), path: '/admin/donations', icon: <HeartIcon size={18} />, adminOnly: true },
+        { name: t('pageManager') || 'Page Manager', path: '/admin/pages', icon: <Layout size={18} />, adminOnly: true },
+    ].filter(item => {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (item.adminOnly && user.role !== 'ADMIN') return false;
+        return true;
+    });
 
     const activeClass = "bg-red-50 dark:bg-red-900/10 text-red-600 border-r-4 border-red-600 shadow-[inset_-4px_0_0_0_#ef4444]";
     const inactiveClass = "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50";

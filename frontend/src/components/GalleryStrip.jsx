@@ -7,7 +7,8 @@ import { formatImageUrl, PLACEHOLDER_IMAGE } from '../services/api';
 
 const GalleryStrip = ({ language }) => {
     const navigate = useNavigate();
-    const { data: images = [], isLoading } = usePublicMedia('IMAGE');
+    const { data: mediaResponse, isLoading } = usePublicMedia('IMAGE');
+    const images = mediaResponse?.media || [];
     const containerRef = useRef(null);
     const [width, setWidth] = React.useState(0);
 

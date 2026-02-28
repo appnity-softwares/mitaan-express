@@ -9,6 +9,7 @@ const {
     incrementViews
 } = require('../controllers/media.controller');
 const { authenticateToken, authorizeRoles } = require('../middleware/auth.middleware');
+const upload = require('../utils/upload');
 
 // Public routes
 router.get('/', getPublicMedia);
@@ -16,7 +17,7 @@ router.post('/:id/view', incrementViews);
 
 // Admin routes
 router.get('/admin', authenticateToken, authorizeRoles('ADMIN', 'EDITOR'), getAdminMedia);
-router.post('/', authenticateToken, authorizeRoles('ADMIN', 'EDITOR'), createMedia);
+router.post('/', authenticateToken, authorizeRoles('ADMIN', 'EDITOR'), upload.single('file'), createMedia);
 router.put('/:id', authenticateToken, authorizeRoles('ADMIN', 'EDITOR'), updateMedia);
 router.delete('/:id', authenticateToken, authorizeRoles('ADMIN'), deleteMedia);
 

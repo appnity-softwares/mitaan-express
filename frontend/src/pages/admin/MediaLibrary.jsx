@@ -9,6 +9,12 @@ const MediaLibrary = () => {
     const [viewMode, setViewMode] = useState('grid');
     const [selectedMedia, setSelectedMedia] = useState([]);
     const [filterType, setFilterType] = useState('ALL'); // ALL, IMAGE, VIDEO
+    const [page, setPage] = useState(1);
+    const [uploadProgress, setUploadProgress] = useState({});
+    const limit = 20;
+
+    // reset page on search/filter changes
+    useEffect(() => setPage(1), [filterType, searchTerm]);
 
     // Video URL Form State
     const [showVideoForm, setShowVideoForm] = useState(false);
@@ -20,7 +26,14 @@ const MediaLibrary = () => {
         thumbnail: ''
     });
 
-    const { data: media = [], isLoading: loading } = useAdminMedia();
+    const { data: mediaResponse, isLoading: loading } = useAdminMedia(
+        filterType !== 'ALL' ? filterType : '',
+        '',
+        page,
+        limit
+    );
+    const media = mediaResponse?.media || [];
+    const pagination = mediaResponse?.pagination || { total: 0, page: 1, totalPages: 1 };
     const createMediaMutation = useCreateMedia();
     const updateMediaMutation = useUpdateMedia();
     const deleteMediaMutation = useDeleteMedia();
@@ -28,9 +41,11 @@ const MediaLibrary = () => {
     const handleVideoSubmit = (e) => {
         e.preventDefault();
         createMediaMutation.mutate({
-            ...videoData,
-            type: 'VIDEO',
-            category: videoData.category || 'GALLERY'
+            payload: {
+                ...videoData,
+                type: 'VIDEO',
+                category: videoData.category || 'GALLERY'
+            }
         }, {
             onSuccess: () => {
                 setShowVideoForm(false);
@@ -42,6 +57,36 @@ const MediaLibrary = () => {
                 alert('Failed to save video: ' + (error.message || 'Unknown error'));
             }
         });
+    };
+
+    const handleFileUpload = (mediaType) => (e) => {
+        if (e.target.files) {
+            Array.from(e.target.files).forEach(file => {
+                const fileName = file.name;
+                const formData = new FormData();
+                formData.append('type', mediaType);
+                formData.append('title', fileName);
+                formData.append('category', 'GALLERY');
+                formData.append('file', file);
+                formData.append('size', `${(file.size / 1024).toFixed(0)} KB`);
+
+                setUploadProgress(prev => ({ ...prev, [fileName]: 0 }));
+
+                createMediaMutation.mutate({
+                    payload: formData,
+                    onProgress: (pct) => setUploadProgress(prev => ({ ...prev, [fileName]: pct }))
+                }, {
+                    onSuccess: () => {
+                        toast.success(`${mediaType === 'VIDEO' ? 'Video' : 'Image'} uploaded successfully!`);
+                        setUploadProgress(prev => { const n = { ...prev }; delete n[fileName]; return n; });
+                    },
+                    onError: (err) => {
+                        toast.error(`Failed to upload ${mediaType}: ` + err.message);
+                        setUploadProgress(prev => { const n = { ...prev }; delete n[fileName]; return n; });
+                    }
+                });
+            });
+        }
     };
 
     const togglePublish = (item) => {
@@ -64,10 +109,10 @@ const MediaLibrary = () => {
     });
 
     const stats = {
-        total: media.length,
+        total: pagination.total,
         selected: selectedMedia.length,
-        images: media.filter(m => m.type === 'IMAGE').length,
-        videos: media.filter(m => m.type === 'VIDEO').length
+        images: '-',
+        videos: '-'
     };
 
     return (
@@ -79,41 +124,42 @@ const MediaLibrary = () => {
                     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
                         {stats.total} assets • {stats.images} images • {stats.videos} videos
                     </p>
+                    {/* Render Upload Progress */}
+                    {Object.entries(uploadProgress).map(([fileName, pct]) => (
+                        <div key={fileName} className="text-xs font-bold text-red-600 mt-2 truncate w-60 flex items-center gap-2">
+                            <div className="flex-1 bg-red-100 rounded-full h-1.5"><div className="bg-red-600 h-1.5 rounded-full transition-all" style={{ width: `${pct}%` }}></div></div>
+                            <span>{pct}% - {fileName}</span>
+                        </div>
+                    ))}
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3 mt-4 md:mt-0 items-end">
                     <button
                         onClick={() => setShowVideoForm(true)}
-                        className="px-6 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all flex items-center gap-2 shadow-lg shadow-red-600/20 active:scale-95"
+                        className="px-6 py-3 bg-red-600/10 text-red-600 rounded-xl font-bold hover:bg-red-600/20 transition-all flex items-center gap-2 border border-red-600/20 active:scale-95"
                     >
-                        <Plus size={20} />
-                        Add Video URL
+                        <Globe size={20} />
+                        <span className="hidden sm:inline">Add URL</span>
                     </button>
                     <label className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:opacity-90 transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95">
-                        <Upload size={20} />
-                        Upload Files
+                        <ImageIcon size={20} />
+                        <span className="hidden sm:inline">Upload Image</span>
                         <input
                             type="file"
                             multiple
-                            accept="image/*,video/*"
+                            accept="image/*"
                             className="hidden"
-                            onChange={(e) => {
-                                if (e.target.files) {
-                                    Array.from(e.target.files).forEach(file => {
-                                        const isVideo = file.type.startsWith('video/');
-                                        const reader = new FileReader();
-                                        reader.onload = (re) => {
-                                            createMediaMutation.mutate({
-                                                type: isVideo ? 'VIDEO' : 'IMAGE',
-                                                title: file.name,
-                                                url: re.target.result,
-                                                category: 'GALLERY',
-                                                size: `${(file.size / 1024).toFixed(0)} KB`
-                                            });
-                                        };
-                                        reader.readAsDataURL(file);
-                                    });
-                                }
-                            }}
+                            onChange={handleFileUpload('IMAGE')}
+                        />
+                    </label>
+                    <label className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:opacity-90 transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95">
+                        <Play size={20} />
+                        <span className="hidden sm:inline">Upload Video</span>
+                        <input
+                            type="file"
+                            multiple
+                            accept="video/*"
+                            className="hidden"
+                            onChange={handleFileUpload('VIDEO')}
                         />
                     </label>
                 </div>
@@ -346,6 +392,29 @@ const MediaLibrary = () => {
                             ))}
                         </tbody>
                     </table>
+                </div>
+            )}
+
+            {/* Pagination Controls */}
+            {pagination.totalPages > 1 && (
+                <div className="flex justify-between items-center bg-white dark:bg-white/5 p-4 rounded-2xl border border-slate-100 dark:border-white/5 mt-6">
+                    <button
+                        disabled={page === 1}
+                        onClick={() => setPage(page - 1)}
+                        className="px-6 py-2 bg-slate-100 dark:bg-white/10 rounded-xl font-bold uppercase text-xs tracking-widest disabled:opacity-50"
+                    >
+                        Previous
+                    </button>
+                    <span className="text-sm font-bold text-slate-500">
+                        Page {pagination.page} of {pagination.totalPages}
+                    </span>
+                    <button
+                        disabled={page === pagination.totalPages}
+                        onClick={() => setPage(page + 1)}
+                        className="px-6 py-2 bg-slate-100 dark:bg-white/10 rounded-xl font-bold uppercase text-xs tracking-widest disabled:opacity-50"
+                    >
+                        Next
+                    </button>
                 </div>
             )}
         </div>

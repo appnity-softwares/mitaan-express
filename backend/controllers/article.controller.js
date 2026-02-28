@@ -208,6 +208,12 @@ exports.createArticle = async (req, res) => {
 
 exports.updateArticle = async (req, res) => {
     const { id } = req.params;
+    const articleId = parseInt(id);
+
+    if (isNaN(articleId)) {
+        return res.status(400).json({ error: 'Invalid article ID provided for update' });
+    }
+
     let {
         title, slug, content, shortDescription, image, videoUrl, categoryId,
         tags, isBreaking, isTrending, isFeatured,
@@ -242,7 +248,7 @@ exports.updateArticle = async (req, res) => {
         if (categoryId) updateData.category = { connect: { id: parseInt(categoryId) } };
 
         const article = await prisma.article.update({
-            where: { id: parseInt(id) },
+            where: { id: articleId },
             data: updateData
         });
         res.json(article);
@@ -254,8 +260,14 @@ exports.updateArticle = async (req, res) => {
 
 exports.deleteArticle = async (req, res) => {
     const { id } = req.params;
+    const articleId = parseInt(id);
+
+    if (isNaN(articleId)) {
+        return res.status(400).json({ error: 'Invalid article ID provided for delete' });
+    }
+
     try {
-        await prisma.article.delete({ where: { id: parseInt(id) } });
+        await prisma.article.delete({ where: { id: articleId } });
         res.json({ message: 'Article deleted' });
     } catch (error) {
         res.status(500).json({ error: 'Delete failed' });

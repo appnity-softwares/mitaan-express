@@ -4,12 +4,18 @@ import { Video as VideoIcon, Play, Clock, Eye, X } from 'lucide-react';
 import { usePublicMedia, useIncrementViews } from '../hooks/useMedia';
 import { getVideoEmbedUrl, getVideoThumbnail } from '../utils/videoUtils';
 
+const isDirectVideo = (url) => {
+    if (!url) return false;
+    return !url.includes('youtube.com') && !url.includes('youtu.be') && !url.includes('vimeo.com');
+};
+
 const VideoPage = ({ language }) => {
     const [filter, setFilter] = useState('All');
     const [selectedVideo, setSelectedVideo] = useState(null);
 
     // Fetch videos from API
-    const { data: mediaData = [], isLoading } = usePublicMedia('VIDEO');
+    const { data: mediaResponse, isLoading } = usePublicMedia('VIDEO');
+    const mediaData = mediaResponse?.media || [];
     const incrementViewsMutation = useIncrementViews();
 
     // Extract unique categories
@@ -107,11 +113,20 @@ const VideoPage = ({ language }) => {
                             >
                                 {/* Thumbnail */}
                                 <div className="relative aspect-video rounded-2xl overflow-hidden mb-4 shadow-xl hover:shadow-2xl transition-all">
-                                    <img
-                                        src={getVideoThumbnail(video.url, video.thumbnail)}
-                                        alt={video.title}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    />
+                                    {isDirectVideo(video.url) && (!video.thumbnail || video.thumbnail.trim() === '') ? (
+                                        <video
+                                            src={`${video.url}#t=0.1`}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                            muted
+                                            preload="metadata"
+                                        />
+                                    ) : (
+                                        <img
+                                            src={getVideoThumbnail(video.url, video.thumbnail)}
+                                            alt={video.title}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        />
+                                    )}
                                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors" />
 
                                     {/* Play Button */}
@@ -144,6 +159,11 @@ const VideoPage = ({ language }) => {
                                     <h3 className="text-xl font-bold text-slate-900 dark:text-white font-serif leading-tight group-hover:text-red-600 transition-colors line-clamp-2">
                                         {video.title}
                                     </h3>
+                                    {video.description && (
+                                        <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+                                            {video.description}
+                                        </p>
+                                    )}
                                     <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
                                         <div className="flex items-center gap-1">
                                             <Eye size={14} />
@@ -188,13 +208,23 @@ const VideoPage = ({ language }) => {
                             >
                                 {/* Video Player */}
                                 <div className="aspect-video rounded-2xl overflow-hidden bg-black mb-6">
-                                    <iframe
-                                        src={getVideoEmbedUrl(selectedVideo.url)}
-                                        title={selectedVideo.title}
-                                        className="w-full h-full"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                    />
+                                    {isDirectVideo(selectedVideo.url) ? (
+                                        <video
+                                            src={selectedVideo.url}
+                                            controls
+                                            autoPlay
+                                            controlsList="nodownload"
+                                            className="w-full h-full outline-none"
+                                        />
+                                    ) : (
+                                        <iframe
+                                            src={getVideoEmbedUrl(selectedVideo.url)}
+                                            title={selectedVideo.title}
+                                            className="w-full h-full"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                        />
+                                    )}
                                 </div>
 
                                 {/* Video Info */}

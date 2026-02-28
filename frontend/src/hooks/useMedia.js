@@ -4,14 +4,16 @@ import { API_URL as BASE_API_URL } from '../services/api';
 const API_URL = `${BASE_API_URL}/media`;
 
 // Fetch published media for frontend (public)
-export const usePublicMedia = (type, category) => {
+export const usePublicMedia = (type, category, page = 1, limit = 20) => {
     return useQuery({
-        queryKey: ['media', 'public', type, category],
+        queryKey: ['media', 'public', type, category, page, limit],
         queryFn: async () => {
             let url = API_URL;
             const params = new URLSearchParams();
             if (type) params.append('type', type);
             if (category) params.append('category', category);
+            if (page) params.append('page', page);
+            if (limit) params.append('limit', limit);
             if (params.toString()) url += `?${params.toString()}`;
 
             const response = await fetch(url);
@@ -22,15 +24,17 @@ export const usePublicMedia = (type, category) => {
 };
 
 // Fetch all media for admin
-export const useAdminMedia = (type, category) => {
+export const useAdminMedia = (type, category, page = 1, limit = 20) => {
     return useQuery({
-        queryKey: ['media', 'admin', type, category],
+        queryKey: ['media', 'admin', type, category, page, limit],
         queryFn: async () => {
             const token = localStorage.getItem('token');
             let url = `${API_URL}/admin`;
             const params = new URLSearchParams();
             if (type) params.append('type', type);
             if (category) params.append('category', category);
+            if (page) params.append('page', page);
+            if (limit) params.append('limit', limit);
             if (params.toString()) url += `?${params.toString()}`;
 
             const response = await fetch(url, {
@@ -47,18 +51,43 @@ export const useCreateMedia = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (mediaData) => {
+        mutationFn: async ({ payload, onProgress }) => {
             const token = localStorage.getItem('token');
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(mediaData)
+            const isFormData = payload instanceof FormData;
+
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', API_URL);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+                if (!isFormData) {
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                }
+
+                if (onProgress && xhr.upload) {
+                    xhr.upload.onprogress = (event) => {
+                        if (event.lengthComputable) {
+                            const percentCompleted = Math.round((event.loaded * 100) / event.total);
+                            onProgress(percentCompleted);
+                        }
+                    };
+                }
+
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            resolve(JSON.parse(xhr.responseText));
+                        } catch (e) {
+                            resolve(xhr.responseText);
+                        }
+                    } else {
+                        reject(new Error(xhr.responseText || 'Failed to create media'));
+                    }
+                };
+
+                xhr.onerror = () => reject(new Error('Network error'));
+                xhr.send(isFormData ? payload : JSON.stringify(payload));
             });
-            if (!response.ok) throw new Error('Failed to create media');
-            return response.json();
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['media'] });

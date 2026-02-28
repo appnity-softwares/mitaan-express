@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Upload } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useCategories, useBlog } from '../../hooks/useQueries';
+import { useCreateMedia } from '../../hooks/useMedia';
 import { createBlog, updateBlog } from '../../services/api';
 import { useAdminTranslation } from '../../context/AdminTranslationContext';
 import toast from 'react-hot-toast';
@@ -32,6 +33,8 @@ const BlogEditorContent = () => {
     // TanStack Query Hooks
     const { data: categories = [] } = useCategories();
     const { data: article, isLoading: articleLoading } = useBlog(id);
+    const createMediaMutation = useCreateMedia();
+    const [uploadProgress, setUploadProgress] = useState(null);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -194,15 +197,53 @@ const BlogEditorContent = () => {
 
                         <div>
                             <label className="block text-xs font-bold text-slate-500 uppercase mb-2">{t('featuredImage') || 'Featured Image'}</label>
-                            <div className="relative group">
-                                <input
-                                    type="url"
-                                    name="image"
-                                    value={formData.image}
-                                    onChange={handleChange}
-                                    placeholder="Image URL..."
-                                    className="w-full px-3 py-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-white/10 text-sm"
-                                />
+                            <div className="relative group space-y-2">
+                                <div className="flex gap-2">
+                                    <input
+                                        type="url"
+                                        name="image"
+                                        value={formData.image}
+                                        onChange={handleChange}
+                                        placeholder="Image URL..."
+                                        className="w-full px-3 py-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-white/10 text-sm flex-1"
+                                    />
+                                    <label className="px-3 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg text-sm font-bold flex items-center justify-center cursor-pointer hover:opacity-90 transition-all shadow-lg active:scale-95 whitespace-nowrap">
+                                        {createMediaMutation.isPending && uploadProgress !== null ? `Uploading ${uploadProgress}%...` : createMediaMutation.isPending ? 'Uploading...' : <><Upload size={16} /><span className="hidden xl:inline ml-2">Upload Image</span></>}
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            disabled={createMediaMutation.isPending}
+                                            onChange={(e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    const file = e.target.files[0];
+                                                    const fmData = new FormData();
+                                                    fmData.append('type', 'IMAGE');
+                                                    fmData.append('title', file.name || 'blog-feature');
+                                                    fmData.append('category', 'SYSTEM');
+                                                    fmData.append('file', file);
+                                                    fmData.append('size', `${(file.size / 1024).toFixed(0)} KB`);
+
+                                                    setUploadProgress(0);
+                                                    createMediaMutation.mutate({
+                                                        payload: fmData,
+                                                        onProgress: (pct) => setUploadProgress(pct)
+                                                    }, {
+                                                        onSuccess: (data) => {
+                                                            setFormData(p => ({ ...p, image: data.url }));
+                                                            setUploadProgress(null);
+                                                            toast.success('Image uploaded!');
+                                                        },
+                                                        onError: (err) => {
+                                                            setUploadProgress(null);
+                                                            toast.error('Upload failed: ' + err.message);
+                                                        }
+                                                    });
+                                                }
+                                            }}
+                                        />
+                                    </label>
+                                </div>
                                 {formData.image && (
                                     <img src={formData.image} alt="" className="mt-2 rounded-lg w-full h-32 object-cover" />
                                 )}

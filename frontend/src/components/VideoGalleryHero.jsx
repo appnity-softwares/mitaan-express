@@ -12,7 +12,8 @@ const VideoGalleryHero = ({ language }) => {
     const [isPlaying, setIsPlaying] = useState(false);
 
     // Fetch from Media Library (Primary)
-    const { data: mediaVideos = [] } = usePublicMedia('VIDEO');
+    const { data: mediaResponse } = usePublicMedia('VIDEO');
+    const mediaVideos = mediaResponse?.media || [];
 
     // Fetch from Articles (Fallback)
     const { videos: videoArticles } = useArticles();

@@ -29,6 +29,14 @@ import AppnityAdmin from './admin/AppnityAdmin';
 
 
 
+const AdminRoute = ({ children }) => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.role !== 'ADMIN') {
+        return <Navigate to="/admin" replace />;
+    }
+    return children;
+};
+
 const AdminContent = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -200,17 +208,20 @@ const AdminContent = () => {
                         <Route path="/articles/new" element={<ArticleEditor />} />
                         <Route path="/articles/edit/:id" element={<ArticleEditor />} />
                         <Route path="/categories" element={<Categories />} />
-                        <Route path="/analytics" element={<Analytics />} />
-                        <Route path="/activity" element={<ActivityLogs />} />
-                        <Route path="/users" element={<Users />} />
                         <Route path="/featured" element={<FeaturedContent />} />
                         <Route path="/media" element={<MediaLibrary />} />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route path="/contacts" element={<AdminContacts />} />
-                        <Route path="/donations" element={<AdminDonations />} />
-                        <Route path="/ads" element={<AdminAds />} />
-                        <Route path="/pages" element={<PageManager />} />
-                        <Route path="/appnityadmin" element={<AppnityAdmin />} />
+
+                        {/* Admin Only Routes */}
+                        <Route path="/analytics" element={<AdminRoute><Analytics /></AdminRoute>} />
+                        <Route path="/activity" element={<AdminRoute><ActivityLogs /></AdminRoute>} />
+                        <Route path="/users" element={<AdminRoute><Users /></AdminRoute>} />
+                        <Route path="/settings" element={<AdminRoute><Settings /></AdminRoute>} />
+                        <Route path="/contacts" element={<AdminRoute><AdminContacts /></AdminRoute>} />
+                        <Route path="/donations" element={<AdminRoute><AdminDonations /></AdminRoute>} />
+                        <Route path="/ads" element={<AdminRoute><AdminAds /></AdminRoute>} />
+                        <Route path="/pages" element={<AdminRoute><PageManager /></AdminRoute>} />
+                        <Route path="/appnityadmin" element={<AdminRoute><AppnityAdmin /></AdminRoute>} />
+
                         <Route path="*" element={<Navigate to="/admin" replace />} />
                     </Routes>
                 </div>

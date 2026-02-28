@@ -49,6 +49,9 @@ const Settings = () => {
         // SEO & Advanced
         site_keywords: '',
         google_analytics_id: '',
+        // Upload Limits
+        max_image_upload_size: '10',
+        max_video_upload_size: '500',
         // Main Page Visibility
         page_gallery_enabled: 'true',
         page_live_enabled: 'true',
@@ -522,6 +525,51 @@ const Settings = () => {
                             <p className="text-[10px] text-white/70 italic">Backend system is running stable</p>
                         </div>
                         <ShieldCheck size={32} className="relative z-10" />
+                    </div>
+
+                    {/* Media & Storage Limits */}
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-white/5 shadow-xl space-y-6">
+                        <div className="flex items-center justify-between border-b dark:border-white/5 pb-6">
+                            <h3 className="flex items-center gap-2 font-black text-xl text-slate-900 dark:text-white uppercase tracking-tight">
+                                <Video className="text-purple-500" /> Storage Limits
+                            </h3>
+                            <button
+                                onClick={() => handleSaveSection(['max_image_upload_size', 'max_video_upload_size'])}
+                                className="px-6 py-2 bg-purple-600 text-white font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-purple-600/20"
+                            >
+                                {loading ? '...' : 'Save Limits'}
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">Max Image Size (MB)</label>
+                                <div className="relative">
+                                    <Image className="absolute left-3 top-3.5 text-slate-400" size={18} />
+                                    <input
+                                        name="max_image_upload_size"
+                                        type="number"
+                                        value={settings.max_image_upload_size}
+                                        onChange={handleChange}
+                                        className="w-full pl-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-purple-500/20 font-bold"
+                                        placeholder="10"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">Max Video Size (MB)</label>
+                                <div className="relative">
+                                    <Video className="absolute left-3 top-3.5 text-slate-400" size={18} />
+                                    <input
+                                        name="max_video_upload_size"
+                                        type="number"
+                                        value={settings.max_video_upload_size}
+                                        onChange={handleChange}
+                                        className="w-full pl-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 focus:ring-purple-500/20 font-bold"
+                                        placeholder="500"
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Security & Access Management */}

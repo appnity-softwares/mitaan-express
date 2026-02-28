@@ -8,7 +8,8 @@ const GalleryPage = ({ language }) => {
     const [filter, setFilter] = useState('All');
 
     // Fetch images from API
-    const { data: mediaData = [], isLoading } = usePublicMedia('IMAGE');
+    const { data: mediaResponse, isLoading } = usePublicMedia('IMAGE');
+    const mediaData = mediaResponse?.media || [];
     const incrementViewsMutation = useIncrementViews();
 
     // Extract unique categories
