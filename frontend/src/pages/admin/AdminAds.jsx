@@ -24,7 +24,6 @@ const AdminAds = () => {
         ad_in_article_link_url: '',
         ad_in_article_enabled: 'false',
         ad_skyscraper_image_url: '',
-        ad_skyscraper_image_url: '',
         ad_skyscraper_link_url: '',
         ad_skyscraper_enabled: 'false',
         ad_sidebar_type: 'promo', // 'promo' or 'ad'
