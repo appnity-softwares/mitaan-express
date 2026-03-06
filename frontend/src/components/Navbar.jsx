@@ -189,9 +189,9 @@ const Navbar = ({
             }`}>
 
 
-            <nav className="max-w-[1600px] mx-auto px-4 lg:px-12 flex items-center justify-between relative h-14 lg:h-auto">
+            <nav className="max-w-[1600px] mx-auto px-4 lg:px-12 flex items-center justify-between h-14 lg:h-auto">
                 {/* Left Section: Menu Toggle */}
-                <div className="flex items-center justify-start z-10">
+                <div className="flex items-center justify-start shrink-0">
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                         className={`flex items-center gap-3 lg:gap-4 group transition-colors shrink-0 ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
@@ -208,19 +208,19 @@ const Navbar = ({
                 </div>
 
                 {/* Center Section: Logo/Title */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center w-full max-w-fit pointer-events-auto">
-                    <button onClick={() => handleLinkClick('home')} className="group flex items-center gap-2.5 lg:gap-3">
+                <div className="flex-1 flex justify-center min-w-0 px-2 sm:px-4">
+                    <button onClick={() => handleLinkClick('home')} className="group flex items-center gap-2 lg:gap-3 min-w-0">
                         <img
                             src={formatImageUrl(settings?.logo_url) || logo}
                             alt="Mitaan Logo"
-                            className="w-8 h-8 lg:w-10 lg:h-10 object-contain shadow-lg shadow-black/10 rounded-lg bg-white"
+                            className="w-8 h-8 lg:w-10 lg:h-10 object-contain shadow-lg shadow-black/10 rounded-lg bg-white shrink-0"
                             onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src = logo;
                             }}
                         />
-                        <div className="flex flex-col items-start leading-none">
-                            <h1 className={`text-lg sm:text-xl lg:text-3xl font-black tracking-tighter font-serif transition-all duration-300 drop-shadow-sm whitespace-nowrap ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
+                        <div className="flex flex-col items-start leading-none min-w-0">
+                            <h1 className={`text-base sm:text-xl lg:text-3xl font-black tracking-tighter font-serif transition-all duration-300 drop-shadow-sm truncate max-w-[120px] sm:max-w-[200px] lg:max-w-none ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
                                 {settings?.site_title || 'Mitaan Express'}
                             </h1>
                         </div>
@@ -228,7 +228,7 @@ const Navbar = ({
                 </div>
 
                 {/* Right Section: Toggles & Donate */}
-                <div className="flex items-center justify-end gap-3 lg:gap-8 z-10">
+                <div className="flex items-center justify-end gap-2 sm:gap-3 lg:gap-8 shrink-0">
                     <div className="hidden lg:flex items-center gap-6">
                         <LiveCounter />
                         {/* Search Button */}

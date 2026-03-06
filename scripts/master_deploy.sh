@@ -114,4 +114,3 @@ echo "1. Update frontend/.env with your actual API domain."
 echo "2. Run './scripts/setup_ssl.sh' to enable HTTPS."
 echo "3. Update R2 credentials in backend/.env if using Cloudflare storage."
 echo "--------------------------------------------------"
-

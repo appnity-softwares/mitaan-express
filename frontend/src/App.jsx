@@ -103,6 +103,7 @@ const App = () => {
 
     useEffect(() => {
         localStorage.setItem('lang', language);
+        document.body.setAttribute('data-lang', language);
     }, [language]);
 
     useEffect(() => {

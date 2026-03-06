@@ -85,3 +85,18 @@
 .ql-editor::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
 }
+
+/* Image containment - prevent layout breaks (Issue #9) */
+.ql-editor img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+    margin: 1em auto;
+    border-radius: 8px;
+}
+
+.ql-editor iframe,
+.ql-editor video {
+    max-width: 100% !important;
+    height: auto !important;
+}

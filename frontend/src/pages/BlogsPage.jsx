@@ -46,16 +46,20 @@ import { useBlogs } from '../hooks/useQueries';
 
 const BlogsPage = ({ language }) => {
     const [page, setPage] = useState(1);
-    const limit = 10; // Set to 2 to demonstrate pagination with 5 blogs
+    const limit = 10;
 
-    // TanStack Query Hook
-    const { data, isLoading: loading } = useBlogs({ status: 'PUBLISHED', page, limit });
+    // Reset to page 1 when language changes
+    useEffect(() => {
+        setPage(1);
+    }, [language]);
+
+    // TanStack Query Hook — pass language to backend for server-side filtering
+    const { data, isLoading: loading } = useBlogs({ status: 'PUBLISHED', page, limit, lang: language });
 
     // Adapted to new backend response format
-    const rawArticles = data?.blogs || [];
+    const articles = data?.blogs || [];
     const pagination = data?.pagination || { total: 0, pages: 1, page: 1 };
 
-    const articles = React.useMemo(() => rawArticles.filter(a => !a.language || a.language === language || a.language === 'both'), [rawArticles, language]);
     const [contentRef, isShort] = useIsShort(200);
 
     if (loading) {
@@ -176,6 +180,7 @@ const BlogsPage = ({ language }) => {
                                             <img
                                                 src={featuredArticle.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&q=80&w=1600"}
                                                 alt={featuredArticle.title}
+                                                loading="lazy"
                                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                             />
                                         </div>
@@ -257,6 +262,7 @@ const BlogsPage = ({ language }) => {
                                                 <img
                                                     src={article.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&q=80&w=800"}
                                                     alt={article.title}
+                                                    loading="lazy"
                                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                                 />
                                             </div>
@@ -267,34 +273,55 @@ const BlogsPage = ({ language }) => {
 
                             {/* Pagination */}
                             {pagination.pages > 1 && (
-                                <div className="flex items-center justify-center gap-4 pt-10 border-t border-slate-100 dark:border-white/10">
+                                <div className="flex items-center justify-center gap-2 sm:gap-4 pt-10 border-t border-slate-100 dark:border-white/10">
                                     <button
                                         onClick={() => {
                                             setPage(p => Math.max(1, p - 1));
                                             window.scrollTo({ top: 300, behavior: 'smooth' });
                                         }}
                                         disabled={page === 1}
-                                        className="w-12 h-12 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center disabled:opacity-30 hover:bg-red-600 hover:text-white transition-all group"
+                                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center disabled:opacity-30 hover:bg-red-600 hover:text-white transition-all group"
                                     >
                                         <ChevronRight size={20} className="rotate-180" />
                                     </button>
 
-                                    <div className="flex items-center gap-2">
-                                        {[...Array(pagination.pages)].map((_, i) => (
-                                            <button
-                                                key={i}
-                                                onClick={() => {
-                                                    setPage(i + 1);
-                                                    window.scrollTo({ top: 300, behavior: 'smooth' });
-                                                }}
-                                                className={`w-10 h-10 rounded-full font-black text-xs transition-all ${page === i + 1
-                                                    ? 'bg-red-600 text-white shadow-lg shadow-red-600/20'
-                                                    : 'hover:bg-slate-100 dark:hover:bg-white/10'
-                                                    }`}
-                                            >
-                                                {i + 1}
-                                            </button>
-                                        ))}
+                                    <div className="flex items-center gap-1 sm:gap-2">
+                                        {(() => {
+                                            const totalPages = pagination.pages;
+                                            const pages = [];
+
+                                            if (totalPages <= 7) {
+                                                for (let i = 1; i <= totalPages; i++) pages.push(i);
+                                            } else {
+                                                pages.push(1);
+                                                if (page > 3) pages.push('...');
+                                                for (let i = Math.max(2, page - 1); i <= Math.min(totalPages - 1, page + 1); i++) {
+                                                    pages.push(i);
+                                                }
+                                                if (page < totalPages - 2) pages.push('...');
+                                                pages.push(totalPages);
+                                            }
+
+                                            return pages.map((p, idx) => (
+                                                p === '...' ? (
+                                                    <span key={`ellipsis-${idx}`} className="w-8 h-10 flex items-center justify-center text-slate-400 font-bold text-xs">...</span>
+                                                ) : (
+                                                    <button
+                                                        key={p}
+                                                        onClick={() => {
+                                                            setPage(p);
+                                                            window.scrollTo({ top: 300, behavior: 'smooth' });
+                                                        }}
+                                                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full font-black text-xs transition-all ${page === p
+                                                            ? 'bg-red-600 text-white shadow-lg shadow-red-600/20'
+                                                            : 'hover:bg-slate-100 dark:hover:bg-white/10'
+                                                            }`}
+                                                    >
+                                                        {p}
+                                                    </button>
+                                                )
+                                            ));
+                                        })()}
                                     </div>
 
                                     <button
@@ -303,7 +330,7 @@ const BlogsPage = ({ language }) => {
                                             window.scrollTo({ top: 300, behavior: 'smooth' });
                                         }}
                                         disabled={page === pagination.pages}
-                                        className="w-12 h-12 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center disabled:opacity-30 hover:bg-red-600 hover:text-white transition-all"
+                                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center disabled:opacity-30 hover:bg-red-600 hover:text-white transition-all"
                                     >
                                         <ChevronRight size={20} />
                                     </button>

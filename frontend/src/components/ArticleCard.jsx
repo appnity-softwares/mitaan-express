@@ -39,6 +39,7 @@ const ArticleCard = ({ article, language }) => {
                 <img
                     src={article.image}
                     alt={article.title}
+                    loading="lazy"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     onError={(e) => {
                         e.target.onerror = null;

@@ -80,20 +80,21 @@ const ArticleDetailPage = ({ language }) => {
     }, [id, articles]);
 
     const handleShare = async (platform) => {
-        const url = window.location.href;
+        const rawUrl = window.location.href;
+        const readableUrl = decodeURI(rawUrl);
         const text = article?.title || 'Check this article';
 
         if (platform === 'copy') {
-            await navigator.clipboard.writeText(url);
+            await navigator.clipboard.writeText(readableUrl);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
             return;
         }
 
         const shareUrls = {
-            facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
-            twitter: `https://twitter.com/intent/tweet?url=${url}&text=${text}`,
-            linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`
+            facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(readableUrl)}`,
+            twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(readableUrl)}&text=${encodeURIComponent(text)}`,
+            linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(readableUrl)}`
         };
 
         window.open(shareUrls[platform], '_blank', 'width=600,height=400');
@@ -260,7 +261,7 @@ const ArticleDetailPage = ({ language }) => {
 
                             {/* Article Content */}
                             <div
-                                className="prose prose-base md:prose-lg dark:prose-invert max-w-none prose-headings:font-serif prose-a:text-red-600 prose-img:rounded-2xl"
+                                className="prose prose-base md:prose-lg dark:prose-invert max-w-none prose-headings:font-serif prose-a:text-red-600 prose-img:rounded-2xl overflow-hidden break-words"
                                 dangerouslySetInnerHTML={{ __html: injectedContent }}
                             />
 

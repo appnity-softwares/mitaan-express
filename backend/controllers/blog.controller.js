@@ -81,12 +81,15 @@ exports.createBlog = async (req, res) => {
             content = await processContentImages(content);
         }
 
-        // Improved slug generation: generate English-only alphanumeric slugs to avoid ugly URL encoding
+        // Slug generation: preserve Hindi/Devanagari characters for pretty URLs
         let slug = req.body.slug;
         if (!slug || slug.trim() === '') {
-            slug = title.toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-') // Only ASCII
-                .replace(/^-+|-+$/g, '');
+            slug = title
+                .replace(/[^\w\u0900-\u097F\u0980-\u09FF\s-]+/g, '') // Keep Unicode + alphanumeric
+                .replace(/\s+/g, '-')
+                .replace(/--+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .toLowerCase();
         }
 
         if (!slug || slug === '-') slug = 'post-' + Math.random().toString(36).substring(2, 7);
@@ -108,15 +111,16 @@ exports.createBlog = async (req, res) => {
                 category: categoryId ? { connect: { id: parseInt(categoryId) } } : undefined,
                 tags: tags && tags.length > 0 ? {
                     connectOrCreate: tags.map(tag => {
-                        const tagSlug = tag.toLowerCase()
-                            .replace(/[^a-z0-9]+/g, '-')
+                        let tagSlug = tag.toLowerCase()
+                            .replace(/\s+/g, '-')
+                            .replace(/[^\w\u0900-\u097F\u0980-\u09FF-]+/g, '')
                             .replace(/^-+|-+$/g, '');
+                        if (!tagSlug || tagSlug === '-') {
+                            tagSlug = 'tag-' + Math.random().toString(36).substring(2, 7);
+                        }
                         return {
                             where: { name: tag },
-                            create: {
-                                name: tag,
-                                slug: tagSlug || 'tag-' + Math.random().toString(36).substring(2, 7)
-                            }
+                            create: { name: tag, slug: tagSlug }
                         };
                     })
                 } : undefined
@@ -148,6 +152,16 @@ exports.updateBlog = async (req, res) => {
             content = await processContentImages(content);
         }
 
+        // Build category update safely
+        let categoryUpdate;
+        if (categoryId) {
+            categoryUpdate = { connect: { id: parseInt(categoryId) } };
+        } else {
+            // Only disconnect if the blog currently has a category
+            const currentBlog = await prisma.blog.findUnique({ where: { id: parseInt(id) }, select: { categoryId: true } });
+            categoryUpdate = currentBlog?.categoryId ? { disconnect: true } : undefined;
+        }
+
         const blog = await prisma.blog.update({
             where: { id: parseInt(id) },
             data: {
@@ -157,19 +171,32 @@ exports.updateBlog = async (req, res) => {
                 language,
                 image,
                 shortDescription,
-                category: categoryId ? { connect: { id: parseInt(categoryId) } } : { disconnect: true },
+                category: categoryUpdate,
                 tags: tags ? {
                     set: [], // Clear existing relations
-                    connectOrCreate: tags.map(tag => ({
-                        where: { name: tag },
-                        create: { name: tag, slug: tag.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
-                    }))
+                    connectOrCreate: tags.map(tag => {
+                        // Generate slug that supports Unicode (Hindi, etc.)
+                        let tagSlug = tag.toLowerCase()
+                            .replace(/\s+/g, '-')
+                            .replace(/[^\w\u0900-\u097F\u0980-\u09FF-]+/g, '') // Keep Unicode + alphanumeric
+                            .replace(/^-+|-+$/g, '');
+
+                        if (!tagSlug || tagSlug === '-') {
+                            tagSlug = 'tag-' + Math.random().toString(36).substring(2, 7);
+                        }
+
+                        return {
+                            where: { name: tag },
+                            create: { name: tag, slug: tagSlug }
+                        };
+                    })
                 } : undefined
             }
         });
         res.json(blog);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to update blog' });
+        console.error('Update Blog Error:', error);
+        res.status(500).json({ error: error.message || 'Failed to update blog' });
     }
 };
 

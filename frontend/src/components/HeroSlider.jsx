@@ -120,6 +120,8 @@ const HeroSlider = ({ language }) => {
                         src={currentSlide.image}
                         className="w-full h-full object-cover"
                         alt=""
+                        loading="eager"
+                        fetchPriority="high"
                         initial={{ scale: 1.2 }}
                         animate={{ scale: 1 }}
                         transition={{ duration: 8, ease: "linear" }}

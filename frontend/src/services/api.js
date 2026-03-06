@@ -224,7 +224,10 @@ export const updateBlog = async (token, id, formData) => {
             },
             body: JSON.stringify(formData),
         });
-        if (!response.ok) throw new Error('Failed to update blog');
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || 'Failed to update blog');
+        }
         return await response.json();
     } catch (error) {
         throw error;
