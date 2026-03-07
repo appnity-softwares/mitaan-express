@@ -9,6 +9,7 @@ import {
 import { fetchBlogBySlug, fetchArticles } from '../services/api';
 import AdSpace from '../components/AdSpace';
 import SEO from '../components/SEO';
+import FloatingShareButtons from '../components/FloatingShareButtons';
 
 const BlogDetailPage = ({ language }) => {
     const { slug } = useParams();
@@ -98,6 +99,11 @@ const BlogDetailPage = ({ language }) => {
                 description={blog.shortDescription || blog.content?.replace(/<[^>]*>/g, '').substring(0, 150)}
                 image={blog.image}
                 type="article"
+            />
+
+            <FloatingShareButtons
+                title={blog.title}
+                shortDescription={blog.shortDescription || ''}
             />
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <button

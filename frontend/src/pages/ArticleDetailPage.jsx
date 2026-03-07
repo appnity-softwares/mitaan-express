@@ -12,6 +12,7 @@ import AdSpace from '../components/AdSpace';
 import RelatedPosts from '../components/RelatedPosts';
 import useIsShort from '../hooks/useIsShort';
 import SEO from '../components/SEO';
+import FloatingShareButtons from '../components/FloatingShareButtons';
 
 const ArticleDetailPage = ({ language }) => {
     const { id } = useParams();
@@ -149,6 +150,11 @@ const ArticleDetailPage = ({ language }) => {
                 description={article.shortDescription || article.content?.replace(/<[^>]*>/g, '').substring(0, 150)}
                 image={article.image}
                 type="article"
+            />
+
+            <FloatingShareButtons
+                title={article.title}
+                shortDescription={article.shortDescription || ''}
             />
 
             {/* Reading Progress Bar */}
