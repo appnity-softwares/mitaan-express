@@ -59,8 +59,9 @@ const MustReadSlider = ({ language, onArticleClick }) => {
                     }))
                 ];
 
-                // Sort by views and take top 10
-                const sorted = combined.sort((a, b) => b.views - a.views).slice(0, 10);
+                // Sort by views, filter out articles with no images, take top 10 combined
+                const validContentList = combined.filter(c => c.image && !c.image.includes('unsplash.com/photo-1518') && !c.title.includes('Draft'));
+                const sorted = validContentList.sort((a, b) => b.views - a.views).slice(0, 10);
 
                 if (sorted.length > 0) {
                     setMustReadArticles(sorted);
@@ -163,10 +164,9 @@ const MustReadSlider = ({ language, onArticleClick }) => {
                             onClick={() => onArticleClick(article)}
                             className="bg-gray-900 rounded-[2rem] overflow-hidden flex-shrink-0 w-[75vw] md:w-[480px] h-[350px] md:h-[420px] relative group cursor-pointer snap-start border border-white/5 shadow-2xl hover:shadow-red-900/20"
                         >
-                            {/* Image with Zoom Effect */}
                             <div className="absolute inset-0">
                                 <motion.img
-                                    src={article.image}
+                                    src={article.image || 'https://mitaanexpress.com/default-og.jpg'}
                                     className="w-full h-full object-cover opacity-60"
                                     alt={article.title}
                                     whileHover={{ scale: 1.1 }}

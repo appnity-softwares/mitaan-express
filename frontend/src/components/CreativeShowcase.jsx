@@ -110,8 +110,8 @@ const CreativeShowcase = ({ language, setActiveCategory }) => {
                         className="flex items-center gap-3 text-xs font-black uppercase tracking-widest hover:text-red-600 transition-colors group text-slate-600 dark:text-slate-400"
                     >
                         {language === 'hi' ? 'सभी कविताएं' : 'All Poetry'}
-                        <span className="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all">
-                            <ArrowRight size={14} />
+                        <span className="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all shadow-sm">
+                            <ArrowRight size={16} />
                         </span>
                     </motion.button>
                 </motion.div>
@@ -225,26 +225,30 @@ const CreativeShowcase = ({ language, setActiveCategory }) => {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             onClick={() => setActiveCategory('poetry')}
-                            className="group relative h-[200px] rounded-[2rem] overflow-hidden cursor-pointer bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-800 dark:to-slate-900 border border-white/5"
+                            className="group relative h-[220px] rounded-[2.5rem] overflow-hidden cursor-pointer bg-slate-900 border border-white/10 shadow-2xl"
                         >
-                            {/* Pattern overlay */}
-                            <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
+                            {/* Animated Background Mesh */}
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(220,38,38,0.2),transparent_70%)]" />
+                            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
 
-                            <div className="absolute inset-0 p-8 flex flex-col justify-between z-10">
-                                <div className="flex items-center gap-2">
-                                    <Feather size={16} className="text-red-500" />
-                                    <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.3em]">
+                            <div className="absolute inset-0 p-10 flex flex-col justify-between z-10">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-red-600/20 flex items-center justify-center">
+                                        <Sparkles size={14} className="text-red-500" />
+                                    </div>
+                                    <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.4em]">
                                         {language === 'hi' ? 'काव्य संग्रह' : 'Poetry Collection'}
                                     </span>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <h3 className="text-2xl font-black text-white font-serif tracking-tight">
+                                <div className="space-y-4">
+                                    <h3 className="text-3xl font-black text-white font-serif tracking-tight leading-none">
                                         {language === 'hi' ? 'शब्दों का जादू' : 'Magic of Words'}
                                     </h3>
-                                    <div className="flex items-center gap-3">
-                                        <span className="px-4 py-2 bg-red-600 text-white text-[10px] font-black uppercase tracking-wider rounded-xl group-hover:bg-red-700 transition flex items-center gap-2">
-                                            {language === 'hi' ? 'पढ़ें' : 'Read Now'} <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                                    <div className="flex items-center gap-4">
+                                        <div className="h-0.5 w-12 bg-red-600 rounded-full" />
+                                        <span className="text-[10px] font-black text-white/50 uppercase tracking-widest group-hover:text-white transition-colors">
+                                            {language === 'hi' ? 'पढ़ना शुरू करें' : 'START READING'}
                                         </span>
                                     </div>
                                 </div>
@@ -257,8 +261,8 @@ const CreativeShowcase = ({ language, setActiveCategory }) => {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.1 }}
-                            onClick={() => setActiveCategory('blogs')}
-                            className="group relative flex-1 min-h-[200px] rounded-[2rem] overflow-hidden cursor-pointer bg-gradient-to-br from-red-600 to-orange-600 border border-red-500/20"
+                            onClick={() => setActiveCategory('insights')}
+                            className="group relative flex-1 min-h-[220px] rounded-[2.5rem] overflow-hidden cursor-pointer bg-gradient-to-br from-red-600 to-red-700 border border-red-500/20"
                         >
                             <div className="absolute inset-0 p-8 flex flex-col justify-between z-10">
                                 <div className="flex items-center gap-2">

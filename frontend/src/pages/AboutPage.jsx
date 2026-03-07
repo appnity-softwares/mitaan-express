@@ -362,7 +362,7 @@ const AboutPage = ({ language, previewSettings }) => {
                                 {language === 'hi' ? 'हमसे जुड़ें' : 'Join Our Mission'}
                             </Link>
                             <Link
-                                to="/blogs"
+                                to="/insights"
                                 className="border-2 border-white text-white px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-white hover:text-red-600 transition-all inline-block"
                             >
                                 {language === 'hi' ? 'और जानें' : 'Learn More'}

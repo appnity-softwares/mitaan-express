@@ -87,7 +87,7 @@ const App = () => {
             '/gallery': 'Gallery',
             '/video': 'Videos',
             '/poetry': 'Poetry',
-            '/blogs': 'Blog',
+            '/insights': 'Insights',
             '/terms': 'Terms and Conditions',
             '/privacy': 'Privacy Policy'
         };
@@ -129,7 +129,7 @@ const App = () => {
     // Navigation Handler for Navbar
     const handleCategoryChange = (id) => {
         if (id === 'home') navigate('/');
-        else if (['about', 'contact', 'gallery', 'video', 'poetry', 'blogs', 'trending'].includes(id)) navigate(`/${id}`);
+        else if (['about', 'contact', 'gallery', 'video', 'poetry', 'insights', 'trending'].includes(id)) navigate(`/${id}`);
         else navigate(`/category/${id}`);
         // Menu closing is handled inside Navbar usually, or Navbar will re-render
     };
@@ -169,11 +169,11 @@ const App = () => {
                                 <Route path="/gallery" element={isPageEnabled('page_gallery_enabled') ? <GalleryPage language={language} /> : <Navigate to="/" replace />} />
                                 <Route path="/video" element={isPageEnabled('page_live_enabled') ? <VideoPage language={language} /> : <Navigate to="/" replace />} />
                                 <Route path="/poetry" element={isPageEnabled('page_poetry_enabled') ? <PoetryPage language={language} /> : <Navigate to="/" replace />} />
-                                <Route path="/blogs" element={isPageEnabled('page_blogs_enabled') ? <BlogsPage language={language} /> : <Navigate to="/" replace />} />
+                                <Route path="/insights" element={isPageEnabled('page_blogs_enabled') ? <BlogsPage language={language} /> : <Navigate to="/" replace />} />
                                 <Route path="/trending" element={<TrendingPage language={language} />} />
                                 <Route path="/category/:categoryId" element={<CategoryPage language={language} />} />
                                 <Route path="/article/:id" element={<ArticleDetailPage language={language} />} />
-                                <Route path="/blog/:slug" element={isPageEnabled('page_blogs_enabled') ? <BlogDetailPage language={language} /> : <Navigate to="/" replace />} />
+                                <Route path="/insight/:slug" element={isPageEnabled('page_blogs_enabled') ? <BlogDetailPage language={language} /> : <Navigate to="/" replace />} />
                                 <Route path="/login" element={<LoginPage />} />
                                 <Route path="/signup" element={<SignupPage />} />
                                 <Route path="/donate" element={isPageEnabled('page_donation_enabled') ? <DonationPage language={language} toggleLanguage={toggleLanguage} /> : <Navigate to="/" replace />} />

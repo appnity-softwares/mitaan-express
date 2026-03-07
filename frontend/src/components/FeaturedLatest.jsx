@@ -13,7 +13,7 @@ const FeaturedLatest = ({ language, items = [] }) => {
 
     const handleItemClick = (item) => {
         if (item.type === 'blog') {
-            navigate(`/blog/${item.slug}`);
+            navigate(`/insight/${item.slug}`);
         } else {
             navigate(`/article/${item.id}`);
         }
@@ -41,7 +41,7 @@ const FeaturedLatest = ({ language, items = [] }) => {
                     </div>
 
                     <button
-                        onClick={() => navigate('/blogs')}
+                        onClick={() => navigate('/insights')}
                         className="group flex items-center gap-3 text-xs font-black uppercase tracking-[0.2em] text-slate-500 hover:text-red-600 transition-all"
                     >
                         {language === 'hi' ? 'सभी समाचार देखें' : 'VIEW ALL STORIES'}

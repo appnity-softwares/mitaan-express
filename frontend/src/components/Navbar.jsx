@@ -185,7 +185,7 @@ const Navbar = ({
     const newsItems = useMemo(() => [
         { id: 'trending', name: language === 'hi' ? 'ट्रेंडिंग' : 'Trending', desc: language === 'hi' ? 'लोकप्रिय समाचार' : 'Viral & Popular', icon: <TrendingUp size={16} />, path: '/trending' },
         { id: 'video', name: language === 'hi' ? 'वीडियो' : 'Videos', desc: language === 'hi' ? 'टीम अपडेट्स' : 'Team & Field Reports', icon: <Video size={16} />, path: '/video' },
-        { id: 'insights', name: language === 'hi' ? 'इनसाइट्स' : 'Insights', desc: language === 'hi' ? 'विशेष विश्लेषण' : 'News & Analysis', icon: <FileText size={16} />, path: '/blogs' },
+        { id: 'insights', name: language === 'hi' ? 'इनसाइट्स' : 'Insights', desc: language === 'hi' ? 'विशेष विश्लेषण' : 'News & Analysis', icon: <FileText size={16} />, path: '/insights' },
         { id: 'gallery', name: language === 'hi' ? 'गैलरी' : 'Events', desc: language === 'hi' ? 'हमारी गतिविधियां' : 'Press & Meetups', icon: <ImageIcon size={16} />, path: '/gallery' },
     ], [language]);
 

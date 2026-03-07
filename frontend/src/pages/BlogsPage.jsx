@@ -200,7 +200,7 @@ const BlogsPage = ({ language }) => {
                                         </div>
 
                                         <div className="text-2xl lg:text-4xl font-black font-serif leading-tight group-hover:text-red-600 transition-colors">
-                                            <Link to={`/blog/${featuredArticle.slug}`}>
+                                            <Link to={`/insight/${featuredArticle.slug}`}>
                                                 {featuredArticle.title}
                                             </Link>
                                         </div>
@@ -220,7 +220,7 @@ const BlogsPage = ({ language }) => {
                                                 </div>
                                             </div>
 
-                                            <Link to={`/blog/${featuredArticle.slug}`} className="w-12 h-12 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 group-hover:text-white transition-all">
+                                            <Link to={`/insight/${featuredArticle.slug}`} className="w-12 h-12 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 group-hover:text-white transition-all">
                                                 <ArrowUpRight size={20} />
                                             </Link>
                                         </div>
@@ -239,7 +239,7 @@ const BlogsPage = ({ language }) => {
                                         transition={{ delay: idx * 0.1 }}
                                         className="group pt-10 border-t border-slate-100 dark:border-white/10 first:border-0 first:pt-0"
                                     >
-                                        <Link to={`/blog/${article.slug}`} className="flex flex-row gap-4 md:gap-8 justify-between items-start">
+                                        <Link to={`/insight/${article.slug}`} className="flex flex-row gap-4 md:gap-8 justify-between items-start">
                                             <div className="flex-1 space-y-2 md:space-y-4 py-1">
                                                 <div className="text-lg md:text-2xl font-bold font-sans text-slate-900 dark:text-white leading-snug group-hover:text-red-600 transition-colors">
                                                     {article.title}

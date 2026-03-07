@@ -37,7 +37,7 @@ const HomePage = ({ language }) => {
 
     const handleArticleClick = (item) => {
         if (item.type === 'blog' || !item.id) {
-            navigate(`/blog/${item.slug || item.id}`);
+            navigate(`/insight/${item.slug || item.id}`);
         } else {
             navigate(`/article/${item.id}`);
         }
@@ -45,7 +45,7 @@ const HomePage = ({ language }) => {
 
     const handleCategoryChange = (category) => {
         if (category === 'home') navigate('/');
-        else if (['about', 'contact', 'gallery', 'video', 'poetry', 'blogs'].includes(category)) navigate(`/${category}`);
+        else if (['about', 'contact', 'gallery', 'video', 'poetry', 'insights'].includes(category)) navigate(`/${category}`);
         else navigate(`/category/${category}`);
     };
 
@@ -68,7 +68,10 @@ const HomePage = ({ language }) => {
                                         <div
                                             key={`${article.id}-1`}
                                             className="flex items-center gap-6 cursor-pointer group/item"
-                                            onClick={() => navigate(`/article/${article.id}`)}
+                                            onClick={() => {
+                                                if (article.type === 'blog') navigate(`/insight/${article.slug}`);
+                                                else navigate(`/article/${article.id}`);
+                                            }}
                                         >
                                             <div className="flex items-center gap-2">
                                                 <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
@@ -89,7 +92,10 @@ const HomePage = ({ language }) => {
                                         <div
                                             key={`${article.id}-2`}
                                             className="flex items-center gap-6 cursor-pointer group/item"
-                                            onClick={() => navigate(`/article/${article.id}`)}
+                                            onClick={() => {
+                                                if (article.type === 'blog') navigate(`/insight/${article.slug}`);
+                                                else navigate(`/article/${article.id}`);
+                                            }}
                                         >
                                             <div className="flex items-center gap-2">
                                                 <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
