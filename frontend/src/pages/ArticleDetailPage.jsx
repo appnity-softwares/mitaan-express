@@ -215,13 +215,23 @@ const ArticleDetailPage = ({ language }) => {
                             </div>
                             <div className="h-8 w-px bg-slate-200 dark:bg-white/10 hidden sm:block"></div>
                             <button
+                                onClick={() => handleShare('copy')}
+                                className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors text-xs font-black uppercase tracking-widest shadow-sm"
+                                title="Copy Readable Link"
+                            >
+                                {copied ? <Check size={14} /> : <Copy size={14} />}
+                                <span className="hidden sm:inline-block">
+                                    {copied ? (language === 'hi' ? 'कॉपी किया' : 'COPIED') : (language === 'hi' ? 'लिंक कॉपी करें' : 'COPY LINK')}
+                                </span>
+                            </button>
+                            <button
                                 onClick={async () => {
                                     if (navigator.share) {
                                         try {
                                             await navigator.share({
                                                 title: article.title,
                                                 text: article.shortDescription,
-                                                url: window.location.href,
+                                                url: decodeURI(window.location.href),
                                             });
                                         } catch (err) {
                                             console.log('Error sharing:', err);
@@ -230,9 +240,10 @@ const ArticleDetailPage = ({ language }) => {
                                         handleShare('copy');
                                     }
                                 }}
-                                className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+                                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors text-xs font-black uppercase tracking-widest shadow-sm"
                             >
-                                {copied ? <Check size={18} className="text-green-600" /> : <Share2 size={18} />}
+                                <Share2 size={14} />
+                                <span className="hidden sm:inline-block">{language === 'hi' ? 'शेयर' : 'SHARE'}</span>
                             </button>
                         </div>
                     </div>
