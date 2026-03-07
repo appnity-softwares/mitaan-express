@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
+import { stripHtml } from '../utils/textUtils';
 import { API_URL } from '../services/api';
 
 // Dummy data removed for API
@@ -33,7 +34,7 @@ const MustReadSlider = ({ language, onArticleClick }) => {
                         image: a.image || 'https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&q=80&w=1000',
                         author: a.author?.name || 'Mitaan',
                         date: new Date(a.createdAt).toLocaleDateString(),
-                        content: a.shortDescription || a.content.substring(0, 100),
+                        content: a.shortDescription || stripHtml(a.content || '').substring(0, 100),
                         slug: a.slug
                     })));
                 } else {

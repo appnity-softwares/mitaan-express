@@ -139,7 +139,7 @@ exports.createBlog = async (req, res) => {
 exports.updateBlog = async (req, res) => {
     try {
         const { id } = req.params;
-        let { title, content, status, language, tags, categoryId, image, shortDescription } = req.body;
+        let { title, slug, content, status, language, tags, categoryId, image, shortDescription } = req.body;
 
         // Handle Featured Image Upload to R2
         if (isR2Enabled && image && image.startsWith('data:image')) {
@@ -151,6 +151,27 @@ exports.updateBlog = async (req, res) => {
         if (isR2Enabled && content) {
             content = await processContentImages(content);
         }
+
+        // Robust slug handling for updates
+        let finalSlug = slug;
+        if (!finalSlug || finalSlug.trim() === '') {
+            finalSlug = title
+                .replace(/[^\w\u0900-\u097F\u0980-\u09FF\s-]+/g, '') // Keep Unicode + alphanumeric
+                .replace(/\s+/g, '-')
+                .replace(/--+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .toLowerCase();
+        }
+        if (!finalSlug || finalSlug === '-') finalSlug = 'post-' + Math.random().toString(36).substring(2, 7);
+
+        // Check for duplicate slug (excluding the current blog)
+        const duplicate = await prisma.blog.findFirst({
+            where: {
+                slug: finalSlug,
+                NOT: { id: parseInt(id) }
+            }
+        });
+        if (duplicate) finalSlug = `${finalSlug}-${Date.now()}`;
 
         // Build category update safely
         let categoryUpdate;
@@ -166,6 +187,7 @@ exports.updateBlog = async (req, res) => {
             where: { id: parseInt(id) },
             data: {
                 title,
+                slug: finalSlug,
                 content,
                 status,
                 language,

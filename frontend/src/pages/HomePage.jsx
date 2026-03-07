@@ -15,6 +15,7 @@ import { useSettings } from '../hooks/useQueries';
 import { formatImageUrl } from '../services/api';
 import AdSpace from '../components/AdSpace';
 import AdPopup from '../components/AdPopup';
+import { stripHtml } from '../utils/textUtils';
 
 const HomePage = ({ language }) => {
     const navigate = useNavigate();
@@ -25,7 +26,7 @@ const HomePage = ({ language }) => {
     const homeArticles = published.slice(0, 5).map(a => ({
         id: a.id,
         title: a.title,
-        description: a.shortDescription || a.content?.substring(0, 150) + '...' || '',
+        description: a.shortDescription || stripHtml(a.content || '').substring(0, 150) + '...' || '',
         image: formatImageUrl(a.image),
         category: language === 'hi' ? (a.category?.nameHi || a.category?.name) : a.category?.name,
         author: a.author?.name || 'Mitaan',

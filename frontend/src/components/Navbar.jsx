@@ -189,76 +189,104 @@ const Navbar = ({
             }`}>
 
 
-            <nav className="max-w-[1600px] mx-auto px-4 lg:px-12 flex items-center justify-between h-14 lg:h-auto">
-                {/* Left Section: Menu Toggle */}
-                <div className="flex items-center justify-start shrink-0">
+            <nav className="max-w-[1600px] mx-auto px-4 lg:px-8 flex items-center justify-between h-14 lg:h-18">
+                {/* Desktop: Quick Nav (Left) | Mobile: Menu Toggle (Left) */}
+                <div className="flex items-center gap-3 lg:gap-4 shrink-0 z-10">
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className={`flex items-center gap-3 lg:gap-4 group transition-colors shrink-0 ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
+                        className={`flex items-center gap-2 group transition-colors shrink-0 ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
+                        aria-label="Toggle Menu"
                     >
-                        <div className="relative overflow-hidden w-6 h-6 flex flex-col justify-center gap-1.5 shrink-0">
-                            <span className={`h-0.5 w-6 bg-current transition-transform duration-500 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-                            <span className={`h-0.5 w-4 bg-current transition-opacity duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} />
-                            <span className={`h-0.5 w-6 bg-current transition-transform duration-500 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+                        <div className="relative w-5 lg:w-6 h-5 flex flex-col justify-center gap-1.5 shrink-0">
+                            <span className={`h-0.5 w-full bg-current transition-transform duration-500 rounded-full ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+                            <span className={`h-0.5 w-3/4 bg-current transition-opacity duration-300 rounded-full ${isMenuOpen ? 'opacity-0' : ''}`} />
+                            <span className={`h-0.5 w-full bg-current transition-transform duration-500 rounded-full ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
                         </div>
-                        <span className="hidden lg:block text-[10px] font-black uppercase tracking-[0.3em] group-hover:text-white/80 transition-colors">
-                            {language === 'hi' ? (isMenuOpen ? 'बंद करें' : 'एक्सप्लोर') : (isMenuOpen ? 'Close' : 'Explore')}
+                        <span className="hidden xl:block text-[9px] font-black uppercase tracking-[0.2em] group-hover:opacity-80 transition-all">
+                            {language === 'hi' ? (isMenuOpen ? 'बंद करें' : 'मेन्यू') : (isMenuOpen ? 'Close' : 'Menu')}
                         </span>
                     </button>
+
+                    {/* Desktop Quick Nav Items */}
+                    <div className="hidden lg:flex items-center gap-1 border-l border-white/20 pl-4 ml-1">
+                        {mainPages.slice(0, 5).map((page) => (
+                            <button
+                                key={page.id}
+                                onClick={() => handleLinkClick(page.id, page.path)}
+                                className={`flex flex-col items-center justify-center w-9 h-9 rounded-xl transition-all hover:bg-white/10 group relative ${activeCategory === page.id ? 'text-white' : (isNavbarSolid ? 'text-white/70' : 'text-red-600/70')}`}
+                                title={page.name}
+                            >
+                                <div className={`transition-transform group-hover:scale-110 ${activeCategory === page.id ? 'scale-110' : ''}`}>
+                                    {React.cloneElement(page.icon, { size: 18 })}
+                                </div>
+                                {activeCategory === page.id && (
+                                    <motion.div layoutId="nav-pill" className="absolute -bottom-1 w-1 h-1 bg-current rounded-full" />
+                                )}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                {/* Center Section: Logo/Title */}
-                <div className="flex-1 flex justify-center min-w-0 px-2 sm:px-4">
-                    <button onClick={() => handleLinkClick('home')} className="group flex items-center gap-2 lg:gap-3 min-w-0">
+                {/* Center Section: Logo/Title (Centered on all screens) */}
+                <div className="absolute left-1/2 -translate-x-1/2 flex justify-center z-0 w-full pointer-events-none">
+                    <button onClick={() => handleLinkClick('home')} className="group flex items-center gap-2 lg:gap-3 pointer-events-auto max-w-[60%] sm:max-w-none">
                         <img
                             src={formatImageUrl(settings?.logo_url) || logo}
                             alt="Mitaan Logo"
-                            className="w-8 h-8 lg:w-10 lg:h-10 object-contain shadow-lg shadow-black/10 rounded-lg bg-white shrink-0"
+                            className="w-7 h-7 sm:w-8 sm:h-8 lg:w-11 lg:h-11 object-contain shadow-lg shadow-black/10 rounded-xl bg-white shrink-0 transition-transform group-hover:scale-105"
                             onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src = logo;
                             }}
                         />
-                        <div className="flex flex-col items-start leading-none min-w-0">
-                            <h1 className={`text-base sm:text-xl lg:text-3xl font-black tracking-tighter font-serif transition-all duration-300 drop-shadow-sm truncate max-w-[120px] sm:max-w-[200px] lg:max-w-none ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
+                        <div className="flex flex-col items-start leading-tight">
+                            <h1 className={`text-sm sm:text-base lg:text-2xl font-black tracking-tighter font-serif transition-colors drop-shadow-sm ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
                                 {settings?.site_title || 'Mitaan Express'}
                             </h1>
+                            <span className={`hidden lg:block text-[8px] font-bold uppercase tracking-[0.3em] opacity-70 ${isNavbarSolid ? 'text-white' : 'text-slate-500'}`}>
+                                {language === 'hi' ? 'निष्पक्ष समाचार' : 'UNBIASED NEWS'}
+                            </span>
                         </div>
                     </button>
                 </div>
 
-                {/* Right Section: Toggles & Donate */}
-                <div className="flex items-center justify-end gap-2 sm:gap-3 lg:gap-8 shrink-0">
-                    <div className="hidden lg:flex items-center gap-6">
+                {/* Right Section: Actions */}
+                <div className="flex items-center justify-end gap-1 sm:gap-2 lg:gap-4 shrink-0 z-10">
+                    <div className="hidden lg:flex items-center gap-2">
                         <LiveCounter />
-                        {/* Search Button */}
+
+                        {/* Search Icon Only (Space saver) */}
                         <button
                             onClick={() => setIsSearchOpen(true)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all cursor-pointer group ${isNavbarSolid ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-600 dark:text-white'}`}
+                            className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all hover:bg-white/10 ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
+                            title="Search (⌘K)"
                         >
-                            <Search size={15} />
-                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-70 group-hover:opacity-100 transition">
-                                {language === 'hi' ? 'खोजें' : 'Search'}
-                            </span>
-                            <kbd className={`text-[9px] font-bold px-1.5 py-0.5 rounded hidden xl:inline-block ${isNavbarSolid ? 'bg-white/10' : 'bg-slate-200 dark:bg-white/10'}`}>⌘K</kbd>
+                            <Search size={18} />
                         </button>
-                        <div className="relative">
-                            <button onClick={toggleLanguage} className="bg-white text-red-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.15em] flex items-center gap-1.5 shadow-sm hover:scale-105 transition-all active:scale-95 border border-white/10">
-                                <span className={language === 'en' ? 'opacity-100' : 'opacity-40'}>EN</span>
-                                <span className="opacity-30">/</span>
-                                <span className={language === 'hi' ? 'opacity-100' : 'opacity-40'}>HI</span>
+
+                        {/* Language Toggle (Compact) */}
+                        <div className="relative group/lang">
+                            <button onClick={toggleLanguage} className="w-10 h-10 flex items-center justify-center rounded-xl transition-all hover:bg-white/10 border border-white/0 hover:border-white/10">
+                                <span className={`text-[10px] font-black ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
+                                    {language.toUpperCase()}
+                                </span>
                             </button>
                             <LanguagePopup onSelect={onLanguageChange} />
                         </div>
-                        <button onClick={toggleTheme} className={`transition-all hover:scale-110 hover:opacity-80 ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
-                            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+
+                        {/* Theme Toggle */}
+                        <button
+                            onClick={toggleTheme}
+                            className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all hover:bg-white/10 ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
+                        >
+                            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
                         </button>
                     </div>
 
                     {/* Mobile Search Button */}
                     <button
                         onClick={() => setIsSearchOpen(true)}
-                        className={`p-2 rounded-full transition-all md:hidden ${isNavbarSolid ? 'text-white hover:bg-white/10' : 'text-red-600 hover:bg-red-50'}`}
+                        className={`w-10 h-10 flex items-center justify-center rounded-full transition-all lg:hidden ${isNavbarSolid ? 'text-white hover:bg-white/10' : 'text-red-600 hover:bg-red-50'}`}
                     >
                         <Search size={20} />
                     </button>
@@ -266,10 +294,10 @@ const Navbar = ({
                     {isDonationEnabled && (
                         <button
                             onClick={() => window.location.href = '/donate'}
-                            className={`hidden md:flex items-center gap-2 px-3 lg:px-6 py-2 rounded-full font-black text-[10px] lg:text-xs uppercase tracking-widest transition-all ${isNavbarSolid ? 'bg-white text-red-600 hover:bg-white/90' : 'bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20'} shadow-sm shrink-0`}
+                            className={`flex items-center gap-2 px-3 lg:px-5 py-2 rounded-xl font-black text-[10px] lg:text-xs uppercase tracking-widest transition-all ${isNavbarSolid ? 'bg-white text-red-600 hover:bg-white/90' : 'bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20'} shadow-sm shrink-0`}
                         >
                             <HeartIcon size={14} className="fill-current" />
-                            <span className={language === 'hi' ? '' : 'hidden lg:inline'}>
+                            <span className="hidden sm:inline">
                                 {language === 'hi' ? 'सहयोग' : 'Donate'}
                             </span>
                         </button>

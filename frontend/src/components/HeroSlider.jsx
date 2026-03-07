@@ -5,6 +5,7 @@ import { PlayCircle, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
 import { useArticles } from '../context/ArticlesContext';
 import { formatImageUrl, PLACEHOLDER_IMAGE } from '../services/api';
 import { useSettings } from '../hooks/useQueries';
+import { stripHtml } from '../utils/textUtils';
 
 const HeroSlider = ({ language }) => {
     const navigate = useNavigate();
@@ -27,7 +28,7 @@ const HeroSlider = ({ language }) => {
         id: a.id,
         tag: language === 'hi' ? (a.category?.nameHi || 'विशेष') : (a.category?.name || 'FEATURED'),
         title: a.title,
-        description: a.shortDescription || a.content?.substring(0, 100) || '',
+        description: a.shortDescription || stripHtml(a.content || '').substring(0, 100) || '',
         image: formatImageUrl(a.image),
         articleId: a.id
     }));

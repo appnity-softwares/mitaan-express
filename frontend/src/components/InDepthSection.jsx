@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Clock, User, ChevronRight } from 'lucide-react';
+import { stripHtml } from '../utils/textUtils';
 
 const InDepthSection = ({ language, onCategoryChange, sportsArticles = [], economyArticles = [], onArticleClick }) => {
     // Get main sports feature
@@ -18,7 +19,7 @@ const InDepthSection = ({ language, onCategoryChange, sportsArticles = [], econo
 
     const getDescription = (art) => {
         if (!art) return '';
-        const desc = art.shortDescription || art.content || '';
+        const desc = art.shortDescription || stripHtml(art.content || '') || '';
         return desc.substring(0, 160) + (desc.length > 160 ? '...' : '');
     };
 

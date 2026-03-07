@@ -194,11 +194,13 @@ const ArticleEditor = () => {
 
                 // Upload using useCreateMedia
                 const response = await createMediaMutation.mutateAsync({
-                    type: 'IMAGE',
-                    title: file.name,
-                    url: base64Image,
-                    category: 'SYSTEM',
-                    size: `${(file.size / 1024).toFixed(0)} KB`
+                    payload: {
+                        type: 'IMAGE',
+                        title: file.name,
+                        url: base64Image,
+                        category: 'SYSTEM',
+                        size: `${(file.size / 1024).toFixed(0)} KB`
+                    }
                 });
 
                 // Insert image into editor
@@ -230,11 +232,13 @@ const ArticleEditor = () => {
 
                 // Upload using useCreateMedia
                 const response = await createMediaMutation.mutateAsync({
-                    type: 'IMAGE',
-                    title: file.name,
-                    url: base64Image,
-                    category: 'SYSTEM',
-                    size: `${(file.size / 1024).toFixed(0)} KB`
+                    payload: {
+                        type: 'IMAGE',
+                        title: file.name,
+                        url: base64Image,
+                        category: 'SYSTEM',
+                        size: `${(file.size / 1024).toFixed(0)} KB`
+                    }
                 });
 
                 // Update form data with the image URL

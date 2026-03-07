@@ -6,6 +6,7 @@ import Sidebar from '../components/Sidebar';
 import { useArticles } from '../context/ArticlesContext';
 import LoadingSkeletons from '../components/LoadingSkeletons';
 import useIsShort from '../hooks/useIsShort';
+import { stripHtml } from '../utils/textUtils';
 
 const CategoryPage = ({ language }) => {
     const { categoryId } = useParams();
@@ -41,7 +42,7 @@ const CategoryPage = ({ language }) => {
         }).map(a => ({
             id: a.id,
             title: a.title,
-            description: a.shortDescription || a.content?.substring(0, 150) + '...' || '',
+            description: a.shortDescription || stripHtml(a.content || '').substring(0, 150) + '...' || '',
             image: a.image || 'https://images.unsplash.com/photo-1476242906366-d8eb64c2f661?auto=format&fit=crop&q=80&w=2000',
             category: language === 'hi' ? (a.category?.nameHi || a.category?.name) : a.category?.name,
             author: a.author?.name || 'Mitaan',

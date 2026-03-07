@@ -72,7 +72,7 @@ const processContentImages = async (content) => {
 
     while ((match = base64Regex.exec(content)) !== null) {
         const extension = match[1];
-        const base64Data = match[0].split(',')[1];
+        const base64Data = match[2]; // Captures only the base64 part up to the next "
         const fileName = `content-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${extension}`;
 
         const promise = uploadToR2(`data:image/${extension};base64,${base64Data}`, fileName, `image/${extension}`)

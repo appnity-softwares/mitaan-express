@@ -233,16 +233,62 @@ exports.updateArticle = async (req, res) => {
             content = await processContentImages(content);
         }
 
+        // Robust slug handling for updates
+        let finalSlug = slug;
+        if (!finalSlug || finalSlug.trim() === '') {
+            finalSlug = title.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+        if (!finalSlug || finalSlug === '-') finalSlug = 'article-' + Math.random().toString(36).substring(2, 7);
+
+        // Check for duplicate slug (excluding the current article)
+        const duplicate = await prisma.article.findFirst({
+            where: {
+                slug: finalSlug,
+                NOT: { id: articleId }
+            }
+        });
+        if (duplicate) finalSlug = `${finalSlug}-${Date.now()}`;
+
+        // Handle tags: array of strings => set, then create or connect
+        let tagData = undefined;
+        if (tags && Array.isArray(tags)) {
+            const tagConnect = [];
+            for (const tagName of tags) {
+                let tagSlug = tagName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                if (!tagSlug || tagSlug === '-') tagSlug = 'tag-' + Math.random().toString(36).substring(2, 7);
+                tagConnect.push({
+                    where: { slug: tagSlug },
+                    create: { name: tagName, slug: tagSlug }
+                });
+            }
+            tagData = {
+                set: [], // Clear existing tags
+                connectOrCreate: tagConnect
+            };
+        }
+
         const updateData = {
-            title, slug, content, shortDescription, image, videoUrl,
-            isBreaking, isTrending, isFeatured,
+            title,
+            slug: finalSlug,
+            content,
+            shortDescription,
+            image,
+            videoUrl,
+            isBreaking,
+            isTrending,
+            isFeatured,
             language: language || 'en',
-            metaTitle, metaDescription, metaKeywords,
+            metaTitle,
+            metaDescription,
+            metaKeywords,
             metadata: metadata || undefined,
             status,
             published: status === 'PUBLISHED',
             priority: priority || undefined,
-            scheduledAt: scheduledAt ? new Date(scheduledAt) : undefined
+            scheduledAt: scheduledAt ? new Date(scheduledAt) : undefined,
+            tags: tagData
         };
 
         if (categoryId) updateData.category = { connect: { id: parseInt(categoryId) } };

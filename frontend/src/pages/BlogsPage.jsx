@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Calendar, ArrowUpRight, ChevronRight, Clock } from 'lucide-react';
+import { CalendarDays, Clock, User, ArrowRight, Share2, Filter, Loader } from 'lucide-react';
+import { stripHtml } from '../utils/textUtils';
 import { fetchBlogs } from '../services/api';
 import AdSpace from '../components/AdSpace';
 import Sidebar from '../components/Sidebar';
@@ -199,13 +200,13 @@ const BlogsPage = ({ language }) => {
                                         </div>
 
                                         <div className="text-2xl lg:text-4xl font-black font-serif leading-tight group-hover:text-red-600 transition-colors">
-                                            <Link to={`/blog/${featuredArticle.slug}`}>
+                                            <Link to={`/ blog / ${featuredArticle.slug} `}>
                                                 {featuredArticle.title}
                                             </Link>
                                         </div>
 
                                         <p className="text-lg text-slate-500 dark:text-gray-400 line-clamp-3 leading-relaxed">
-                                            {featuredArticle.summary || featuredArticle.shortDescription || featuredArticle.content?.substring(0, 150) + "..."}
+                                            {featuredArticle.summary || featuredArticle.shortDescription || stripHtml(featuredArticle.content || '').substring(0, 150) + "..."}
                                         </p>
 
                                         <div className="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-white/10">
@@ -219,7 +220,7 @@ const BlogsPage = ({ language }) => {
                                                 </div>
                                             </div>
 
-                                            <Link to={`/blog/${featuredArticle.slug}`} className="w-12 h-12 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 group-hover:text-white transition-all">
+                                            <Link to={`/ blog / ${featuredArticle.slug} `} className="w-12 h-12 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 group-hover:text-white transition-all">
                                                 <ArrowUpRight size={20} />
                                             </Link>
                                         </div>
@@ -238,14 +239,14 @@ const BlogsPage = ({ language }) => {
                                         transition={{ delay: idx * 0.1 }}
                                         className="group pt-10 border-t border-slate-100 dark:border-white/10 first:border-0 first:pt-0"
                                     >
-                                        <Link to={`/blog/${article.slug}`} className="flex flex-row gap-4 md:gap-8 justify-between items-start">
+                                        <Link to={`/ blog / ${article.slug} `} className="flex flex-row gap-4 md:gap-8 justify-between items-start">
                                             <div className="flex-1 space-y-2 md:space-y-4 py-1">
                                                 <div className="text-lg md:text-2xl font-bold font-sans text-slate-900 dark:text-white leading-snug group-hover:text-red-600 transition-colors">
                                                     {article.title}
                                                 </div>
 
                                                 <p className="text-slate-500 dark:text-gray-400 line-clamp-2 md:line-clamp-3 text-sm md:text-base leading-relaxed">
-                                                    {article.summary || article.shortDescription || article.content?.substring(0, 150) + "..."}
+                                                    {article.summary || article.shortDescription || stripHtml(article.content || '').substring(0, 150) + "..."}
                                                 </p>
 
                                                 <div className="flex items-center gap-3 text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest hidden md:flex">
@@ -304,7 +305,7 @@ const BlogsPage = ({ language }) => {
 
                                             return pages.map((p, idx) => (
                                                 p === '...' ? (
-                                                    <span key={`ellipsis-${idx}`} className="w-8 h-10 flex items-center justify-center text-slate-400 font-bold text-xs">...</span>
+                                                    <span key={`ellipsis - ${idx} `} className="w-8 h-10 flex items-center justify-center text-slate-400 font-bold text-xs">...</span>
                                                 ) : (
                                                     <button
                                                         key={p}
@@ -312,10 +313,10 @@ const BlogsPage = ({ language }) => {
                                                             setPage(p);
                                                             window.scrollTo({ top: 300, behavior: 'smooth' });
                                                         }}
-                                                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full font-black text-xs transition-all ${page === p
-                                                            ? 'bg-red-600 text-white shadow-lg shadow-red-600/20'
-                                                            : 'hover:bg-slate-100 dark:hover:bg-white/10'
-                                                            }`}
+                                                        className={`w - 9 h - 9 sm: w - 10 sm: h - 10 rounded - full font - black text - xs transition - all ${page === p
+                                                                ? 'bg-red-600 text-white shadow-lg shadow-red-600/20'
+                                                                : 'hover:bg-slate-100 dark:hover:bg-white/10'
+                                                            } `}
                                                     >
                                                         {p}
                                                     </button>
