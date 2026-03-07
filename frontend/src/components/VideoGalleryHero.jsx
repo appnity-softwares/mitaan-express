@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Clock, MessageSquare, User, ChevronUp, ChevronDown, X } from 'lucide-react';
 import { usePublicMedia } from '../hooks/useMedia';
+import { useSettings } from '../hooks/useQueries';
 import { useArticles } from '../context/ArticlesContext';
 import { getVideoEmbedUrl, getVideoThumbnail } from '../utils/videoUtils';
 import { formatImageUrl, PLACEHOLDER_IMAGE } from '../services/api';
@@ -11,26 +12,54 @@ const VideoGalleryHero = ({ language }) => {
     const [startIndex, setStartIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
 
-    // Fetch from Media Library (Primary)
+    const { data: settings } = useSettings();
+
+    // Fetch from Media Library (Primary Fallback)
     const { data: mediaResponse } = usePublicMedia('VIDEO');
     const mediaVideos = mediaResponse?.media || [];
 
-    // Fetch from Articles (Fallback)
+    // Fetch from Articles (Secondary Fallback)
     const { videos: videoArticles } = useArticles();
 
-    // Prioritize Media Library videos
-    const displayVideos = mediaVideos.length > 0
-        ? mediaVideos.map(v => ({
-            id: `media-${v.id}`,
-            title: v.title,
-            author: 'Mitaan Express',
-            time: new Date(v.createdAt).toLocaleDateString(),
-            comments: 0,
-            image: getVideoThumbnail(v.url, v.thumbnail),
-            duration: v.duration || "00:00",
-            url: v.url
-        }))
-        : videoArticles.map(a => ({
+    // Determine videos to display (Priority: Settings > Media Library > Articles)
+    const displayVideos = useMemo(() => {
+        // 1. Check for manually curated hero videos in settings
+        if (settings?.hero_videos_json) {
+            try {
+                const manualVideos = JSON.parse(settings.hero_videos_json);
+                if (Array.isArray(manualVideos) && manualVideos.length > 0) {
+                    return manualVideos.map((v, idx) => ({
+                        id: `hero-${idx}`,
+                        title: v.title,
+                        author: v.author || 'Mitaan Express',
+                        time: v.createdAt ? new Date(v.createdAt).toLocaleDateString() : 'Now',
+                        comments: 0,
+                        image: v.thumbnail || getVideoThumbnail(v.url),
+                        duration: v.duration || "00:00",
+                        url: v.url
+                    }));
+                }
+            } catch (e) {
+                console.error("Error parsing hero_videos_json", e);
+            }
+        }
+
+        // 2. Fallback to Media Library
+        if (mediaVideos.length > 0) {
+            return mediaVideos.map(v => ({
+                id: `media-${v.id}`,
+                title: v.title,
+                author: 'Mitaan Express',
+                time: new Date(v.createdAt).toLocaleDateString(),
+                comments: 0,
+                image: getVideoThumbnail(v.url, v.thumbnail),
+                duration: v.duration || "00:00",
+                url: v.url
+            }));
+        }
+
+        // 3. Fallback to Video Articles
+        return videoArticles.map(a => ({
             id: `article-${a.id}`,
             title: a.title,
             author: a.author?.name || 'Mitaan',
@@ -40,16 +69,17 @@ const VideoGalleryHero = ({ language }) => {
             duration: a.metadata?.duration || "00:00",
             url: a.videoUrl
         }));
+    }, [settings, mediaVideos, videoArticles]);
 
-    // Default fallback if both are empty
+    // Default fallback if all are empty
     const videos = displayVideos.length > 0 ? displayVideos : [{
-        id: 1,
-        title: "Business Agility in the Digital Age",
-        author: "Nisi Nyung",
-        time: "7d ago",
-        comments: 23,
-        image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=1600",
-        duration: "12:45",
+        id: 'fallback-1',
+        title: "Welcome to Mitaan Express",
+        author: "Admin",
+        time: "1d ago",
+        comments: 0,
+        image: PLACEHOLDER_IMAGE,
+        duration: "00:00",
         url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
     }];
 
@@ -94,17 +124,26 @@ const VideoGalleryHero = ({ language }) => {
                 {/* Main Video Area */}
                 <div className="lg:col-span-8 relative rounded-2xl overflow-hidden group h-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-white/5 shadow-2xl">
                     {isPlaying ? (
-                        <div className="w-full h-full relative">
-                            <iframe
-                                src={getEmbedUrl(activeVideo.url)}
-                                title={activeVideo.title}
-                                className="w-full h-full"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            />
+                        <div className="w-full h-full relative bg-black">
+                            {activeVideo.url?.match(/\.(mp4|webm|ogg|mov)$|^data:video/i) ? (
+                                <video
+                                    src={activeVideo.url}
+                                    controls
+                                    autoPlay
+                                    className="w-full h-full object-contain"
+                                />
+                            ) : (
+                                <iframe
+                                    src={getEmbedUrl(activeVideo.url)}
+                                    title={activeVideo.title}
+                                    className="w-full h-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                />
+                            )}
                             <button
                                 onClick={() => setIsPlaying(false)}
-                                className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-md transition-all z-10"
+                                className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-md transition-all z-20"
                             >
                                 <X size={20} />
                             </button>

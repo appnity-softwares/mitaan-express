@@ -49,6 +49,7 @@ export const adminTranslations = {
         aboutPage: "About Page",
         featuredPoetry: "Featured Poetry",
         navbarManager: "Navbar Menu",
+        liveNowSection: "Live Now Section",
 
         // Stats & Dashboard
         totalArticles: "Total Articles",
@@ -208,6 +209,7 @@ export const adminTranslations = {
         aboutPage: "अबाउट पेज",
         featuredPoetry: "विशेष कविताएं",
         navbarManager: "नेवबार मेन्यू",
+        liveNowSection: "लाइव न्यूज़ सेक्शन",
 
         // Stats & Dashboard
         totalArticles: "कुल लेख",

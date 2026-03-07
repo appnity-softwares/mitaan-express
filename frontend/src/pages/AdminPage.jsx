@@ -26,6 +26,7 @@ import AppnityAdmin from './admin/AppnityAdmin';
 import AdminAbout from './admin/AdminAbout';
 import AdminNavbar from './admin/AdminNavbar';
 import AdminPoetry from './admin/AdminPoetry';
+import AdminLive from './admin/AdminLive';
 
 // Placeholders
 
@@ -232,6 +233,7 @@ const AdminContent = () => {
                         <Route path="/about" element={<AdminRoute><AdminAbout /></AdminRoute>} />
                         <Route path="/navbar" element={<AdminRoute><AdminNavbar /></AdminRoute>} />
                         <Route path="/poetry" element={<AdminRoute><AdminPoetry /></AdminRoute>} />
+                        <Route path="/live" element={<AdminRoute><AdminLive /></AdminRoute>} />
                         <Route path="/pages" element={<AdminRoute><PageManager /></AdminRoute>} />
                         <Route path="/appnityadmin" element={<AdminRoute><AppnityAdmin /></AdminRoute>} />
 

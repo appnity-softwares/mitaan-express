@@ -5,7 +5,7 @@ import {
     LogOut, Globe, FolderTree, MessageSquare, BarChart3, Moon,
     Sun, Star, ChevronDown, ChevronRight, Activity, PenTool,
     Heart as HeartIcon, DollarSign, Layout, RefreshCcw, Info, Menu as MenuIcon,
-    Feather, ExternalLink, Newspaper
+    Feather, ExternalLink, Newspaper, Video
 } from 'lucide-react';
 import { fetchCategories } from '../../services/api';
 import { useSettings } from '../../hooks/useQueries';
@@ -208,6 +208,7 @@ const AdminSidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout, theme, to
                                 <SectionLabel label={t('siteCustomization')} />
                                 <SidebarLink to="/admin/about" icon={<Info size={17} />} label={t('aboutPage')} />
                                 <SidebarLink to="/admin/poetry" icon={<Feather size={17} />} label={t('featuredPoetry')} />
+                                <SidebarLink to="/admin/live" icon={<Video size={17} />} label={t('liveNowSection')} />
                                 <SidebarLink to="/admin/navbar" icon={<MenuIcon size={17} />} label={t('navbarManager')} />
                                 <SidebarLink to="/admin/ads" icon={<DollarSign size={17} />} label={t('ads')} />
                                 <SidebarLink to="/admin/settings" icon={<Settings size={17} />} label={t('settings')} />

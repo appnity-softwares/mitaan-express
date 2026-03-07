@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { fetchBlogBySlug, fetchArticles } from '../services/api';
 import AdSpace from '../components/AdSpace';
+import SEO from '../components/SEO';
 
 const BlogDetailPage = ({ language }) => {
     const { slug } = useParams();
@@ -92,13 +93,19 @@ const BlogDetailPage = ({ language }) => {
             animate={{ opacity: 1 }}
             className="min-h-screen bg-white dark:bg-[#030712]"
         >
-            <div className="max-w-4xl mx-auto px-4 py-6">
+            <SEO
+                title={`${blog.title} - Mitaan Express`}
+                description={blog.shortDescription || blog.content?.replace(/<[^>]*>/g, '').substring(0, 150)}
+                image={blog.image}
+                type="article"
+            />
+            <div className="max-w-7xl mx-auto px-4 py-8">
                 <button
                     onClick={() => navigate('/blogs')}
-                    className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-red-600 transition-colors font-medium"
+                    className="group inline-flex items-center gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 hover:border-red-600/30 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all shadow-sm hover:shadow"
                 >
-                    <ArrowLeft size={20} />
-                    {language === 'hi' ? 'वापस जाएं' : 'BACK TO BLOGS'}
+                    <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                    {language === 'hi' ? 'सभी इनसाइट्स' : 'Back to Insights'}
                 </button>
             </div>
 

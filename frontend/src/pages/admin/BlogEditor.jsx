@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Upload } from 'lucide-react';
+import { ArrowLeft, Upload, Zap, TrendingUp, Star } from 'lucide-react';
 import QuillEditor from '../../components/admin/QuillEditor';
 import { useCategories, useBlog } from '../../hooks/useQueries';
 import { useCreateMedia } from '../../hooks/useMedia';
@@ -45,6 +45,9 @@ const BlogEditorContent = () => {
         language: adminLanguage || 'en',
         tags: '',
         excerpt: '',
+        isBreaking: false,
+        isTrending: false,
+        isFeatured: false,
     });
 
     useEffect(() => {
@@ -61,13 +64,17 @@ const BlogEditorContent = () => {
                 language: article.language || 'en',
                 tags: article.tags?.map(t => t.name).join(', ') || '',
                 excerpt: article.shortDescription || '',
+                isBreaking: article.isBreaking || false,
+                isTrending: article.isTrending || false,
+                isFeatured: article.isFeatured || false,
             });
         }
     }, [article]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        const val = type === 'checkbox' ? checked : value;
+        setFormData(prev => ({ ...prev, [name]: val }));
 
         if (name === 'title' && !id) {
             const slug = value.toLowerCase()
@@ -97,9 +104,9 @@ const BlogEditorContent = () => {
                 tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
                 categoryId: parseInt(formData.categoryId) || null,
                 priority: 'NORMAL',
-                isBreaking: false,
-                isTrending: false,
-                isFeatured: false,
+                isBreaking: formData.isBreaking,
+                isTrending: formData.isTrending,
+                isFeatured: formData.isFeatured,
                 metadata: { type: 'personal-blog' }
             };
 
@@ -284,6 +291,63 @@ const BlogEditorContent = () => {
                                 className="w-full px-3 py-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-white/10 text-sm resize-none"
                             />
                         </div>
+
+                        {/* HIGHLIGHT OPTIONS */}
+                        <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-3">
+                            <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Content Placement</label>
+
+                            <label className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors border border-slate-100 dark:border-white/5">
+                                <input
+                                    type="checkbox"
+                                    name="isBreaking"
+                                    checked={formData.isBreaking}
+                                    onChange={handleChange}
+                                    className="w-5 h-5 text-red-600 rounded focus:ring-2 ring-red-600"
+                                />
+                                <div className="flex-1">
+                                    <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                        <Zap size={16} className="text-red-600" />
+                                        Breaking News
+                                    </div>
+                                    <div className="text-xs text-slate-500">Show in breaking ticker</div>
+                                </div>
+                            </label>
+
+                            <label className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors border border-slate-100 dark:border-white/5">
+                                <input
+                                    type="checkbox"
+                                    name="isTrending"
+                                    checked={formData.isTrending}
+                                    onChange={handleChange}
+                                    className="w-5 h-5 text-red-600 rounded focus:ring-2 ring-red-600"
+                                />
+                                <div className="flex-1">
+                                    <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                        <TrendingUp size={16} className="text-orange-600" />
+                                        Trending
+                                    </div>
+                                    <div className="text-xs text-slate-500">Force display in trending sections</div>
+                                </div>
+                            </label>
+
+                            <label className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors border border-slate-100 dark:border-white/5">
+                                <input
+                                    type="checkbox"
+                                    name="isFeatured"
+                                    checked={formData.isFeatured}
+                                    onChange={handleChange}
+                                    className="w-5 h-5 text-red-600 rounded focus:ring-2 ring-red-600"
+                                />
+                                <div className="flex-1">
+                                    <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                        <Star size={16} className="text-yellow-500" />
+                                        Featured
+                                    </div>
+                                    <div className="text-xs text-slate-500">Pin to featured sections</div>
+                                </div>
+                            </label>
+                        </div>
+
                     </div>
                 </div>
             </div>

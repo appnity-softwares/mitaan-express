@@ -11,6 +11,7 @@ import { useSettings } from '../hooks/useQueries';
 import AdSpace from '../components/AdSpace';
 import RelatedPosts from '../components/RelatedPosts';
 import useIsShort from '../hooks/useIsShort';
+import SEO from '../components/SEO';
 
 const ArticleDetailPage = ({ language }) => {
     const { id } = useParams();
@@ -143,6 +144,13 @@ const ArticleDetailPage = ({ language }) => {
 
     return (
         <div className="min-h-screen bg-white dark:bg-[#030712] overflow-x-hidden">
+            <SEO
+                title={`${article.title} - Mitaan Express`}
+                description={article.shortDescription || article.content?.replace(/<[^>]*>/g, '').substring(0, 150)}
+                image={article.image}
+                type="article"
+            />
+
             {/* Reading Progress Bar */}
             <div
                 className="fixed top-0 left-0 h-1 bg-red-600 z-[100] transition-all duration-300"
@@ -150,13 +158,13 @@ const ArticleDetailPage = ({ language }) => {
             />
 
             {/* Back Button */}
-            <div className="max-w-4xl mx-auto px-4 py-6">
+            <div className="max-w-7xl mx-auto px-4 py-8">
                 <button
                     onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-red-600 transition-colors font-medium"
+                    className="group inline-flex items-center gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 hover:border-red-600/30 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all shadow-sm hover:shadow"
                 >
-                    <ArrowLeft size={20} />
-                    {language === 'hi' ? 'वापस जाएं' : 'BACK TO HOME'}
+                    <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                    {language === 'hi' ? 'वापस जाएं' : 'Go Back'}
                 </button>
             </div>
 

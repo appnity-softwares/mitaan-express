@@ -13,6 +13,8 @@ import 'aos/dist/aos.css';
 import './styles/quill-custom.css';
 
 import LoadingSkeletons from './components/LoadingSkeletons';
+import SEO from './components/SEO';
+import { formatImageUrl } from './services/api';
 
 // Lazy Loaded Pages
 const HomePage = React.lazy(() => import('./pages/HomePage'));
@@ -22,6 +24,7 @@ const GalleryPage = React.lazy(() => import('./pages/GalleryPage'));
 const VideoPage = React.lazy(() => import('./pages/VideoPage'));
 const PoetryPage = React.lazy(() => import('./pages/PoetryPage'));
 const BlogsPage = React.lazy(() => import('./pages/BlogsPage'));
+const TrendingPage = React.lazy(() => import('./pages/TrendingPage'));
 const CategoryPage = React.lazy(() => import('./pages/CategoryPage'));
 const ArticleDetailPage = React.lazy(() => import('./pages/ArticleDetailPage'));
 const BlogDetailPage = React.lazy(() => import('./pages/BlogDetailPage'));
@@ -126,7 +129,7 @@ const App = () => {
     // Navigation Handler for Navbar
     const handleCategoryChange = (id) => {
         if (id === 'home') navigate('/');
-        else if (['about', 'contact', 'gallery', 'video', 'poetry', 'blogs'].includes(id)) navigate(`/${id}`);
+        else if (['about', 'contact', 'gallery', 'video', 'poetry', 'blogs', 'trending'].includes(id)) navigate(`/${id}`);
         else navigate(`/category/${id}`);
         // Menu closing is handled inside Navbar usually, or Navbar will re-render
     };
@@ -135,6 +138,11 @@ const App = () => {
 
     return (
         <ArticlesProvider language={language}>
+            <SEO
+                title={settings?.site_title ? `${settings.site_title} - Premium News` : "Mitaan Express"}
+                description={settings?.site_description || "Unbiased news, deep insights, and real-time updates from Mitaan Express."}
+                image={formatImageUrl(settings?.logo_url) || "https://mitaanexpress.com/default-og.jpg"}
+            />
             <div className={`min-h-screen ${theme} bg-white dark:bg-[#030712] text-slate-900 dark:text-white transition-colors duration-300 font-sans selection:bg-red-600 selection:text-white`}>
                 {!isAdminRoute && (
                     <Navbar
@@ -162,6 +170,7 @@ const App = () => {
                                 <Route path="/video" element={isPageEnabled('page_live_enabled') ? <VideoPage language={language} /> : <Navigate to="/" replace />} />
                                 <Route path="/poetry" element={isPageEnabled('page_poetry_enabled') ? <PoetryPage language={language} /> : <Navigate to="/" replace />} />
                                 <Route path="/blogs" element={isPageEnabled('page_blogs_enabled') ? <BlogsPage language={language} /> : <Navigate to="/" replace />} />
+                                <Route path="/trending" element={<TrendingPage language={language} />} />
                                 <Route path="/category/:categoryId" element={<CategoryPage language={language} />} />
                                 <Route path="/article/:id" element={<ArticleDetailPage language={language} />} />
                                 <Route path="/blog/:slug" element={isPageEnabled('page_blogs_enabled') ? <BlogDetailPage language={language} /> : <Navigate to="/" replace />} />

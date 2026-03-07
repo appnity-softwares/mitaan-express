@@ -122,7 +122,7 @@ const HeroSlider = ({ language }) => {
                         className="w-full h-full object-cover"
                         alt=""
                         loading="eager"
-                        fetchPriority="high"
+                        fetchpriority="high"
                         initial={{ scale: 1.2 }}
                         animate={{ scale: 1 }}
                         transition={{ duration: 8, ease: "linear" }}

@@ -14,34 +14,62 @@ const MustReadSlider = ({ language, onArticleClick }) => {
     const [mustReadArticles, setMustReadArticles] = useState([]);
 
     useEffect(() => {
-        const loadMustRead = async () => {
-            // In a real app we'd filter by views > 100 or PRIORITY=HIGH
+        const loadContent = async () => {
             try {
-                const response = await fetch(`${API_URL}/articles`);
-                if (!response.ok) throw new Error('Failed to fetch articles');
-                const data = await response.json();
+                // Fetch both articles and blogs
+                const [articlesRes, blogsRes] = await Promise.all([
+                    fetch(`${API_URL}/articles`),
+                    fetch(`${API_URL}/blogs?limit=20`)
+                ]);
 
-                if (!Array.isArray(data)) throw new Error('Invalid data format');
+                if (!articlesRes.ok || !blogsRes.ok) throw new Error('Failed to fetch content');
 
-                // Filter by Priority=HIGH or Sort by Views - let's simulate
-                const simulation = data.filter(a => a.status === 'PUBLISHED').sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 8);
+                const articlesData = await articlesRes.json();
+                const blogsDataResponse = await blogsRes.json();
+                const blogsData = blogsDataResponse.blogs || blogsDataResponse;
 
-                if (simulation.length > 0) {
-                    setMustReadArticles(simulation.map(a => ({
+                if (!Array.isArray(articlesData)) throw new Error('Articles data is not an array');
+                const finalBlogs = Array.isArray(blogsData) ? blogsData : [];
+
+                // Combine and normalize data
+                const combined = [
+                    ...articlesData.filter(a => a.status === 'PUBLISHED').map(a => ({
                         id: a.id,
-                        category: a.category?.name?.toUpperCase() || 'NEWS',
+                        type: 'article',
+                        category: a.category?.name?.toUpperCase() || (language === 'hi' ? 'समाचार' : 'NEWS'),
                         title: a.title,
                         image: a.image || 'https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&q=80&w=1000',
                         author: a.author?.name || 'Mitaan',
                         date: new Date(a.createdAt).toLocaleDateString(),
                         content: a.shortDescription || stripHtml(a.content || '').substring(0, 100),
-                        slug: a.slug
-                    })));
+                        slug: a.slug,
+                        views: a.views || 0
+                    })),
+                    ...finalBlogs.filter(b => b.status === 'PUBLISHED').map(b => ({
+                        id: b.id,
+                        type: 'blog',
+                        category: language === 'hi' ? 'ब्लॉग' : 'BLOG',
+                        title: b.title,
+                        image: b.image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1000',
+                        author: b.author?.name || 'Mitaan',
+                        date: new Date(b.createdAt).toLocaleDateString(),
+                        content: b.shortDescription || stripHtml(b.content || '').substring(0, 100),
+                        slug: b.slug,
+                        views: b.views || 0
+                    }))
+                ];
+
+                // Sort by views and take top 10
+                const sorted = combined.sort((a, b) => b.views - a.views).slice(0, 10);
+
+                if (sorted.length > 0) {
+                    setMustReadArticles(sorted);
                 } else {
                     // Fallback
                     setMustReadArticles([{
                         id: 'default',
-                        category: 'NEWS',
+                        type: 'article',
+                        category: language === 'hi' ? 'समाचार' : 'NEWS',
                         title: 'Welcome to Mitaan Express',
                         image: 'https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&q=80&w=1000',
                         author: 'Mitaan',
@@ -53,8 +81,8 @@ const MustReadSlider = ({ language, onArticleClick }) => {
                 console.error("Failed to load must read", e);
             }
         };
-        loadMustRead();
-    }, []);
+        loadContent();
+    }, [language]);
 
     const checkScroll = () => {
         if (sliderRef.current) {
@@ -127,7 +155,7 @@ const MustReadSlider = ({ language, onArticleClick }) => {
                 >
                     {mustReadArticles.map((article, index) => (
                         <motion.div
-                            key={article.id}
+                            key={`${article.type || 'article'} - ${article.id}`}
                             initial={{ opacity: 0, x: 50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             whileHover={{ scale: 1.03, y: -8 }}

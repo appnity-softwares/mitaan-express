@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-    Search, Menu, User, ChevronDown, Globe, X, Moon, Sun, ArrowRight,
-    Image as ImageIcon, Video, Info, Mail, Home, TrendingUp,
+    Search, Menu, User, ChevronDown, ChevronRight, FolderTree, Globe, X, Moon, Sun, ArrowRight,
+    Image as ImageIcon, Video, Info, Mail, Home, TrendingUp, Zap,
     ShieldAlert, Landmark, Users, Trophy, Cpu, BookOpen,
     PenTool, Film, History, Sparkles, Activity, FileText,
     Feather, Share2, Instagram, Facebook, Twitter, AlertTriangle,
     Brain, Palette, Award, Star, Sunrise, Smile, Smartphone, Code, Heart as HeartIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { fetchCategories, formatImageUrl, PLACEHOLDER_IMAGE } from '../services/api';
 import { useSettings } from '../hooks/useQueries';
 import LiveCounter from './LiveCounter';
@@ -25,6 +26,7 @@ const Navbar = ({
     toggleLanguage,
     onLanguageChange
 }) => {
+    const navigate = useNavigate();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [categories, setCategories] = useState([]);
@@ -129,7 +131,11 @@ const Navbar = ({
 
     const handleLinkClick = (id, customPath) => {
         if (customPath) {
-            window.location.href = customPath;
+            if (customPath.startsWith('/')) {
+                navigate(customPath);
+            } else {
+                window.location.href = customPath;
+            }
         } else {
             onCategoryChange(id);
         }
@@ -158,7 +164,7 @@ const Navbar = ({
                         return {
                             id: item.id || item.path || `custom-${idx}`,
                             name: language === 'hi' ? (item.nameHi || item.name) : item.name,
-                            icon: <IconComp size={20} />,
+                            icon: <IconComp size={22} />,
                             key: item.pageKey || undefined,
                             order: item.order ?? idx,
                             path: item.path || undefined,
@@ -176,10 +182,17 @@ const Navbar = ({
 
     const isDonationEnabled = !settings || settings.page_donation_enabled !== 'false';
 
+    const newsItems = useMemo(() => [
+        { id: 'trending', name: language === 'hi' ? 'ट्रेंडिंग' : 'Trending', desc: language === 'hi' ? 'लोकप्रिय समाचार' : 'Viral & Popular', icon: <TrendingUp size={16} />, path: '/trending' },
+        { id: 'video', name: language === 'hi' ? 'वीडियो' : 'Videos', desc: language === 'hi' ? 'टीम अपडेट्स' : 'Team & Field Reports', icon: <Video size={16} />, path: '/video' },
+        { id: 'insights', name: language === 'hi' ? 'इनसाइट्स' : 'Insights', desc: language === 'hi' ? 'विशेष विश्लेषण' : 'News & Analysis', icon: <FileText size={16} />, path: '/blogs' },
+        { id: 'gallery', name: language === 'hi' ? 'गैलरी' : 'Events', desc: language === 'hi' ? 'हमारी गतिविधियां' : 'Press & Meetups', icon: <ImageIcon size={16} />, path: '/gallery' },
+    ], [language]);
+
     const socialLinks = [
-        { name: 'Twitter', icon: <Twitter size={18} />, href: settings?.social_twitter || '#' },
-        { name: 'Facebook', icon: <Facebook size={18} />, href: settings?.social_facebook || '#' },
-        { name: 'Instagram', icon: <Instagram size={18} />, href: settings?.social_instagram || '#' },
+        { name: 'Twitter', icon: <Twitter size={20} />, href: settings?.social_twitter || '#' },
+        { name: 'Facebook', icon: <Facebook size={20} />, href: settings?.social_facebook || '#' },
+        { name: 'Instagram', icon: <Instagram size={20} />, href: settings?.social_instagram || '#' },
     ];
 
     return (
@@ -197,53 +210,141 @@ const Navbar = ({
                         className={`flex items-center gap-2 group transition-colors shrink-0 ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
                         aria-label="Toggle Menu"
                     >
-                        <div className="relative w-5 lg:w-6 h-5 flex flex-col justify-center gap-1.5 shrink-0">
+                        <div className="relative w-6 lg:w-7 h-6 flex flex-col justify-center gap-1.5 shrink-0">
                             <span className={`h-0.5 w-full bg-current transition-transform duration-500 rounded-full ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
                             <span className={`h-0.5 w-3/4 bg-current transition-opacity duration-300 rounded-full ${isMenuOpen ? 'opacity-0' : ''}`} />
                             <span className={`h-0.5 w-full bg-current transition-transform duration-500 rounded-full ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
                         </div>
-                        <span className="hidden xl:block text-[9px] font-black uppercase tracking-[0.2em] group-hover:opacity-80 transition-all">
+                        <span className="hidden xl:block text-[11px] font-black uppercase tracking-[0.2em] group-hover:opacity-80 transition-all">
                             {language === 'hi' ? (isMenuOpen ? 'बंद करें' : 'मेन्यू') : (isMenuOpen ? 'Close' : 'Menu')}
                         </span>
                     </button>
 
                     {/* Desktop Quick Nav Items */}
                     <div className="hidden lg:flex items-center gap-1 border-l border-white/20 pl-4 ml-1">
-                        {mainPages.slice(0, 5).map((page) => (
+                        {/* News Dropdown */}
+                        <div className="relative group/news">
                             <button
-                                key={page.id}
-                                onClick={() => handleLinkClick(page.id, page.path)}
-                                className={`flex flex-col items-center justify-center w-9 h-9 rounded-xl transition-all hover:bg-white/10 group relative ${activeCategory === page.id ? 'text-white' : (isNavbarSolid ? 'text-white/70' : 'text-red-600/70')}`}
-                                title={page.name}
+                                className={`flex items-center h-11 px-3 rounded-xl transition-all hover:bg-white/10 group relative ${activeCategory === 'news' ? 'text-white' : (isNavbarSolid ? 'text-white' : 'text-red-600')}`}
                             >
-                                <div className={`transition-transform group-hover:scale-110 ${activeCategory === page.id ? 'scale-110' : ''}`}>
-                                    {React.cloneElement(page.icon, { size: 18 })}
-                                </div>
-                                {activeCategory === page.id && (
-                                    <motion.div layoutId="nav-pill" className="absolute -bottom-1 w-1 h-1 bg-current rounded-full" />
-                                )}
+                                <TrendingUp size={20} className="shrink-0" />
+                                <span className="ml-2 text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap">
+                                    {language === 'hi' ? 'समाचार' : 'NEWS'}
+                                </span>
+                                <ChevronDown size={10} className="ml-1 opacity-50 group-hover/news:rotate-180 transition-transform" />
                             </button>
-                        ))}
+                            <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover/news:opacity-100 group-hover/news:visible transition-all duration-300 z-[110]">
+                                <div className="bg-white dark:bg-slate-900 shadow-2xl rounded-3xl border border-slate-100 dark:border-white/5 p-3 min-w-[220px] space-y-1">
+                                    <p className="text-[10px] font-black text-red-600 uppercase tracking-[0.2em] mb-3 px-3 pt-2">
+                                        {language === 'hi' ? 'लेटेस्ट न्यूज़' : 'Latest News Feed'}
+                                    </p>
+                                    {newsItems.map(item => (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => handleLinkClick(item.id, item.path)}
+                                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-left group/sub"
+                                        >
+                                            <div className="w-10 h-10 flex items-center justify-center bg-slate-100 dark:bg-white/5 rounded-xl text-slate-500 group-hover/sub:text-red-600 group-hover/sub:bg-red-50 dark:group-hover/sub:bg-red-900/20 transition-all">
+                                                {item.icon}
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-widest">{item.name}</p>
+                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">{item.desc}</p>
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Categories Dropdown */}
+                        <div className="relative group/categories">
+                            <button
+                                className={`flex items-center h-11 px-3 rounded-xl transition-all hover:bg-white/10 group relative ${activeCategory === 'categories' ? 'text-white' : (isNavbarSolid ? 'text-white' : 'text-red-600')}`}
+                            >
+                                <FolderTree size={20} className="shrink-0" />
+                                <span className="ml-2 text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap">
+                                    {language === 'hi' ? 'श्रेणियां' : 'CATEGORIES'}
+                                </span>
+                                <ChevronDown size={10} className="ml-1 opacity-50 group-hover/categories:rotate-180 transition-transform" />
+                            </button>
+
+                            {/* Dropdown Menu */}
+                            <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover/categories:opacity-100 group-hover/categories:visible transition-all duration-300 z-[110]">
+                                <div className="bg-white dark:bg-slate-900 shadow-2xl rounded-3xl border border-slate-100 dark:border-white/5 p-4 min-w-[260px] max-h-[80vh] overflow-y-auto sidebar-scroll">
+                                    <p className="text-[10px] font-black text-red-600 uppercase tracking-[0.2em] mb-4 px-2">
+                                        {language === 'hi' ? 'विभाग' : 'News Departments'}
+                                    </p>
+                                    <div className="grid grid-cols-1 gap-1">
+                                        {categoryTree.map((parent) => (
+                                            <div key={parent.id} className="group/item">
+                                                <button
+                                                    onClick={() => handleLinkClick(parent.slug || parent.id)}
+                                                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-left"
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-1.5 h-4 rounded-full" style={{ backgroundColor: parent.color || '#ef4444' }}></div>
+                                                        <span className="text-sm font-black text-slate-700 dark:text-slate-200">
+                                                            {language === 'hi' ? parent.nameHi : parent.name}
+                                                        </span>
+                                                    </div>
+                                                    {parent.children?.length > 0 && <ChevronRight size={14} className="text-slate-300" />}
+                                                </button>
+
+                                                {/* Subcategories (Hover side) */}
+                                                {parent.children?.length > 0 && (
+                                                    <div className="absolute left-full top-0 ml-2 opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200">
+                                                        <div className="bg-white dark:bg-slate-900 shadow-2xl rounded-3xl border border-slate-100 dark:border-white/5 p-3 min-w-[200px] space-y-1">
+                                                            {parent.children.map(child => (
+                                                                <button
+                                                                    key={child.id}
+                                                                    onClick={() => handleLinkClick(child.slug || child.id)}
+                                                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-left"
+                                                                >
+                                                                    <div className="text-slate-400">
+                                                                        {iconMap[child.icon] || <Star size={14} />}
+                                                                    </div>
+                                                                    <span className="text-xs font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                                                                        {language === 'hi' ? child.nameHi : child.name}
+                                                                    </span>
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Quick Icons (Home & About) */}
+                        <div className="flex items-center gap-0.5 ml-2 border-l border-white/20 pl-2">
+                            {mainPages.slice(0, 2).map((page) => (
+                                <button
+                                    key={page.id}
+                                    onClick={() => handleLinkClick(page.id, page.path)}
+                                    className={`flex items-center justify-center w-11 h-11 rounded-xl transition-all hover:bg-white/10 group relative ${activeCategory === page.id ? 'text-white' : (isNavbarSolid ? 'text-white' : 'text-red-600')}`}
+                                    title={page.name}
+                                >
+                                    <div className="transition-transform group-hover:scale-110">
+                                        {React.cloneElement(page.icon, { size: 21 })}
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
                 {/* Center Section: Logo/Title (Centered on all screens) */}
                 <div className="absolute left-1/2 -translate-x-1/2 flex justify-center z-0 w-full pointer-events-none">
                     <button onClick={() => handleLinkClick('home')} className="group flex items-center gap-2 lg:gap-3 pointer-events-auto max-w-[60%] sm:max-w-none">
-                        <img
-                            src={formatImageUrl(settings?.logo_url) || logo}
-                            alt="Mitaan Logo"
-                            className="w-7 h-7 sm:w-8 sm:h-8 lg:w-11 lg:h-11 object-contain shadow-lg shadow-black/10 rounded-xl bg-white shrink-0 transition-transform group-hover:scale-105"
-                            onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = logo;
-                            }}
-                        />
-                        <div className="flex flex-col items-start leading-tight">
-                            <h1 className={`text-sm sm:text-base lg:text-2xl font-black tracking-tighter font-serif transition-colors drop-shadow-sm ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
+                        <div className="flex flex-col items-center leading-tight">
+                            <h1 className={`text-lg sm:text-xl lg:text-3xl font-black tracking-tighter font-serif transition-colors drop-shadow-sm ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
                                 {settings?.site_title || 'Mitaan Express'}
                             </h1>
-                            <span className={`hidden lg:block text-[8px] font-bold uppercase tracking-[0.3em] opacity-70 ${isNavbarSolid ? 'text-white' : 'text-slate-500'}`}>
+                            <span className={`hidden lg:block text-[9px] font-black uppercase tracking-[0.4em] opacity-80 ${isNavbarSolid ? 'text-white' : 'text-slate-500'}`}>
                                 {language === 'hi' ? 'निष्पक्ष समाचार' : 'UNBIASED NEWS'}
                             </span>
                         </div>

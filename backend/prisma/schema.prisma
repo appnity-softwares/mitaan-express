@@ -137,6 +137,11 @@ model Blog {
   published        Boolean       @default(false)
   views            Int           @default(0)
   
+  // Options
+  isBreaking       Boolean       @default(false)
+  isTrending       Boolean       @default(false)
+  isFeatured       Boolean       @default(false)
+  
   // Dynamic fields
   metadata         Json?
 

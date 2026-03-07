@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Zap } from 'lucide-react';
 import HeroSlider from '../components/HeroSlider';
+import FeaturedLatest from '../components/FeaturedLatest';
 import ArticleCard from '../components/ArticleCard';
 import PromotionalBanner from '../components/PromotionalBanner';
 import Sidebar from '../components/Sidebar';
@@ -34,8 +35,12 @@ const HomePage = ({ language }) => {
         slug: a.slug
     }));
 
-    const handleArticleClick = (article) => {
-        navigate(`/article/${article.id}`);
+    const handleArticleClick = (item) => {
+        if (item.type === 'blog' || !item.id) {
+            navigate(`/blog/${item.slug || item.id}`);
+        } else {
+            navigate(`/article/${item.id}`);
+        }
     };
 
     const handleCategoryChange = (category) => {
@@ -107,6 +112,11 @@ const HomePage = ({ language }) => {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <AdSpace position="homepage_top" />
                     </div>
+
+                    {/* NEW: Featured Latest Section */}
+                    {published.length > 0 && (
+                        <FeaturedLatest language={language} items={published} />
+                    )}
 
                     {/* Main Grid: Centered Content */}
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-8 lg:gap-20">

@@ -17,25 +17,54 @@ exports.getSettings = async (req, res) => {
 
 const { uploadToR2, isR2Enabled } = require('../utils/r2');
 
+/**
+ * Recursively search and upload base64 images/videos to R2 in an object/array
+ */
+const uploadNestedBase64 = async (data, parentKey = '') => {
+    if (typeof data === 'string' && data.startsWith('data:')) {
+        const typeMatch = data.match(/^data:([^;]+);base64/);
+        const type = typeMatch ? typeMatch[1] : 'image/jpeg';
+        const extension = type.split('/')[1] || 'jpg';
+        const fileName = `setting-${parentKey}-${Date.now()}.${extension}`;
+        console.log(`☁️ Uploading ${type} to R2...`);
+        return await uploadToR2(data, fileName, type);
+    } else if (Array.isArray(data)) {
+        return await Promise.all(data.map((item, idx) => uploadNestedBase64(item, `${parentKey}-${idx}`)));
+    } else if (typeof data === 'object' && data !== null) {
+        const result = {};
+        for (const key of Object.keys(data)) {
+            result[key] = await uploadNestedBase64(data[key], `${parentKey}-${key}`);
+        }
+        return result;
+    }
+    return data;
+};
+
 exports.updateSettings = async (req, res) => {
     try {
         const updates = req.body; // Expect { "site_title": "New Title", ... }
 
-        // Optimize: Upload base64 images to R2 if found in settings
         const processedUpdates = { ...updates };
         if (isR2Enabled) {
             for (const key of Object.keys(processedUpdates)) {
-                const value = processedUpdates[key];
-                if (typeof value === 'string' && value.startsWith('data:image')) {
-                    console.log(`☁️ Setting '${key}' contains base64 image. Uploading to R2...`);
-                    try {
-                        const fileName = `setting-${key}-${Date.now()}.jpg`;
-                        const r2Url = await uploadToR2(value, fileName);
-                        processedUpdates[key] = r2Url;
-                        console.log(`✅ Setting '${key}' uploaded to R2: ${r2Url}`);
-                    } catch (uploadError) {
-                        console.error(`❌ Failed to upload setting '${key}' to R2:`, uploadError);
-                        // Fallback: keep original value (base64) if R2 fails
+                let value = processedUpdates[key];
+
+                // Handle simple base64 (Logo, etc) or JSON strings (hero_videos_json, etc)
+                if (typeof value === 'string') {
+                    if (value.startsWith('data:')) {
+                        try {
+                            processedUpdates[key] = await uploadNestedBase64(value, key);
+                        } catch (err) {
+                            console.error(`Failed to upload ${key}:`, err);
+                        }
+                    } else if (value.startsWith('[') || value.startsWith('{')) {
+                        try {
+                            const parsed = JSON.parse(value);
+                            const processedJson = await uploadNestedBase64(parsed, key);
+                            processedUpdates[key] = JSON.stringify(processedJson);
+                        } catch (e) {
+                            // Not JSON or parse error, skip
+                        }
                     }
                 }
             }
