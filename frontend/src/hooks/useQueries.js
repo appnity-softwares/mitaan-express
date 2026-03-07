@@ -12,6 +12,8 @@ import {
     API_URL,
 } from '../services/api';
 
+const EMPTY_OBJECT = {};
+
 // ============================================
 // PUBLIC QUERIES (No Auth Required)
 // ============================================
@@ -20,7 +22,7 @@ import {
  * Fetch all articles with optional filters
  * @param {Object} filters - { category, search, author, lang, status }
  */
-export const useArticles = (filters = {}) => {
+export const useArticles = (filters = EMPTY_OBJECT) => {
     return useQuery({
         queryKey: queryKeys.articles.list(filters),
         queryFn: () => fetchArticles(
@@ -68,7 +70,7 @@ export const useCategories = () => {
 /**
  * Fetch all blogs with optional filters
  */
-export const useBlogs = (filters = {}) => {
+export const useBlogs = (filters = EMPTY_OBJECT) => {
     return useQuery({
         queryKey: queryKeys.blogs.list(filters),
         queryFn: () => fetchBlogs(
@@ -134,7 +136,7 @@ export const useAdminStats = () => {
 /**
  * Fetch admin articles (all statuses)
  */
-export const useAdminArticles = (filters = {}) => {
+export const useAdminArticles = (filters = EMPTY_OBJECT) => {
     return useQuery({
         queryKey: ['admin', 'articles', filters],
         queryFn: () => fetchArticles(
@@ -151,7 +153,7 @@ export const useAdminArticles = (filters = {}) => {
 /**
  * Fetch admin blogs (all statuses)
  */
-export const useAdminBlogs = (filters = {}) => {
+export const useAdminBlogs = (filters = EMPTY_OBJECT) => {
     return useQuery({
         queryKey: ['admin', 'blogs', filters],
         queryFn: () => fetchBlogs(

@@ -13,12 +13,15 @@ const MyBlogs = () => {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user') || '{}');
 
+    // Memoize filters to prevent infinite refetching loops
+    const blogsFilters = useMemo(() => ({ author: user.id }), [user.id]);
+
     // TanStack Query Hook
     const {
         data: blogsData,
         isLoading: loading,
         refetch: loadData
-    } = useAdminBlogs({ author: user.id });
+    } = useAdminBlogs(blogsFilters);
 
     const articles = Array.isArray(blogsData) ? blogsData : (blogsData?.blogs || []);
 

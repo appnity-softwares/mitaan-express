@@ -54,8 +54,16 @@ const BlogsPage = ({ language }) => {
         setPage(1);
     }, [language]);
 
+    // Memoize the filters object to prevent infinite refetching loops
+    const blogsFilters = useMemo(() => ({
+        status: 'PUBLISHED',
+        page,
+        limit,
+        lang: language
+    }), [page, limit, language]);
+
     // TanStack Query Hook — pass language to backend for server-side filtering
-    const { data, isLoading: loading } = useBlogs({ status: 'PUBLISHED', page, limit, lang: language });
+    const { data, isLoading: loading } = useBlogs(blogsFilters);
 
     // Adapted to new backend response format
     const articles = data?.blogs || [];
