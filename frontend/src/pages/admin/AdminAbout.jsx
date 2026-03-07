@@ -184,11 +184,11 @@ const AdminAbout = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-500">Title (EN)</label>
-                                    <input type="text" name="about_hero_title_en" value={v('about_hero_title_en')} onChange={handleChange} className="w-full p-3 bg-slate-50 dark:bg-slate-900 rounded-lg outline-none text-sm dark:text-white border border-slate-200 dark:border-slate-700" placeholder="The Voice of <br/> Truth" />
+                                    <textarea name="about_hero_title_en" value={v('about_hero_title_en')} onChange={handleChange} className="w-full p-3 bg-slate-50 dark:bg-slate-900 rounded-lg outline-none text-sm dark:text-white border border-slate-200 dark:border-slate-700 h-20 resize-none" placeholder="The Voice of&#10;Truth" />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-500">Title (HI)</label>
-                                    <input type="text" name="about_hero_title_hi" value={v('about_hero_title_hi')} onChange={handleChange} className="w-full p-3 bg-slate-50 dark:bg-slate-900 rounded-lg outline-none text-sm dark:text-white border border-slate-200 dark:border-slate-700" placeholder="सच्चाई की <br/> आवाज़" />
+                                    <textarea name="about_hero_title_hi" value={v('about_hero_title_hi')} onChange={handleChange} className="w-full p-3 bg-slate-50 dark:bg-slate-900 rounded-lg outline-none text-sm dark:text-white border border-slate-200 dark:border-slate-700 h-20 resize-none" placeholder="सच्चाई की&#10;आवाज़" />
                                 </div>
                             </div>
 
@@ -249,11 +249,11 @@ const AdminAbout = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-slate-500">CTA Title (EN)</label>
-                                <input type="text" name="about_cta_title_en" value={v('about_cta_title_en')} onChange={handleChange} className="w-full p-3 bg-slate-50 dark:bg-slate-900 rounded-lg outline-none text-sm dark:text-white border border-slate-200 dark:border-slate-700" placeholder="Join Us in <br/> Standing with Truth" />
+                                <textarea name="about_cta_title_en" value={v('about_cta_title_en')} onChange={handleChange} className="w-full p-3 bg-slate-50 dark:bg-slate-900 rounded-lg outline-none text-sm dark:text-white border border-slate-200 dark:border-slate-700 h-20 resize-none" placeholder="Join Us in&#10;Standing with Truth" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-slate-500">CTA Title (HI)</label>
-                                <input type="text" name="about_cta_title_hi" value={v('about_cta_title_hi')} onChange={handleChange} className="w-full p-3 bg-slate-50 dark:bg-slate-900 rounded-lg outline-none text-sm dark:text-white border border-slate-200 dark:border-slate-700" />
+                                <textarea name="about_cta_title_hi" value={v('about_cta_title_hi')} onChange={handleChange} className="w-full p-3 bg-slate-50 dark:bg-slate-900 rounded-lg outline-none text-sm dark:text-white border border-slate-200 dark:border-slate-700 h-20 resize-none" placeholder="सत्य के साथ&#10;खड़े रहें" />
                             </div>
                         </div>
 

@@ -119,7 +119,7 @@ const AboutPage = ({ language, previewSettings }) => {
                             {language === 'hi' ? 'मितान एक्सप्रेस के बारे में' : 'ABOUT MITAAN EXPRESS'}
                         </motion.span>
 
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white font-serif tracking-tighter leading-[1.1]" dangerouslySetInnerHTML={{ __html: language === 'hi' ? (settings.about_hero_title_hi || 'सच्चाई की <br/><span class="bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">आवाज़</span>') : (settings.about_hero_title_en || 'The Voice of <br/><span class="bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Truth</span>') }}></h1>
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white font-serif tracking-tighter leading-[1.1]" dangerouslySetInnerHTML={{ __html: language === 'hi' ? (settings.about_hero_title_hi?.replace(/\n/g, '<br/>') || 'सच्चाई की <br/><span class="bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">आवाज़</span>') : (settings.about_hero_title_en?.replace(/\n/g, '<br/>') || 'The Voice of <br/><span class="bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Truth</span>') }}></h1>
 
                         <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed">
                             {language === 'hi'
@@ -346,7 +346,7 @@ const AboutPage = ({ language, previewSettings }) => {
                     </div>
 
                     <div className="relative z-10 text-center space-y-8">
-                        <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white font-serif tracking-tighter leading-tight" dangerouslySetInnerHTML={{ __html: language === 'hi' ? (settings.about_cta_title_hi || 'सत्य के साथ <br/> खड़े रहें') : (settings.about_cta_title_en || 'Join Us in <br/> Standing with Truth') }}></h2>
+                        <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white font-serif tracking-tighter leading-tight" dangerouslySetInnerHTML={{ __html: language === 'hi' ? (settings.about_cta_title_hi?.replace(/\n/g, '<br/>') || 'सत्य के साथ <br/> खड़े रहें') : (settings.about_cta_title_en?.replace(/\n/g, '<br/>') || 'Join Us in <br/> Standing with Truth') }}></h2>
 
                         <p className="text-white/90 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
                             {language === 'hi'
