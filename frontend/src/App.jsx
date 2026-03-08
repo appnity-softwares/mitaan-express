@@ -33,6 +33,8 @@ const LoginPage = React.lazy(() => import('./pages/LoginPage'));
 const SignupPage = React.lazy(() => import('./pages/SignupPage'));
 const DonationPage = React.lazy(() => import('./pages/DonationPage'));
 
+const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
+
 // Static Pages
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
@@ -178,6 +180,7 @@ const App = () => {
                                 <Route path="/signup" element={<SignupPage />} />
                                 <Route path="/donate" element={isPageEnabled('page_donation_enabled') ? <DonationPage language={language} toggleLanguage={toggleLanguage} /> : <Navigate to="/" replace />} />
                                 <Route path="/admin/*" element={<AdminPage />} />
+                                <Route path="*" element={<NotFoundPage />} />
                             </Routes>
                         </AnimatePresence>
                     </React.Suspense>

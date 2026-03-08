@@ -29,11 +29,11 @@ class GlobalErrorBoundary extends React.Component {
                             </div>
 
                             <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight font-serif">
-                                Oops! Something's <span className="text-red-600 italic">Off.</span>
+                                Oops! Something went <span className="text-red-600 italic">wrong.</span>
                             </h1>
 
                             <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                                We've encountered an unexpected issue while loading this page. Our team has been notified.
+                                An unexpected error occurred while loading this page. We apologize for the inconvenience. Please refresh or return to the homepage.
                             </p>
                         </div>
 
