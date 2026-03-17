@@ -6,6 +6,7 @@ import { Moon, Sun } from 'lucide-react';
 const AdminLogin = ({ setToken }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -37,7 +38,7 @@ const AdminLogin = ({ setToken }) => {
         setError('');
 
         try {
-            const data = await loginUser(email, password);
+            const data = await loginUser(email, password, rememberMe);
             if (data.token) {
                 localStorage.setItem('token', data.token); // Securely store
                 localStorage.setItem('user', JSON.stringify(data.user));
@@ -51,7 +52,7 @@ const AdminLogin = ({ setToken }) => {
     };
 
     return (
-        <div className={`min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300`}>
+        <div className={`min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300 px-4`}>
             <div className="absolute top-6 right-6">
                 <button onClick={toggleTheme} className="p-3 bg-white dark:bg-slate-800 rounded-full shadow-lg text-slate-900 dark:text-white hover:scale-110 transition-transform">
                     {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
@@ -94,6 +95,20 @@ const AdminLogin = ({ setToken }) => {
                             placeholder="••••••••"
                             required
                         />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                        <label className="flex items-center gap-2 cursor-pointer group">
+                            <input
+                                type="checkbox"
+                                checked={rememberMe}
+                                onChange={e => setRememberMe(e.target.checked)}
+                                className="w-5 h-5 rounded border-slate-300 text-red-600 focus:ring-red-600 cursor-pointer accent-red-600"
+                            />
+                            <span className="text-sm font-medium text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                                Remember Me
+                            </span>
+                        </label>
                     </div>
                 </div>
 

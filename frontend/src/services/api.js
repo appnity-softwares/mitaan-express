@@ -3,6 +3,32 @@ export const SOCKET_URL = API_URL.replace('/api', '');
 export const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1585829365294-bb8c6f045b88?auto=format&fit=crop&q=80&w=800';
 
 /**
+ * Helper to handle API responses, parse JSON safely, and extract errors
+ * @param {Response} response - Fetch API Response object
+ */
+const handleResponse = async (response) => {
+    const contentType = response.headers.get('content-type');
+    let data;
+
+    if (contentType && contentType.includes('application/json')) {
+        try {
+            data = await response.json();
+        } catch (e) {
+            data = null;
+        }
+    } else {
+        data = await response.text();
+    }
+
+    if (!response.ok) {
+        const errorMsg = (data && data.error) || (typeof data === 'string' && data && !data.includes('<!DOCTYPE')) ? data : null;
+        throw new Error(errorMsg || `Error ${response.status}: ${response.statusText}`);
+    }
+
+    return data;
+};
+
+/**
  * Formats image URLs to handle local assets, R2 URLs, and base64
  * @param {string} url - The image URL or path
  * @returns {string} - Formatted URL
@@ -57,24 +83,14 @@ export const fetchArticleBySlug = async (slug) => {
     }
 };
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (email, password, rememberMe) => {
     try {
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email, password, rememberMe }),
         });
-
-        if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Login failed');
-            } else {
-                throw new Error(`Login failed: Server returned ${response.status} ${response.statusText}`);
-            }
-        }
-        return await response.json();
+        return await handleResponse(response);
     } catch (error) {
         console.error('Login error:', error);
         throw error;
@@ -104,8 +120,7 @@ export const fetchStats = async (token) => {
         const response = await fetch(`${API_URL}/admin/stats`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (!response.ok) throw new Error('Failed to fetch stats');
-        return await response.json();
+        return await handleResponse(response);
     } catch (error) {
         console.error('Stats error:', error);
         return null;
@@ -122,11 +137,7 @@ export const createArticle = async (token, formData) => {
             },
             body: JSON.stringify(formData),
         });
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error || 'Failed to create article');
-        }
-        return await response.json();
+        return await handleResponse(response);
     } catch (error) {
         throw error;
     }
@@ -142,8 +153,7 @@ export const updateArticle = async (token, id, formData) => {
             },
             body: JSON.stringify(formData),
         });
-        if (!response.ok) throw new Error('Failed to update article');
-        return await response.json();
+        return await handleResponse(response);
     } catch (error) {
         throw error;
     }
@@ -157,7 +167,7 @@ export const deleteArticle = async (token, id) => {
                 'Authorization': `Bearer ${token}`
             }
         });
-        if (!response.ok) throw new Error('Failed to delete article');
+        await handleResponse(response);
         return true;
     } catch (error) {
         throw error;
@@ -174,9 +184,9 @@ export const fetchBlogs = async (search = '', author = '', lang = '', status = '
         if (status) params.append('status', status);
         if (page) params.append('page', page);
         if (limit) params.append('limit', limit);
-        const response = await fetch(`${API_URL}/blogs?${params.toString()}`);
-        if (!response.ok) throw new Error('Failed to fetch blogs');
-        return await response.json();
+        const url = `${API_URL}/blogs?${params.toString()}`;
+        const response = await fetch(url);
+        return await handleResponse(response);
     } catch (error) {
         console.error('Error fetching blogs:', error);
         return { blogs: [], pagination: { total: 0, pages: 0, page: 1, limit: 10 } };
@@ -186,8 +196,7 @@ export const fetchBlogs = async (search = '', author = '', lang = '', status = '
 export const fetchBlogBySlug = async (slug) => { // Added for editing
     try {
         const response = await fetch(`${API_URL}/blogs/${slug}`);
-        if (!response.ok) throw new Error('Failed to fetch blog');
-        return await response.json();
+        return await handleResponse(response);
     } catch (error) {
         return null;
     }
@@ -204,11 +213,7 @@ export const createBlog = async (token, formData) => {
             },
             body: JSON.stringify(formData),
         });
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to create blog');
-        }
-        return await response.json();
+        return await handleResponse(response);
     } catch (error) {
         throw error;
     }
@@ -224,11 +229,7 @@ export const updateBlog = async (token, id, formData) => {
             },
             body: JSON.stringify(formData),
         });
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error || 'Failed to update blog');
-        }
-        return await response.json();
+        return await handleResponse(response);
     } catch (error) {
         throw error;
     }
@@ -268,8 +269,7 @@ export const updateSettings = async (token, settings) => {
             },
             body: JSON.stringify(settings),
         });
-        if (!response.ok) throw new Error('Failed to update settings');
-        return await response.json();
+        return await handleResponse(response);
     } catch (error) {
         throw error;
     }

@@ -3,8 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 exports.login = async (req, res) => {
-    const { email, password } = req.body;
-    console.log('Login attempt for:', email);
+    const { email, password, rememberMe } = req.body;
+    console.log('Login attempt for:', email, 'Remember Me:', rememberMe);
     try {
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
@@ -21,10 +21,13 @@ exports.login = async (req, res) => {
 
         console.log('Login successful for:', email);
 
+        // Set expiration based on rememberMe
+        const expiresIn = rememberMe ? '30d' : '24h';
+
         const token = jwt.sign(
             { id: user.id, email: user.email, role: user.role },
             process.env.JWT_SECRET,
-            { expiresIn: '24h' }
+            { expiresIn }
         );
 
         res.json({
