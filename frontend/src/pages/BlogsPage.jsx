@@ -1,47 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CalendarDays, Clock, User, ArrowRight, Share2, Filter, Loader, ArrowUpRight, ChevronRight } from 'lucide-react';
 import { stripHtml } from '../utils/textUtils';
-import { fetchBlogs } from '../services/api';
-import AdSpace from '../components/AdSpace';
+
 import Sidebar from '../components/Sidebar';
 import { useIsShort } from '../hooks/useIsShort';
-
-const blogPosts = [
-    {
-        title: 'Modern Journalism in the Age of AI',
-        excerpt: 'How artificial intelligence is changing the way news is gathered and reported globally...',
-        author: 'Amitabh Kant',
-        date: 'March 1, 2025',
-        category: 'Digital',
-        image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800'
-    },
-    {
-        title: 'The Sustainable Living Guide',
-        excerpt: 'Small changes in your daily routine that can lead to a massive impact on the environment...',
-        author: 'Priya Verma',
-        date: 'Feb 28, 2025',
-        category: 'Lifestyle',
-        image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb773b09?auto=format&fit=crop&q=80&w=800'
-    },
-    {
-        title: 'Future of Remote Tech Work',
-        excerpt: 'Why distributed teams are becoming the norm for top silicon valley firms in 2025...',
-        author: 'Rajesh Sharma',
-        date: 'Feb 25, 2025',
-        category: 'Work',
-        image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800'
-    },
-    {
-        title: 'Culinary Traditions of India',
-        excerpt: 'Exploring the diverse spices and ancient techniques of regional Indian cooking...',
-        author: 'Sanjeev Kapoor',
-        date: 'Feb 22, 2025',
-        category: 'Food',
-        image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?auto=format&fit=crop&q=80&w=800'
-    }
-];
 
 import { useBlogs } from '../hooks/useQueries';
 

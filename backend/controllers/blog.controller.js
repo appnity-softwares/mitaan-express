@@ -8,7 +8,7 @@ exports.getAllBlogs = async (req, res) => {
         const where = {};
 
         if (lang) where.language = lang;
-        if (author) where.authorId = parseInt(author);
+        if (author && !isNaN(parseInt(author))) where.authorId = parseInt(author);
         if (status) where.status = status;
         if (search) {
             where.OR = [
@@ -42,8 +42,8 @@ exports.getAllBlogs = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching blogs:', error);
-        res.status(500).json({ error: 'Failed to fetch blogs' });
+        console.error('Fetch Blogs Error:', error);
+        res.status(500).json({ error: 'Failed to fetch blogs', details: error.message });
     }
 };
 

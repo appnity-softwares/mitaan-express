@@ -8,8 +8,12 @@ exports.getAllArticles = async (req, res) => {
         if (category) where.category = { slug: category };
         if (tag) where.tags = { some: { slug: tag } };
         if (status) where.status = status;
-        if (author) where.authorId = parseInt(author);
-        if (lang) where.language = lang; // Filter by language (en/hi)
+        if (author && !isNaN(parseInt(author))) {
+            where.authorId = parseInt(author);
+        }
+        if (lang) where.language = lang; 
+
+        // ... rest of search logic ...
         if (search) {
             where.OR = [
                 { title: { contains: search, mode: 'insensitive' } },
@@ -59,8 +63,8 @@ exports.getAllArticles = async (req, res) => {
         });
         res.json(articles);
     } catch (error) {
-        console.error('Fetch error:', error);
-        res.status(500).json({ error: 'Failed to fetch articles', details: error.message, stack: error.stack });
+        console.error('Fetch Articles Error:', error);
+        res.status(500).json({ error: 'Failed to fetch articles', details: error.message });
     }
 };
 
