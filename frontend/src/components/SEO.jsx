@@ -4,11 +4,12 @@ import { Helmet } from 'react-helmet-async';
 const SEO = ({
     title = 'Mitaan Express - Premium News & Magazine',
     description = 'Unbiased news, deep insights, and real-time updates from Mitaan Express.',
-    image = 'https://mitaanexpress.com/default-og.jpg', // Better if we can dynamically get from settings, we'll try our best
+    image = 'https://mitaanexpress.com/default-og.jpg',
     url = typeof window !== 'undefined' ? window.location.href : 'https://mitaanexpress.com',
     type = 'website',
     author = 'Mitaan Express',
-    keywords = 'news, magazine, india news, latest news'
+    keywords = 'news, magazine, india news, latest news',
+    schemaData = null
 }) => {
     return (
         <Helmet>
@@ -18,6 +19,7 @@ const SEO = ({
             <meta name="description" content={description} />
             <meta name="keywords" content={keywords} />
             <meta name="author" content={author} />
+            <link rel="canonical" href={url} />
 
             {/* Open Graph / Facebook / WhatsApp */}
             <meta property="og:type" content={type} />
@@ -33,6 +35,13 @@ const SEO = ({
             <meta property="twitter:title" content={title} />
             <meta property="twitter:description" content={description} />
             <meta property="twitter:image" content={image} />
+
+            {/* Structured Data */}
+            {schemaData && (
+                <script type="application/ld+json">
+                    {JSON.stringify(schemaData)}
+                </script>
+            )}
 
             {/* Theme & Icons */}
             <meta name="theme-color" content="#dc2626" />

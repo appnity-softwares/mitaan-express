@@ -111,6 +111,28 @@ const BlogDetailPage = ({ language }) => {
                 description={blog.shortDescription || blog.content?.replace(/<[^>]*>/g, '').substring(0, 150)}
                 image={blog.image}
                 type="article"
+                schemaData={{
+                    "@context": "https://schema.org",
+                    "@type": "BlogPosting",
+                    "headline": blog.title,
+                    "description": blog.shortDescription || blog.content?.replace(/<[^>]*>/g, '').substring(0, 150),
+                    "image": [blog.image],
+                    "datePublished": blog.createdAt,
+                    "dateModified": blog.updatedAt || blog.createdAt,
+                    "author": [{
+                        "@type": "Person",
+                        "name": blog.authorName || blog.author?.name || 'Mitaan Team',
+                        "url": window.location.origin
+                    }],
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "Mitaan Express",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": `${window.location.origin}/logo.png`
+                        }
+                    }
+                }}
             />
 
             <FloatingShareButtons

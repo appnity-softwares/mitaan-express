@@ -6,6 +6,7 @@ import Sidebar from '../components/Sidebar';
 import { useArticles } from '../context/ArticlesContext';
 import LoadingSkeletons from '../components/LoadingSkeletons';
 import useIsShort from '../hooks/useIsShort';
+import SEO from '../components/SEO';
 import { stripHtml } from '../utils/textUtils';
 
 const CategoryPage = ({ language }) => {
@@ -78,6 +79,12 @@ const CategoryPage = ({ language }) => {
             animate={{ opacity: 1 }}
             className="relative min-h-screen bg-white dark:bg-[#030712] overflow-hidden"
         >
+            <SEO 
+                title={`${categoryTitle} न्यूज़ - Mitaan Express`}
+                description={`${categoryTitle} - ताज़ा खबरें, विश्लेषण और अपडेट | News and updates from ${categoryTitle} category.`}
+                url={`${window.location.origin}/category/${categoryId}`}
+                type="website"
+            />
             {/* Background Decorative Element */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/5 blur-[120px] rounded-full -mr-64 -mt-32 pointer-events-none"></div>
             <div className="absolute top-1/2 left-0 w-[300px] h-[300px] bg-blue-600/5 blur-[100px] rounded-full -ml-32 pointer-events-none"></div>

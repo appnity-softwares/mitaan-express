@@ -16,6 +16,7 @@ import { useSettings } from '../hooks/useQueries';
 import { formatImageUrl } from '../services/api';
 import AdSpace from '../components/AdSpace';
 import AdPopup from '../components/AdPopup';
+import SEO from '../components/SEO';
 import { stripHtml } from '../utils/textUtils';
 
 const HomePage = ({ language }) => {
@@ -52,6 +53,22 @@ const HomePage = ({ language }) => {
 
     return (
         <>
+            <SEO 
+                title={settings?.site_title || "Mitaan Express - Premium News & Magazine"}
+                description={settings?.site_description || "Latest Hindi News, Breaking News, and Deep Insights from Mitaan Express."}
+                schemaData={{
+                    "@context": "https://schema.org",
+                    "@type": "NewsMediaOrganization",
+                    "name": "Mitaan Express",
+                    "url": window.location.origin,
+                    "logo": formatImageUrl(settings?.logo_url) || `${window.location.origin}/logo.png`,
+                    "sameAs": [
+                        "https://facebook.com/mitaanexpress",
+                        "https://twitter.com/mitaanexpress",
+                        "https://instagram.com/mitaanexpress"
+                    ]
+                }}
+            />
             <AdPopup language={language} />
 
             {settings?.section_hero_enabled !== 'false' && (

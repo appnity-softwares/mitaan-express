@@ -156,6 +156,28 @@ const ArticleDetailPage = ({ language }) => {
                 description={article.shortDescription || article.content?.replace(/<[^>]*>/g, '').substring(0, 150)}
                 image={article.image}
                 type="article"
+                schemaData={{
+                    "@context": "https://schema.org",
+                    "@type": "NewsArticle",
+                    "headline": article.title,
+                    "description": article.shortDescription || article.content?.replace(/<[^>]*>/g, '').substring(0, 150),
+                    "image": [article.image],
+                    "datePublished": article.createdAt,
+                    "dateModified": article.updatedAt || article.createdAt,
+                    "author": [{
+                        "@type": "Person",
+                        "name": article.authorName || article.author?.name || 'Mitaan Team',
+                        "url": window.location.origin
+                    }],
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "Mitaan Express",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": `${window.location.origin}/logo.png`
+                        }
+                    }
+                }}
             />
 
             <FloatingShareButtons

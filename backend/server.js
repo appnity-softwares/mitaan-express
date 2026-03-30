@@ -24,6 +24,7 @@ const mediaRoutes = require('./routes/media.routes');
 const donationRoutes = require('./routes/donation.routes');
 const contactRoutes = require('./routes/contact.routes');
 const searchRoutes = require('./routes/search.routes');
+const seoRoutes = require('./routes/seo.routes');
 
 
 app.use('/api/auth', authRoutes);
@@ -38,6 +39,7 @@ app.use('/api/media', mediaRoutes);
 app.use('/api/donations', donationRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/seo', seoRoutes);
 
 const { Server } = require("socket.io");
 const http = require('http').createServer(app);
