@@ -187,6 +187,11 @@ const Settings = () => {
                                         <input name="site_title" value={settings.site_title} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 ring-red-500 font-black text-lg font-serif" placeholder="Mitaan Express" />
                                     </div>
                                     <div className="md:col-span-2">
+                                        <label className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">Website Description (SEO)</label>
+                                        <textarea name="site_description" value={settings.site_description} onChange={handleChange} rows="3" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 ring-red-500 font-medium text-sm text-slate-600 dark:text-slate-300 resize-none" placeholder="Enter the description that will appear in Google search results..." />
+                                        <p className="text-[10px] text-slate-400 mt-2 font-bold tracking-tight">Recommended: 150-160 characters for optimal search display.</p>
+                                    </div>
+                                    <div className="md:col-span-2">
                                         <label className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">High-Res Logo URL</label>
                                         <input name="logo_url" value={settings.logo_url} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 ring-red-500 font-mono text-sm" placeholder="https://..." />
                                         {settings.logo_url && <div className="mt-4 p-4 bg-slate-100 dark:bg-slate-900 rounded-2xl inline-block border border-slate-200 dark:border-white/10"><img src={settings.logo_url} alt="Logo Preview" className="h-10 object-contain mx-auto" /></div>}

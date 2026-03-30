@@ -3,7 +3,8 @@ import { motion, Reorder, AnimatePresence } from 'framer-motion';
 import { 
     Save, Plus, Trash2, GripVertical, ChevronDown, ChevronRight, 
     Eye, Star, Info, Home, Mail, Feather, FileText, BookOpen, 
-    Globe, Heart as HeartIcon, Trophy, Users, Image as ImageIcon, Video
+    Globe, Heart as HeartIcon, Trophy, Users, Image as ImageIcon, Video,
+    Menu, TrendingUp, FolderTree, Zap, Search, Languages, Sun, Moon
 } from 'lucide-react';
 import { useSettings } from '../../hooks/useQueries';
 import { useUpdateSettings } from '../../hooks/useMutations';
@@ -22,6 +23,8 @@ const AdminNavbar = () => {
 
     const [items, setItems] = useState([]);
     const [headerOrderIds, setHeaderOrderIds] = useState([]);
+    const [headerSegments, setHeaderSegments] = useState([]);
+    const [headerRightSegments, setHeaderRightSegments] = useState([]);
     const [saving, setSaving] = useState(false);
     const [expandedItem, setExpandedItem] = useState(null);
 
@@ -56,6 +59,14 @@ const AdminNavbar = () => {
         } else {
             setHeaderOrderIds(['home', 'about', 'contact']);
         }
+
+        // Initialize Header Layout Segments
+        const segOrder = settings?.header_segment_order || 'menu,home,news,categories,info';
+        setHeaderSegments(segOrder.split(',').map(s => s.trim()).filter(Boolean));
+
+        const rightSegOrder = settings?.header_right_order || 'live,search,lang,theme';
+        setHeaderRightSegments(rightSegOrder.split(',').map(s => s.trim()).filter(Boolean));
+
     }, [settings]);
 
     const handleSave = async () => {
@@ -63,7 +74,9 @@ const AdminNavbar = () => {
         try {
             await updateMutation.mutateAsync({
                 navbar_items_json: JSON.stringify(items),
-                header_navbar_items: headerOrderIds.join(',')
+                header_navbar_items: headerOrderIds.join(','),
+                header_segment_order: headerSegments.join(','),
+                header_right_order: headerRightSegments.join(',')
             });
             toast.success(adminLang === 'hi' ? 'नेवबार सेव हो गया!' : 'Navbar saved successfully!');
         } catch (error) {
@@ -75,6 +88,8 @@ const AdminNavbar = () => {
     const handleReset = () => {
         setItems(defaultItems);
         setHeaderOrderIds(['home', 'about', 'contact']);
+        setHeaderSegments(['menu', 'home', 'news', 'categories', 'info']);
+        setHeaderRightSegments(['live', 'search', 'lang', 'theme']);
         toast.success('Local reset! Click Save to persist.');
     };
 
@@ -307,11 +322,66 @@ const AdminNavbar = () => {
                     </Reorder.Group>
                 </div>
 
-                {/* Header Management */}
+                {/* Header Management & Segment Layout */}
                 <div className="space-y-8">
+                    {/* NEW: Segment Reordering Section */}
+                    <div className="px-4">
+                        <h3 className="font-black text-[11px] uppercase text-slate-400 tracking-[0.3em]">Header Design & Layout</h3>
+                        <p className="text-[10px] font-bold text-slate-500 mt-1">Reorder major navigation segments</p>
+                    </div>
+
+                    <div className="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-white/5 p-8 shadow-2xl space-y-8">
+                        {/* 1. Main Left/Center Segments */}
+                        <div className="space-y-4">
+                            <label className="text-[11px] font-black uppercase text-red-600 tracking-[0.2em] block pl-1">Primary Segments (Left/Center)</label>
+                            <Reorder.Group axis="y" values={headerSegments} onReorder={setHeaderSegments} className="space-y-2">
+                                {headerSegments.map((seg) => {
+                                    const labels = {
+                                        menu: { name: 'Slide Menu Toggle', icon: <Menu size={18} /> },
+                                        home: { name: 'Home Navigation', icon: <Home size={18} /> },
+                                        news: { name: 'News Dropdown', icon: <TrendingUp size={18} /> },
+                                        categories: { name: 'Category Navigator', icon: <FolderTree size={18} /> },
+                                        info: { name: 'Header Quick-Links Group', icon: <Info size={18} /> }
+                                    };
+                                    const config = labels[seg] || { name: seg.toUpperCase(), icon: <GripVertical size={18} /> };
+                                    return (
+                                        <Reorder.Item key={seg} value={seg} className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-white/5 flex items-center gap-4 cursor-grab active:cursor-grabbing hover:bg-white dark:hover:bg-slate-900 transition-all group">
+                                            <div className="text-slate-300 group-hover:text-red-500 transition-colors"><GripVertical size={18} /></div>
+                                            <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-white/5 flex items-center justify-center text-red-600 shadow-sm">{config.icon}</div>
+                                            <span className="text-[11px] font-black uppercase tracking-tight dark:text-white">{config.name}</span>
+                                        </Reorder.Item>
+                                    );
+                                })}
+                            </Reorder.Group>
+                        </div>
+
+                        {/* 2. Right Side Actions */}
+                        <div className="space-y-4">
+                            <label className="text-[11px] font-black uppercase text-red-600 tracking-[0.2em] block pl-1">Action Registry (Right Side)</label>
+                            <Reorder.Group axis="y" values={headerRightSegments} onReorder={setHeaderRightSegments} className="space-y-2">
+                                {headerRightSegments.map((seg) => {
+                                    const labels = {
+                                        live: { name: 'Live Traffic Meter', icon: <Zap size={18} /> },
+                                        search: { name: 'Smart Search Button', icon: <Search size={18} /> },
+                                        lang: { name: 'Language Engine', icon: <Languages size={18} /> },
+                                        theme: { name: 'Theme Architect', icon: <Sun size={18} /> }
+                                    };
+                                    const config = labels[seg] || { name: seg.toUpperCase(), icon: <GripVertical size={18} /> };
+                                    return (
+                                        <Reorder.Item key={seg} value={seg} className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-white/5 flex items-center gap-4 cursor-grab active:cursor-grabbing hover:bg-white dark:hover:bg-slate-900 transition-all group">
+                                            <div className="text-slate-300 group-hover:text-red-500 transition-colors"><GripVertical size={18} /></div>
+                                            <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-white/5 flex items-center justify-center text-red-600 shadow-sm">{config.icon}</div>
+                                            <span className="text-[11px] font-black uppercase tracking-tight dark:text-white">{config.name}</span>
+                                        </Reorder.Item>
+                                    );
+                                })}
+                            </Reorder.Group>
+                        </div>
+                    </div>
+
                     <div className="px-4">
                         <h3 className="font-black text-[11px] uppercase text-slate-400 tracking-[0.3em]">Header Quick-Links</h3>
-                        <p className="text-[10px] font-bold text-slate-500 mt-1">Pinned icons in the top bar</p>
+                        <p className="text-[10px] font-bold text-slate-500 mt-1">Pinned icons in the 'Quick-Links Group' segment</p>
                     </div>
 
                     <div className="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-white/5 p-10 shadow-2xl shadow-slate-200/50 dark:shadow-none space-y-10 relative overflow-hidden">
