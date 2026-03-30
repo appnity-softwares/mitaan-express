@@ -180,6 +180,14 @@ const Navbar = ({
             .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
     }, [language, settings]);
 
+    const headerQuickIcons = useMemo(() => {
+        if (settings?.header_navbar_items) {
+            const ids = settings.header_navbar_items.split(',').filter(Boolean);
+            return ids.map(id => mainPages.find(p => p.id === id)).filter(Boolean);
+        }
+        return mainPages.slice(0, 2);
+    }, [mainPages, settings]);
+
     const isDonationEnabled = !settings || settings.page_donation_enabled !== 'false';
 
     const newsItems = useMemo(() => [
@@ -319,11 +327,11 @@ const Navbar = ({
                             </div>
                         </div>
 
-                        {/* Quick Icons (Home & About) */}
+                        {/* Quick Icons (Selective Header Render) */}
                         <div className="flex items-center gap-0.5 ml-2 border-l border-white/20 pl-2">
-                            {mainPages.slice(0, 2).map((page) => (
+                            {headerQuickIcons.map((page) => (
                                 <button
-                                    key={page.id}
+                                    key={`header-quick-${page.id}`}
                                     onClick={() => handleLinkClick(page.id, page.path)}
                                     className={`flex items-center justify-center w-11 h-11 rounded-xl transition-all hover:bg-white/10 group relative ${activeCategory === page.id ? 'text-white' : (isNavbarSolid ? 'text-white' : 'text-red-600')}`}
                                     title={page.name}

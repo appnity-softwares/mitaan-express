@@ -13,9 +13,9 @@ const FeaturedLatest = ({ language, items = [] }) => {
 
     const handleItemClick = (item) => {
         if (item.type === 'blog') {
-            navigate(`/insight/${item.slug}`);
+            navigate(`/insight/${item.slug || item.id}`);
         } else {
-            navigate(`/article/${item.id}`);
+            navigate(`/article/${item.slug || item.id}`);
         }
     };
 

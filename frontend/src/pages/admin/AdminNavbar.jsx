@@ -17,6 +17,7 @@ const AdminNavbar = () => {
     const updateMutation = useUpdateSettings();
 
     const [items, setItems] = useState([]);
+    const [headerOrderIds, setHeaderOrderIds] = useState(['home', 'about']);
     const [saving, setSaving] = useState(false);
     const [expandedItem, setExpandedItem] = useState(null);
 
@@ -41,13 +42,17 @@ const AdminNavbar = () => {
             } catch (e) { }
         }
         setItems(defaultItems);
+        if (settings?.header_navbar_items) {
+            setHeaderOrderIds(settings.header_navbar_items.split(',').filter(Boolean));
+        }
     }, [settings]);
 
     const handleSave = async () => {
         setSaving(true);
         try {
             await updateMutation.mutateAsync({
-                navbar_items_json: JSON.stringify(items)
+                navbar_items_json: JSON.stringify(items),
+                header_navbar_items: headerOrderIds.join(',')
             });
             toast.success(adminLang === 'hi' ? 'नेवबार सेव हो गया!' : 'Navbar saved successfully!');
         } catch (error) {
@@ -58,8 +63,9 @@ const AdminNavbar = () => {
 
     const handleReset = async () => {
         setItems(defaultItems);
+        setHeaderOrderIds(['home', 'about']);
         try {
-            await updateMutation.mutateAsync({ navbar_items_json: '' });
+            await updateMutation.mutateAsync({ navbar_items_json: '', header_navbar_items: 'home,about' });
             toast.success('Reset to default');
         } catch (e) { }
     };
@@ -312,6 +318,73 @@ const AdminNavbar = () => {
                     {adminLang === 'hi' ? 'नया मेन्यू आइटम जोड़ें' : 'Add New Menu Item'}
                 </span>
             </button>
+
+            {/* Header Quick Icons */}
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-white/5 space-y-6 mt-6">
+                <div className="flex items-center gap-2">
+                    <Star size={18} className="text-red-600" />
+                    <div>
+                        <h3 className="font-black uppercase tracking-widest text-slate-900 dark:text-white">
+                            {adminLang === 'hi' ? 'हेडर आइकॉन क्रम (सिर्फ हेडर के लिए)' : 'Header Links Order'}
+                        </h3>
+                        <p className="text-xs text-slate-500 mt-1">
+                            {adminLang === 'hi'
+                                ? 'तय करें कि कौन से आइटम हेडर टॉप-बार में दिखेंगे और उनका क्रम क्या होगा।'
+                                : 'Configure which items appear on the top header bar and sort their order.'}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-6 items-start">
+                    {/* Available Items */}
+                    <div className="flex-1 space-y-2 w-full">
+                        <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-2">Available Pages</h4>
+                        <select onChange={(e) => {
+                            if (!e.target.value) return;
+                            if (!headerOrderIds.includes(e.target.value)) setHeaderOrderIds([...headerOrderIds, e.target.value]);
+                            e.target.value = '';
+                        }} className="w-full p-3 bg-slate-50 dark:bg-slate-900 rounded-xl outline-none border border-slate-200 dark:border-slate-700 text-sm font-bold dark:text-white">
+                            <option value="">-- Add to Header --</option>
+                            {items.filter(i => !headerOrderIds.includes(i.id)).map(i => (
+                                <option key={i.id} value={i.id}>{adminLang === 'hi' ? (i.nameHi || i.name) : i.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Selected Items */}
+                    <div className="flex-[2] space-y-2 w-full">
+                        <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-2">Header Display Order</h4>
+                        <div className="space-y-2">
+                            {headerOrderIds.map((id, idx) => {
+                                const item = items.find(i => i.id === id);
+                                if (!item) return null;
+                                return (
+                                    <div key={id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
+                                        <span className="font-bold text-sm dark:text-white">{adminLang === 'hi' ? (item.nameHi || item.name) : item.name}</span>
+                                        <div className="flex items-center gap-2">
+                                            <button onClick={() => {
+                                                if (idx === 0) return;
+                                                const newIds = [...headerOrderIds];
+                                                [newIds[idx], newIds[idx - 1]] = [newIds[idx - 1], newIds[idx]];
+                                                setHeaderOrderIds(newIds);
+                                            }} disabled={idx === 0} className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded disabled:opacity-20 transition"><ArrowUp size={14} className="text-slate-500" /></button>
+                                            <button onClick={() => {
+                                                if (idx === headerOrderIds.length - 1) return;
+                                                const newIds = [...headerOrderIds];
+                                                [newIds[idx], newIds[idx + 1]] = [newIds[idx + 1], newIds[idx]];
+                                                setHeaderOrderIds(newIds);
+                                            }} disabled={idx === headerOrderIds.length - 1} className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded disabled:opacity-20 transition"><ArrowDown size={14} className="text-slate-500" /></button>
+                                            <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+                                            <button onClick={() => setHeaderOrderIds(headerOrderIds.filter(x => x !== id))} className="p-1 hover:bg-red-100 dark:hover:bg-red-900/20 text-red-500 rounded transition"><Trash2 size={14} /></button>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                            {headerOrderIds.length === 0 && <div className="p-6 text-center text-slate-400 text-xs font-bold border-2 border-dashed rounded-xl border-slate-200 dark:border-slate-700">No items selected to appear on the header.</div>}
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* Live Preview */}
             <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-white/5 space-y-4">

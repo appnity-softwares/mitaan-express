@@ -17,7 +17,7 @@ import FloatingShareButtons from '../components/FloatingShareButtons';
 const ArticleDetailPage = ({ language }) => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { articles, loading } = useArticles();
+    const { articles, blogs, loading } = useArticles();
     const { data: settings } = useSettings();
     const [article, setArticle] = useState(null);
     const [copied, setCopied] = useState(false);
@@ -78,8 +78,14 @@ const ArticleDetailPage = ({ language }) => {
                 (a.language === foundArticle.language || !a.language)
             ).slice(0, 3);
             setRelatedArticles(related);
+        } else if (blogs && blogs.length > 0) {
+            // Check if this might actually be a blog
+            const foundBlog = blogs.find(b => b.id === parseInt(id) || b.slug === id);
+            if (foundBlog) {
+                navigate(`/insight/${foundBlog.slug || foundBlog.id}`, { replace: true });
+            }
         }
-    }, [id, articles]);
+    }, [id, articles, blogs, navigate]);
 
     const handleShare = async (platform) => {
         const rawUrl = window.location.href;
@@ -353,7 +359,7 @@ const ArticleDetailPage = ({ language }) => {
                                     {(relatedArticles.length > 0 ? relatedArticles : articles.slice(0, 4)).map((item, index) => (
                                         <Link
                                             key={item.id}
-                                            to={`/article/${item.id}`}
+                                            to={`/article/${item.slug || item.id}`}
                                             className="group flex gap-5 items-start"
                                         >
                                             <span className="text-4xl font-black text-slate-600 dark:text-white/10 group-hover:text-red-600/20 transition-colors font-serif -mt-2">

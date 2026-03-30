@@ -13,7 +13,7 @@ const ArticleCard = ({ article, language }) => {
             navigator.share({
                 title: article.title,
                 text: article.description,
-                url: window.location.origin + '/article/' + article.id,
+                url: window.location.origin + (article.type === 'blog' ? '/insight/' + (article.slug || article.id) : '/article/' + article.id),
             }).catch(console.error);
         } else {
             setShowShare(!showShare);
@@ -22,7 +22,7 @@ const ArticleCard = ({ article, language }) => {
 
     const copyToClipboard = (e) => {
         e.stopPropagation();
-        navigator.clipboard.writeText(window.location.origin + '/article/' + article.id);
+        navigator.clipboard.writeText(window.location.origin + (article.type === 'blog' ? '/insight/' + (article.slug || article.id) : '/article/' + article.id));
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };

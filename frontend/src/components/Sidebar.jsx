@@ -15,7 +15,8 @@ const Sidebar = ({ language, showWeather = true }) => {
             title: a.title,
             image: a.image,
             category: a.category?.name || 'TRENDING',
-            slug: a.slug
+            slug: a.slug,
+            type: a.type
         }))
         : [{
             id: 's1',
@@ -53,7 +54,7 @@ const Sidebar = ({ language, showWeather = true }) => {
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
                             className="group flex gap-4 cursor-pointer items-start border-b border-slate-50 dark:border-white/5 pb-6 last:border-0 last:pb-0"
-                            onClick={() => window.location.href = `/article/${article.slug}`}
+                            onClick={() => window.location.href = article.type === 'blog' ? `/insight/${article.slug || article.id}` : `/article/${article.slug || article.id}`}
                         >
                             <span className="text-3xl font-black text-black-600 dark:text-white/10 group-hover:text-red-600/30 transition-colors font-serif leading-none mt-1">
                                 {index + 1}

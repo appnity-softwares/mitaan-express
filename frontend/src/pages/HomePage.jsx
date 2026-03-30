@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap } from 'lucide-react';
+import { Zap, ArrowRight } from 'lucide-react';
 import HeroSlider from '../components/HeroSlider';
 import FeaturedLatest from '../components/FeaturedLatest';
 import ArticleCard from '../components/ArticleCard';
@@ -32,14 +32,15 @@ const HomePage = ({ language }) => {
         category: language === 'hi' ? (a.category?.nameHi || a.category?.name) : a.category?.name,
         author: a.author?.name || 'Mitaan',
         date: new Date(a.createdAt).toLocaleDateString(),
-        slug: a.slug
+        slug: a.slug,
+        type: a.type
     }));
 
     const handleArticleClick = (item) => {
         if (item.type === 'blog' || !item.id) {
             navigate(`/insight/${item.slug || item.id}`);
         } else {
-            navigate(`/article/${item.id}`);
+            navigate(`/article/${item.slug || item.id}`);
         }
     };
 
@@ -69,8 +70,8 @@ const HomePage = ({ language }) => {
                                             key={`${article.id}-1`}
                                             className="flex items-center gap-6 cursor-pointer group/item"
                                             onClick={() => {
-                                                if (article.type === 'blog') navigate(`/insight/${article.slug}`);
-                                                else navigate(`/article/${article.id}`);
+                                                if (article.type === 'blog') navigate(`/insight/${article.slug || article.id}`);
+                                                else navigate(`/article/${article.slug || article.id}`);
                                             }}
                                         >
                                             <div className="flex items-center gap-2">
@@ -93,8 +94,8 @@ const HomePage = ({ language }) => {
                                             key={`${article.id}-2`}
                                             className="flex items-center gap-6 cursor-pointer group/item"
                                             onClick={() => {
-                                                if (article.type === 'blog') navigate(`/insight/${article.slug}`);
-                                                else navigate(`/article/${article.id}`);
+                                                if (article.type === 'blog') navigate(`/insight/${article.slug || article.id}`);
+                                                else navigate(`/article/${article.slug || article.id}`);
                                             }}
                                         >
                                             <div className="flex items-center gap-2">
@@ -139,6 +140,18 @@ const HomePage = ({ language }) => {
                                         />
                                     </div>
                                 ))}
+                                
+                                <div className="pt-2 pb-6 flex justify-center lg:justify-start">
+                                    <button
+                                        onClick={() => navigate('/insights')}
+                                        className="group inline-flex items-center gap-4 px-8 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-black text-xs uppercase tracking-[0.2em] rounded-full hover:bg-red-600 hover:text-white hover:border-red-600 dark:hover:bg-red-600 dark:hover:text-white dark:hover:border-red-600 transition-all shadow-sm hover:shadow-xl"
+                                    >
+                                        {language === 'hi' ? 'सभी समाचार देखें' : 'EXPLORE ALL STORIES'}
+                                        <div className="w-8 h-8 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:border-transparent group-hover:bg-white/20 transition-all">
+                                            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                                        </div>
+                                    </button>
+                                </div>
                             </div>
                             {settings?.section_poetry_enabled !== 'false' && (
                                 <div data-aos="fade-up">

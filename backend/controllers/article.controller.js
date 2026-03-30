@@ -186,6 +186,7 @@ exports.createArticle = async (req, res) => {
                 publishedAt: status === 'PUBLISHED' ? new Date() : null,
                 priority: priority || 'NORMAL',
                 scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
+                createdAt: createdAt ? new Date(createdAt) : undefined,
                 category: { connect: { id: parseInt(categoryId) } },
                 author: { connect: { id: req.user.id } },
                 tags: { connectOrCreate: tagConnect }
@@ -288,6 +289,7 @@ exports.updateArticle = async (req, res) => {
             published: status === 'PUBLISHED',
             priority: priority || undefined,
             scheduledAt: scheduledAt ? new Date(scheduledAt) : undefined,
+            createdAt: createdAt ? new Date(createdAt) : undefined,
             tags: tagData
         };
 

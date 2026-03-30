@@ -23,6 +23,13 @@ const AdminSidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout, theme, to
     const [categories, setCategories] = useState([]);
     const [expandedCategories, setExpandedCategories] = useState({});
     const [activeCategoryName, setActiveCategoryName] = useState('');
+    const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('user') || '{}'));
+
+    useEffect(() => {
+        const handleStorage = () => setUser(JSON.parse(localStorage.getItem('user') || '{}'));
+        window.addEventListener('storage', handleStorage);
+        return () => window.removeEventListener('storage', handleStorage);
+    }, []);
 
     useEffect(() => {
         if (location.pathname.startsWith('/admin/articles')) {
@@ -75,7 +82,6 @@ const AdminSidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout, theme, to
         setExpandedCategories(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
     const isAdmin = user.role === 'ADMIN';
 
     const activeClass = "bg-red-50 dark:bg-red-900/10 text-red-600 border-r-4 border-red-600";

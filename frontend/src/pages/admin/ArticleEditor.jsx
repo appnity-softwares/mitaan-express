@@ -56,6 +56,7 @@ const ArticleEditor = () => {
         metaKeywords: '',
         scheduledAt: '',
         priority: 'NORMAL', // HIGH, NORMAL, LOW
+        createdAt: '',
     });
 
     const currentCategory = categories.find(c => c.id === parseInt(formData.categoryId));
@@ -81,8 +82,9 @@ const ArticleEditor = () => {
                 metaTitle: article.metaTitle || '',
                 metaDescription: article.metaDescription || '',
                 metaKeywords: article.metaKeywords || '',
-                scheduledAt: article.scheduledAt || '',
+                scheduledAt: article.scheduledAt ? new Date(article.scheduledAt).toISOString().slice(0, 16) : '',
                 priority: article.priority || 'NORMAL',
+                createdAt: article.createdAt ? new Date(article.createdAt).toISOString().slice(0, 16) : '',
             });
         } else if (defaultCategoryId && !id) {
             setFormData(prev => ({ ...prev, categoryId: defaultCategoryId }));
@@ -150,6 +152,7 @@ const ArticleEditor = () => {
                 tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
                 priority: formData.priority,
                 scheduledAt: formData.scheduledAt ? new Date(formData.scheduledAt) : null,
+                createdAt: formData.createdAt ? new Date(formData.createdAt).toISOString() : undefined,
                 metadata: {} // Clear metadata usage for these fields
             };
 
@@ -769,6 +772,19 @@ const ArticleEditor = () => {
                                     className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 ring-red-600 text-slate-900 dark:text-white"
                                 />
                                 <p className="text-xs text-slate-500 mt-2">Leave empty to publish immediately</p>
+                            </div>
+
+                            <div className="mt-4">
+                                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                                    Published Date (Override)
+                                </label>
+                                <input
+                                    type="datetime-local"
+                                    name="createdAt"
+                                    value={formData.createdAt}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 ring-red-600 text-slate-900 dark:text-white"
+                                />
                             </div>
                         </div>
 

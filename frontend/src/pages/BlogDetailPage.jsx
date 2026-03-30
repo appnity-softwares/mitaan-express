@@ -11,6 +11,8 @@ import AdSpace from '../components/AdSpace';
 import SEO from '../components/SEO';
 import FloatingShareButtons from '../components/FloatingShareButtons';
 
+import { useArticles } from '../context/ArticlesContext';
+
 const BlogDetailPage = ({ language }) => {
     const { slug } = useParams();
     const navigate = useNavigate();
@@ -18,6 +20,7 @@ const BlogDetailPage = ({ language }) => {
     const [loading, setLoading] = useState(true);
     const [copied, setCopied] = useState(false);
     const [latestNews, setLatestNews] = useState([]);
+    const { articles } = useArticles();
 
     useEffect(() => {
         const loadData = async () => {
@@ -31,12 +34,21 @@ const BlogDetailPage = ({ language }) => {
                 setLatestNews(newsData.articles ? newsData.articles.slice(0, 5) : (Array.isArray(newsData) ? newsData.slice(0, 5) : []));
             } catch (error) {
                 console.error("Failed to load blog details", error);
+                
+                // If not found as a blog, check if it's actually an article and redirect
+                if (articles && articles.length > 0) {
+                    const foundArticle = articles.find(a => a.id === parseInt(slug) || a.slug === slug);
+                    if (foundArticle) {
+                        setLoading(false);
+                        return navigate(`/article/${foundArticle.id}`, { replace: true });
+                    }
+                }
             } finally {
                 setLoading(false);
             }
         };
         loadData();
-    }, [slug, language]);
+    }, [slug, language, articles, navigate]);
 
     const handleShare = async (platform) => {
         const rawUrl = window.location.href;
@@ -236,6 +248,8 @@ const BlogDetailPage = ({ language }) => {
                 <aside className="lg:col-span-4 space-y-8">
                     <div className="sticky top-24 space-y-12">
                         <AdSpace position="sidebar" />
+                        
+                        {(latestNews.length > 0 || (articles && articles.length > 0)) && (
                         <div className="bg-white dark:bg-white/5 p-8 rounded-[2rem] border border-slate-100 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-none relative overflow-hidden">
                             {/* Accent Background */}
                             <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/5 blur-3xl -z-10 rounded-full"></div>
@@ -247,8 +261,8 @@ const BlogDetailPage = ({ language }) => {
                                 </span>
                             </h3>
                             <div className="space-y-6">
-                                {latestNews.map(news => (
-                                    <Link to={`/article/${news.slug}`} key={news.id} className="group flex gap-4 items-start">
+                                {(latestNews.length > 0 ? latestNews : articles.slice(0, 5)).map(news => (
+                                    <Link to={`/article/${news.slug || news.id}`} key={news.id} className="group flex gap-4 items-start">
                                         <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-slate-200">
                                             <img
                                                 src={news.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=200'}
@@ -268,6 +282,8 @@ const BlogDetailPage = ({ language }) => {
                                 ))}
                             </div>
                         </div>
+                        )}
+                        
                         <AdSpace position="skyscraper" />
                     </div>
                 </aside>

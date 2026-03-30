@@ -1,6 +1,6 @@
 export const getYouTubeID = (url) => {
     if (!url) return null;
-    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s?]+)/);
+    const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|live\/|shorts\/)|youtu\.be\/)([^&\s?]+)/);
     return match ? match[1] : null;
 };
 

@@ -48,6 +48,7 @@ const BlogEditorContent = () => {
         isBreaking: false,
         isTrending: false,
         isFeatured: false,
+        createdAt: '',
     });
 
     useEffect(() => {
@@ -67,6 +68,7 @@ const BlogEditorContent = () => {
                 isBreaking: article.isBreaking || false,
                 isTrending: article.isTrending || false,
                 isFeatured: article.isFeatured || false,
+                createdAt: article.createdAt ? new Date(article.createdAt).toISOString().slice(0, 16) : '',
             });
         }
     }, [article]);
@@ -107,6 +109,7 @@ const BlogEditorContent = () => {
                 isBreaking: formData.isBreaking,
                 isTrending: formData.isTrending,
                 isFeatured: formData.isFeatured,
+                createdAt: formData.createdAt ? new Date(formData.createdAt).toISOString() : undefined,
                 metadata: { type: 'personal-blog' }
             };
 
@@ -252,6 +255,17 @@ const BlogEditorContent = () => {
                                     <img src={formData.image} alt="" className="mt-2 rounded-lg w-full h-32 object-cover" />
                                 )}
                             </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Publish Date</label>
+                            <input
+                                type="datetime-local"
+                                name="createdAt"
+                                value={formData.createdAt}
+                                onChange={handleChange}
+                                className="w-full px-3 py-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-white/10 text-sm font-bold"
+                            />
                         </div>
 
                         <div>

@@ -22,7 +22,7 @@ const TrendingPage = ({ language }) => {
         if (item.type === 'blog' || !item.id) {
             navigate(`/insight/${item.slug || item.id}`);
         } else {
-            navigate(`/article/${item.id}`);
+            navigate(`/article/${item.slug || item.id}`);
         }
     };
 

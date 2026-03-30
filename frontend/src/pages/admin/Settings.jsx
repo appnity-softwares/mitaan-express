@@ -35,6 +35,16 @@ const Settings = () => {
 
     const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
     const [isPasswordChanging, setIsPasswordChanging] = useState(false);
+    
+    const [profileName, setProfileName] = useState('');
+    const [isProfileUpdating, setIsProfileUpdating] = useState(false);
+
+    useEffect(() => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user?.name) setProfileName(user.name);
+        } catch(e){}
+    }, []);
 
     useEffect(() => {
         if (initialData) setSettings(prev => ({ ...prev, ...initialData }));
@@ -76,6 +86,34 @@ const Settings = () => {
             toast.error(error.message);
         } finally {
             setIsPasswordChanging(false);
+        }
+    };
+
+    const handleProfileUpdate = async (e) => {
+        e.preventDefault();
+        setIsProfileUpdating(true);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/auth/profile`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ name: profileName })
+            });
+
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Failed to update profile');
+
+            // Update local storage
+            const user = JSON.parse(localStorage.getItem('user'));
+            localStorage.setItem('user', JSON.stringify({ ...user, name: profileName }));
+            toast.success('Author Name Updated.');
+            
+            // Dispatch event to update Sidebar
+            window.dispatchEvent(new Event('storage'));
+        } catch (error) {
+            toast.error(error.message);
+        } finally {
+            setIsProfileUpdating(false);
         }
     };
 
@@ -306,6 +344,16 @@ const Settings = () => {
                         {activeTab === 'advanced' && (
                             <motion.div key="advanced" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                                    {/* Profile Matrix */}
+                                    <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-3xl border border-blue-100 dark:border-blue-500/10">
+                                        <h3 className="text-xl font-black text-blue-600 uppercase tracking-tight mb-6 flex items-center gap-2"><User size={20} /> Author Identity</h3>
+                                        <form onSubmit={handleProfileUpdate} className="space-y-4">
+                                            <input type="text" required value={profileName} onChange={e => setProfileName(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl outline-none focus:ring-2 ring-blue-500 text-sm" placeholder="Author/Admin Name" />
+                                            <p className="text-xs text-slate-500 font-bold">This name will be shown on the articles you publish and in the Admin Sidebar.</p>
+                                            <button type="submit" disabled={isProfileUpdating} className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition disabled:opacity-50">Update Name</button>
+                                        </form>
+                                    </div>
 
                                     {/* Security Matrix */}
                                     <div className="bg-red-50 dark:bg-red-900/10 p-6 rounded-3xl border border-red-100 dark:border-red-500/10">

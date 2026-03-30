@@ -116,7 +116,7 @@ const PoetryPage = ({ language }) => {
                                 viewport={{ once: true }}
                                 transition={{ delay: idx * 0.1 }}
                                 className="group cursor-pointer"
-                                onClick={() => window.location.href = `/article/${poem.id}`}
+                                onClick={() => window.location.href = `/article/${poem.slug || poem.id}`}
                             >
                                 <div className="space-y-6">
                                     <div className="relative aspect-[16/10] overflow-hidden rounded-[2.5rem] bg-slate-100 dark:bg-gray-900 shadow-xl group-hover:shadow-2xl transition-all duration-500">

@@ -91,8 +91,8 @@ const SpotlightSearch = ({ isOpen, onClose, language }) => {
             setSelectedIndex(prev => Math.max(prev - 1, 0));
         } else if (e.key === 'Enter' && allResults[selectedIndex]) {
             const item = allResults[selectedIndex];
-            if (item.type === 'article') handleNavigate(`/article/${item.data.slug}`, item.data.title);
-            else if (item.type === 'blog') handleNavigate(`/insight/${item.data.slug}`, item.data.title);
+            if (item.type === 'article') handleNavigate(`/article/${item.data.slug || item.data.id}`, item.data.title);
+            else if (item.type === 'blog') handleNavigate(`/insight/${item.data.slug || item.data.id}`, item.data.title);
             else if (item.type === 'category') handleNavigate(`/category/${item.data.slug}`, item.data.name);
         }
     };
@@ -247,7 +247,7 @@ const SpotlightSearch = ({ isOpen, onClose, language }) => {
                                                     return (
                                                         <button
                                                             key={article.id}
-                                                            onClick={() => handleNavigate(`/article/${article.slug}`, article.title)}
+                                                            onClick={() => handleNavigate(`/article/${article.slug || article.id}`, article.title)}
                                                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-left ${selectedIndex === globalIdx ? 'bg-red-50 dark:bg-red-900/20' : 'hover:bg-slate-50 dark:hover:bg-white/5'}`}
                                                         >
                                                             <div className="w-14 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">
@@ -279,7 +279,7 @@ const SpotlightSearch = ({ isOpen, onClose, language }) => {
                                                     return (
                                                         <button
                                                             key={blog.id}
-                                                            onClick={() => handleNavigate(`/insight/${blog.slug}`, blog.title)}
+                                                            onClick={() => handleNavigate(`/insight/${blog.slug || blog.id}`, blog.title)}
                                                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-left ${selectedIndex === globalIdx ? 'bg-red-50 dark:bg-red-900/20' : 'hover:bg-slate-50 dark:hover:bg-white/5'}`}
                                                         >
                                                             <div className="w-14 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">

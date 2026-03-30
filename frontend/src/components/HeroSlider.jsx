@@ -30,7 +30,9 @@ const HeroSlider = ({ language }) => {
         title: a.title,
         description: a.shortDescription || stripHtml(a.content || '').substring(0, 100) || '',
         image: formatImageUrl(a.image),
-        articleId: a.id
+        articleId: a.id,
+        slug: a.slug,
+        type: a.type
     }));
 
     const slides = [welcomeSlide, ...articleSlides];
@@ -162,7 +164,7 @@ const HeroSlider = ({ language }) => {
                         <motion.div variants={itemVariants} className="flex flex-row gap-3 sm:gap-5 pt-4 sm:pt-6 w-full sm:w-auto">
                             {/* Primary Button: Read Story / Get Started */}
                             <button
-                                onClick={() => currentSlide.isWelcome ? navigate(currentSlide.fallbackLink || '/about') : navigate(`/article/${currentSlide.articleId}`)}
+                                onClick={() => currentSlide.isWelcome ? navigate(currentSlide.fallbackLink || '/about') : navigate(currentSlide.type === 'blog' ? `/insight/${currentSlide.slug || currentSlide.articleId}` : `/article/${currentSlide.slug || currentSlide.articleId}`)}
                                 className="group relative px-4 py-3 sm:px-8 sm:py-4 overflow-hidden rounded-xl transition-all duration-500 flex-1 sm:flex-none sm:w-auto cursor-pointer"
                             >
                                 <span className="absolute inset-0 bg-red-600 transition-transform duration-500 group-hover:scale-105"></span>

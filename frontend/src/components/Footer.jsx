@@ -157,7 +157,7 @@ const Footer = ({ language, onCategoryChange }) => {
                                 <motion.div
                                     key={news.id}
                                     whileHover={{ y: -5 }}
-                                    onClick={() => navigate(`/article/${news.id}`)}
+                                    onClick={() => navigate(news.type === 'blog' ? `/insight/${news.slug || news.id}` : `/article/${news.slug || news.id}`)}
                                     className="flex gap-4 group cursor-pointer"
                                 >
                                     <div className="w-24 h-24 shrink-0 overflow-hidden rounded-xl border border-slate-200 dark:border-white/5">

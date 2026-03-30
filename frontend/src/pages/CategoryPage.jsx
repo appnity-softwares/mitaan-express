@@ -47,12 +47,18 @@ const CategoryPage = ({ language }) => {
             category: language === 'hi' ? (a.category?.nameHi || a.category?.name) : a.category?.name,
             author: a.author?.name || 'Mitaan',
             date: new Date(a.createdAt).toLocaleDateString(),
-            slug: a.slug
+            slug: a.slug,
+            type: a.type
         }));
     }, [categoryId, published, currentCategory, language]);
 
     const handleArticleClick = (articleId) => {
-        navigate(`/article/${articleId}`);
+        const article = filteredArticles.find(a => a.id === articleId);
+        if (article?.type === 'blog') {
+            navigate(`/insight/${article.slug || articleId}`);
+        } else {
+            navigate(`/article/${article?.slug || articleId}`);
+        }
     };
 
     if (loading) {
