@@ -26,6 +26,7 @@ exports.getAllArticles = async (req, res) => {
                 content: true,
                 shortDescription: true,
                 image: true,
+                authorName: true,
                 videoUrl: true,
                 views: true,
                 status: true,
@@ -121,7 +122,7 @@ exports.createArticle = async (req, res) => {
         title, slug, content, shortDescription, image, videoUrl, categoryId,
         tags, isBreaking, isTrending, isFeatured,
         metaTitle, metaDescription, metaKeywords, status, metadata,
-        priority, scheduledAt, language
+        priority, scheduledAt, language, authorName
     } = req.body;
 
     if (!categoryId || isNaN(parseInt(categoryId))) {
@@ -179,6 +180,7 @@ exports.createArticle = async (req, res) => {
                 isTrending: isTrending || false,
                 isFeatured: isFeatured || false,
                 language: language || 'en',
+                authorName: authorName || null,
                 metaTitle, metaDescription, metaKeywords,
                 metadata: metadata || {},
                 status: status || 'DRAFT',
@@ -219,7 +221,7 @@ exports.updateArticle = async (req, res) => {
         title, slug, content, shortDescription, image, videoUrl, categoryId,
         tags, isBreaking, isTrending, isFeatured,
         metaTitle, metaDescription, metaKeywords, status, metadata,
-        priority, scheduledAt, language
+        priority, scheduledAt, language, authorName
     } = req.body;
 
     try {
@@ -281,6 +283,7 @@ exports.updateArticle = async (req, res) => {
             isTrending,
             isFeatured,
             language: language || 'en',
+            authorName: authorName !== undefined ? authorName : undefined,
             metaTitle,
             metaDescription,
             metaKeywords,

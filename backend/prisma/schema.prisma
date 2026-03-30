@@ -36,6 +36,7 @@ model Article {
   content          String        @db.Text
   shortDescription String?       @db.Text
   image            String?
+  authorName       String?       // Custom publisher name
   
   // Options
   isBreaking       Boolean       @default(false)
@@ -122,6 +123,7 @@ model Blog {
   content          String        @db.Text
   shortDescription String?       @db.Text
   image            String?
+  authorName       String?       // Custom publisher name
   
   // Relations
   author           User          @relation(fields: [authorId], references: [id])

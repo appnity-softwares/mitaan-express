@@ -30,7 +30,7 @@ const HomePage = ({ language }) => {
         description: a.shortDescription || stripHtml(a.content || '').substring(0, 150) + '...' || '',
         image: formatImageUrl(a.image),
         category: language === 'hi' ? (a.category?.nameHi || a.category?.name) : a.category?.name,
-        author: a.author?.name || 'Mitaan',
+        author: a.authorName || a.author?.name || 'Mitaan',
         date: new Date(a.createdAt).toLocaleDateString(),
         slug: a.slug,
         type: a.type

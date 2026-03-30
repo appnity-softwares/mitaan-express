@@ -215,7 +215,7 @@ const ArticleDetailPage = ({ language }) => {
                                 )}
                             </div>
                             <div className="text-left">
-                                <p className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wide">{article.author?.name || 'Mitaan Team'}</p>
+                                <p className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wide">{article.authorName || article.author?.name || 'Mitaan Team'}</p>
                                 <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{formattedDate}</p>
                             </div>
                         </div>

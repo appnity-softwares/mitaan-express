@@ -149,7 +149,7 @@ const BlogDetailPage = ({ language }) => {
                                 )}
                             </div>
                             <div>
-                                <p className="font-bold text-slate-900 dark:text-white text-sm">{blog.author?.name || 'Author'}</p>
+                                <p className="font-bold text-slate-900 dark:text-white text-sm">{blog.authorName || blog.author?.name || 'Author'}</p>
                                 <p className="text-xs text-slate-500">{formattedDate}</p>
                             </div>
                         </div>

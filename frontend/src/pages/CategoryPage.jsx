@@ -45,7 +45,7 @@ const CategoryPage = ({ language }) => {
             description: a.shortDescription || stripHtml(a.content || '').substring(0, 150) + '...' || '',
             image: a.image || 'https://images.unsplash.com/photo-1476242906366-d8eb64c2f661?auto=format&fit=crop&q=80&w=2000',
             category: language === 'hi' ? (a.category?.nameHi || a.category?.name) : a.category?.name,
-            author: a.author?.name || 'Mitaan',
+            author: a.authorName || a.author?.name || 'Mitaan',
             date: new Date(a.createdAt).toLocaleDateString(),
             slug: a.slug,
             type: a.type

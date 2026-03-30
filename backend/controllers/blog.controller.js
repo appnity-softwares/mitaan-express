@@ -68,7 +68,7 @@ const { uploadToR2, processContentImages, isR2Enabled } = require('../utils/r2')
 
 exports.createBlog = async (req, res) => {
     try {
-        let { title, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, createdAt } = req.body;
+        let { title, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, createdAt, authorName } = req.body;
 
         // Handle Featured Image Upload to R2
         if (isR2Enabled && image && image.startsWith('data:image')) {
@@ -110,6 +110,7 @@ exports.createBlog = async (req, res) => {
                 isBreaking: isBreaking === true || isBreaking === 'true',
                 isTrending: isTrending === true || isTrending === 'true',
                 isFeatured: isFeatured === true || isFeatured === 'true',
+                authorName: authorName || null,
                 createdAt: createdAt ? new Date(createdAt) : undefined,
                 author: { connect: { id: req.user.id } },
                 category: categoryId ? { connect: { id: parseInt(categoryId) } } : undefined,
@@ -143,7 +144,7 @@ exports.createBlog = async (req, res) => {
 exports.updateBlog = async (req, res) => {
     try {
         const { id } = req.params;
-        let { title, slug, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, createdAt } = req.body;
+        let { title, slug, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, createdAt, authorName } = req.body;
 
         // Handle Featured Image Upload to R2
         if (isR2Enabled && image && image.startsWith('data:image')) {
@@ -200,6 +201,7 @@ exports.updateBlog = async (req, res) => {
                 isBreaking: isBreaking !== undefined ? (isBreaking === true || isBreaking === 'true') : undefined,
                 isTrending: isTrending !== undefined ? (isTrending === true || isTrending === 'true') : undefined,
                 isFeatured: isFeatured !== undefined ? (isFeatured === true || isFeatured === 'true') : undefined,
+                authorName: authorName !== undefined ? authorName : undefined,
                 createdAt: createdAt ? new Date(createdAt) : undefined,
                 category: categoryUpdate,
                 tags: tags ? {

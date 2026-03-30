@@ -57,6 +57,7 @@ const ArticleEditor = () => {
         scheduledAt: '',
         priority: 'NORMAL', // HIGH, NORMAL, LOW
         createdAt: '',
+        authorName: '',
     });
 
     const currentCategory = categories.find(c => c.id === parseInt(formData.categoryId));
@@ -85,6 +86,7 @@ const ArticleEditor = () => {
                 scheduledAt: article.scheduledAt ? new Date(article.scheduledAt).toISOString().slice(0, 16) : '',
                 priority: article.priority || 'NORMAL',
                 createdAt: article.createdAt ? new Date(article.createdAt).toISOString().slice(0, 16) : '',
+                authorName: article.authorName || '',
             });
         } else if (defaultCategoryId && !id) {
             setFormData(prev => ({ ...prev, categoryId: defaultCategoryId }));
@@ -153,6 +155,7 @@ const ArticleEditor = () => {
                 priority: formData.priority,
                 scheduledAt: formData.scheduledAt ? new Date(formData.scheduledAt) : null,
                 createdAt: formData.createdAt ? new Date(formData.createdAt).toISOString() : undefined,
+                authorName: formData.authorName,
                 metadata: {} // Clear metadata usage for these fields
             };
 
@@ -716,6 +719,19 @@ const ArticleEditor = () => {
                                         <div className="text-xs text-slate-500">Mark as breaking news (appears in banner)</div>
                                     </div>
                                 </label>
+
+                                <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-white/10">
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Display Publisher Name (Override)</label>
+                                    <input
+                                        type="text"
+                                        name="authorName"
+                                        value={formData.authorName}
+                                        onChange={handleChange}
+                                        placeholder="e.g. Agency Name, Reporter Name"
+                                        className="w-full px-3 py-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-white/10 text-sm outline-none focus:ring-2 ring-red-600 dark:text-white"
+                                    />
+                                    <p className="text-[10px] text-slate-500 mt-1">If blank, the system name will be shown.</p>
+                                </div>
 
                                 <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors">
                                     <input

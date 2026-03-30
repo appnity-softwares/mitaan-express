@@ -49,6 +49,7 @@ const BlogEditorContent = () => {
         isTrending: false,
         isFeatured: false,
         createdAt: '',
+        authorName: '',
     });
 
     useEffect(() => {
@@ -69,6 +70,7 @@ const BlogEditorContent = () => {
                 isTrending: article.isTrending || false,
                 isFeatured: article.isFeatured || false,
                 createdAt: article.createdAt ? new Date(article.createdAt).toISOString().slice(0, 16) : '',
+                authorName: article.authorName || '',
             });
         }
     }, [article]);
@@ -110,6 +112,7 @@ const BlogEditorContent = () => {
                 isTrending: formData.isTrending,
                 isFeatured: formData.isFeatured,
                 createdAt: formData.createdAt ? new Date(formData.createdAt).toISOString() : undefined,
+                authorName: formData.authorName,
                 metadata: { type: 'personal-blog' }
             };
 
@@ -309,6 +312,19 @@ const BlogEditorContent = () => {
                         {/* HIGHLIGHT OPTIONS */}
                         <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-3">
                             <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Content Placement</label>
+
+                            <div className="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm">
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Display Publisher Name (Override)</label>
+                                <input
+                                    type="text"
+                                    name="authorName"
+                                    value={formData.authorName}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Agency Name, Reporter Name"
+                                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-sm outline-none focus:ring-2 ring-red-600 dark:text-white rounded-lg"
+                                />
+                                <p className="text-[10px] text-slate-500 mt-1">If blank, the system name will be shown.</p>
+                            </div>
 
                             <label className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors border border-slate-100 dark:border-white/5">
                                 <input

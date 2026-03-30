@@ -223,7 +223,7 @@ const BlogsPage = ({ language }) => {
                                                     <User size={18} className="text-slate-400" />
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="text-xs font-bold uppercase">{featuredArticle.author?.name || 'Editor'}</span>
+                                                    <span className="text-xs font-bold uppercase">{featuredArticle.authorName || featuredArticle.author?.name || 'Editor'}</span>
                                                     <span className="text-[10px] text-slate-400">{new Date(featuredArticle.createdAt).toLocaleDateString()}</span>
                                                 </div>
                                             </div>

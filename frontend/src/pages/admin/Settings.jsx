@@ -5,11 +5,12 @@ import {
     Save, Globe, Phone, Mail, MapPin, Facebook, Twitter, Instagram,
     Youtube, Image, Type, Megaphone, Zap, Layout, Settings as SettingsIcon,
     ShieldCheck, BarChart3, Palette, BookOpen, Feather, PenTool,
-    Heart as HeartIcon, Video, Star, Lock, Fingerprint, Upload, AlertCircle
+    Heart as HeartIcon, Video, Star, Lock, Fingerprint, Upload, AlertCircle,
+    Home, Info, User, FileText, Trophy, Users
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { API_URL } from '../../services/api';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 
 const Settings = () => {
     const { data: initialData, isLoading: initialLoading } = useSettings();
@@ -31,6 +32,7 @@ const Settings = () => {
         max_image_upload_size: '10', max_video_upload_size: '500',
         page_gallery_enabled: 'true', page_live_enabled: 'true', page_poetry_enabled: 'true',
         page_blogs_enabled: 'true', page_donation_enabled: 'true',
+        navbar_items_json: '', header_navbar_items: '',
     });
 
     const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
@@ -200,7 +202,7 @@ const Settings = () => {
                             <motion.div key="layout" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
                                 <div className="flex justify-between items-center border-b border-slate-100 dark:border-white/10 pb-4">
                                     <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Global Architecture</h2>
-                                    <button onClick={() => handleSaveSection(['section_hero_enabled', 'section_ticker_enabled', 'section_indepth_enabled', 'section_poetry_enabled', 'section_gallery_enabled', 'section_live_enabled', 'page_gallery_enabled', 'page_live_enabled', 'page_poetry_enabled', 'page_blogs_enabled', 'page_donation_enabled', 'hero_welcome_title', 'hero_welcome_subtitle', 'hero_welcome_image', 'hero_welcome_link'])} className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-xl text-xs uppercase tracking-widest hover:opacity-90 transition shadow-lg">Lock Layout</button>
+                                    <button onClick={() => handleSaveSection(['section_hero_enabled', 'section_ticker_enabled', 'section_indepth_enabled', 'section_poetry_enabled', 'section_gallery_enabled', 'section_live_enabled', 'page_gallery_enabled', 'page_live_enabled', 'page_poetry_enabled', 'page_blogs_enabled', 'page_donation_enabled', 'hero_welcome_title', 'hero_welcome_subtitle', 'hero_welcome_image', 'hero_welcome_link', 'header_navbar_items'])} className="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-xl text-xs uppercase tracking-widest hover:opacity-90 transition shadow-lg">Lock Layout</button>
                                 </div>
 
                                 <div className="space-y-6">
@@ -242,7 +244,7 @@ const Settings = () => {
                                         </div>
                                     )}
 
-                                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2 pt-6"><Globe size={14} /> Core Pages</h3>
+                                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2"><Globe size={14} /> Core Pages</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {[
                                             { key: 'page_gallery_enabled', name: 'Gallery Page' },
@@ -259,6 +261,132 @@ const Settings = () => {
                                                 </select>
                                             </div>
                                         ))}
+                                    </div>
+
+                                    {/* Advanced Menu Manager */}
+                                    <div className="pt-10">
+                                        <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2 mb-6">
+                                            <Layout size={14} /> Master Navigation Hub
+                                        </h3>
+                                        <div className="p-8 bg-slate-900 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden group">
+                                            <div className="absolute top-0 right-0 p-8 text-white/5 pointer-events-none group-hover:text-red-500/10 transition-colors">
+                                                <SettingsIcon size={120} />
+                                            </div>
+                                            
+                                            <div className="relative z-10 space-y-6">
+                                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/5 pb-6">
+                                                    <div>
+                                                        <h4 className="text-xl font-black text-white uppercase tracking-tight mb-1">Architecture Config</h4>
+                                                        <p className="text-xs text-slate-400 font-medium">Drag to reorder side menu nodes and pin/unpin them for the header bar.</p>
+                                                    </div>
+                                                    <div className="flex gap-3">
+                                                        <button 
+                                                            onClick={() => {
+                                                                const defaults = [
+                                                                    { id: 'home', name: 'Home', nameHi: 'मुख्य पृष्ठ', icon: 'Home' },
+                                                                    { id: 'about', name: 'About Us', nameHi: 'हमारे बारे में', icon: 'Info' },
+                                                                    { id: 'gallery', name: 'Gallery', nameHi: 'गैलरी', icon: 'ImageIcon', pageKey: 'page_gallery_enabled' },
+                                                                    { id: 'video', name: 'Videos', nameHi: 'वीडियो', icon: 'Video', pageKey: 'page_live_enabled' },
+                                                                    { id: 'contact', name: 'Contact Us', nameHi: 'संपर्क करें', icon: 'Mail' },
+                                                                    { id: 'poetry', name: 'Poetry', nameHi: 'काव्य', icon: 'Feather', pageKey: 'page_poetry_enabled' },
+                                                                    { id: 'blogs', name: 'Blog', nameHi: 'ब्लॉग', icon: 'FileText', pageKey: 'page_blogs_enabled' }
+                                                                ];
+                                                                setSettings(prev => ({ 
+                                                                    ...prev, 
+                                                                    navbar_items_json: JSON.stringify(defaults),
+                                                                    header_navbar_items: 'home,about,contact' 
+                                                                }));
+                                                                toast.success('Restored default architecture nodes.');
+                                                            }}
+                                                            className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black uppercase rounded-xl transition-all"
+                                                        >
+                                                            Restore Defaults
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => handleSaveSection(['navbar_items_json', 'header_navbar_items'])}
+                                                            className="px-5 py-2 bg-red-600 hover:bg-red-500 text-white text-[10px] font-black uppercase rounded-xl transition-all shadow-lg shadow-red-600/20"
+                                                        >
+                                                            Sync Nodes
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <Reorder.Group
+                                                    axis="y"
+                                                    values={(() => {
+                                                        try {
+                                                            const items = settings.navbar_items_json ? JSON.parse(settings.navbar_items_json) : [
+                                                                { id: 'home', name: 'Home', nameHi: 'मुख्य पृष्ठ', icon: 'Home' },
+                                                                { id: 'about', name: 'About Us', nameHi: 'हमारे बारे में', icon: 'Info' },
+                                                                { id: 'gallery', name: 'Gallery', nameHi: 'गैलरी', icon: 'ImageIcon', pageKey: 'page_gallery_enabled' },
+                                                                { id: 'video', name: 'Videos', nameHi: 'वीडियो', icon: 'Video', pageKey: 'page_live_enabled' },
+                                                                { id: 'contact', name: 'Contact Us', nameHi: 'संपर्क करें', icon: 'Mail' },
+                                                                { id: 'poetry', name: 'Poetry', nameHi: 'काव्य', icon: 'Feather', pageKey: 'page_poetry_enabled' },
+                                                                { id: 'blogs', name: 'Blog', nameHi: 'ब्लॉग', icon: 'FileText', pageKey: 'page_blogs_enabled' }
+                                                            ];
+                                                            return items;
+                                                        } catch(e) { return []; }
+                                                    })()}
+                                                    onReorder={(newOrder) => setSettings(prev => ({ ...prev, navbar_items_json: JSON.stringify(newOrder) }))}
+                                                    className="space-y-3"
+                                                >
+                                                    {(/^\s*$/.test(settings.navbar_items_json) ? [
+                                                        { id: 'home', name: 'Home', nameHi: 'मुख्य पृष्ठ', icon: 'Home' },
+                                                        { id: 'about', name: 'About Us', nameHi: 'हमारे बारे में', icon: 'Info' },
+                                                        { id: 'gallery', name: 'Gallery', nameHi: 'गैलरी', icon: 'ImageIcon', pageKey: 'page_gallery_enabled' },
+                                                        { id: 'video', name: 'Videos', nameHi: 'वीडियो', icon: 'Video', pageKey: 'page_live_enabled' },
+                                                        { id: 'contact', name: 'Contact Us', nameHi: 'संपर्क करें', icon: 'Mail' },
+                                                        { id: 'poetry', name: 'Poetry', nameHi: 'काव्य', icon: 'Feather', pageKey: 'page_poetry_enabled' },
+                                                        { id: 'blogs', name: 'Blog', nameHi: 'ब्लॉग', icon: 'FileText', pageKey: 'page_blogs_enabled' }
+                                                    ] : JSON.parse(settings.navbar_items_json)).map((item) => {
+                                                        const navIconMap = { Home, Info, ImageIcon: Image, Video, Mail, Feather, FileText, BookOpen, Star, Globe, Heart: HeartIcon, Trophy, Users };
+                                                        const IconComp = navIconMap[item.icon] || Star;
+                                                        const isPinned = (settings.header_navbar_items || '').split(',').includes(item.id);
+                                                        
+                                                        return (
+                                                            <Reorder.Item
+                                                                key={item.id}
+                                                                value={item}
+                                                                className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/[0.08] rounded-2xl border border-white/5 cursor-grab active:cursor-grabbing group transition-all"
+                                                                whileDrag={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.1)", zIndex: 100 }}
+                                                            >
+                                                                <div className="flex items-center gap-4">
+                                                                    <div className="flex flex-col gap-1 opacity-20 group-hover:opacity-60 transition-opacity">
+                                                                        <div className="w-4 h-0.5 bg-white rounded-full"></div>
+                                                                        <div className="w-4 h-0.5 bg-white rounded-full"></div>
+                                                                        <div className="w-4 h-0.5 bg-white rounded-full"></div>
+                                                                    </div>
+                                                                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-red-500">
+                                                                        <IconComp size={18} />
+                                                                    </div>
+                                                                    <div>
+                                                                        <span className="font-bold text-sm text-white uppercase tracking-tight block">
+                                                                            {item.name}
+                                                                        </span>
+                                                                        <span className="text-[10px] text-slate-500 font-bold">{item.nameHi}</span>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <button 
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        const currentPins = (settings.header_navbar_items || '').split(',').filter(Boolean);
+                                                                        let newPins;
+                                                                        if (isPinned) newPins = currentPins.filter(p => p !== item.id);
+                                                                        else newPins = [...currentPins, item.id];
+                                                                        setSettings(prev => ({ ...prev, header_navbar_items: newPins.join(',') }));
+                                                                    }}
+                                                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase transition-all ${isPinned ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'bg-white/5 text-slate-500 hover:text-white hover:bg-white/10 border border-white/5'}`}
+                                                                >
+                                                                    {isPinned ? <Zap size={12} fill="currentColor" /> : <Star size={12} />}
+                                                                    {isPinned ? 'In Header' : 'Pin to Header'}
+                                                                </button>
+                                                            </Reorder.Item>
+                                                        );
+                                                    })}
+                                                </Reorder.Group>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </motion.div>

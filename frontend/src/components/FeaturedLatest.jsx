@@ -85,7 +85,7 @@ const FeaturedLatest = ({ language, items = [] }) => {
                                     </div>
                                     <div className="flex items-center gap-1.5">
                                         <User size={12} className="text-red-600" />
-                                        {item.author?.name || 'Mitaan'}
+                                        {item.authorName || item.author?.name || 'Mitaan'}
                                     </div>
                                 </div>
                                 <h3 className="text-xl font-bold text-slate-900 dark:text-white leading-tight font-serif group-hover:text-red-600 transition-colors">

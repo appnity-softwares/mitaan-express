@@ -111,7 +111,7 @@ const TrendingPage = ({ language }) => {
                                         </div>
                                         <div className="flex items-center gap-1.5">
                                             <User size={12} className="text-red-600" />
-                                            {item.author?.name || 'Mitaan'}
+                                            {item.authorName || item.author?.name || 'Mitaan'}
                                         </div>
                                     </div>
 
