@@ -92,7 +92,7 @@ const FeaturedLatest = ({ language, items = [] }) => {
                                     {item.title}
                                 </h3>
                                 <p className="text-sm text-slate-500 dark:text-white/60 line-clamp-2 leading-relaxed">
-                                    {item.shortDescription || (item.content ? item.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...' : '')}
+                                    {(item.shortDescription || item.content || '').replace(/<[^>]*>/g, '').substring(0, 150)}
                                 </p>
                             </div>
                         </motion.div>

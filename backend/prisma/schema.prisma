@@ -38,11 +38,13 @@ model Article {
   shortDescription String?       @db.Text
   image            String?
   authorName       String?       // Custom publisher name
+  authorImage      String?       // Custom publisher image
   
   // Options
   isBreaking       Boolean       @default(false)
   isTrending       Boolean       @default(false)
   isFeatured       Boolean       @default(false)
+  isMustRead       Boolean       @default(false) // Pin to Must Read section
   
   // SEO
   videoUrl         String?
@@ -125,6 +127,7 @@ model Blog {
   shortDescription String?       @db.Text
   image            String?
   authorName       String?       // Custom publisher name
+  authorImage      String?       // Custom publisher image
   
   // Relations
   author           User          @relation(fields: [authorId], references: [id])
@@ -144,6 +147,8 @@ model Blog {
   isBreaking       Boolean       @default(false)
   isTrending       Boolean       @default(false)
   isFeatured       Boolean       @default(false)
+  isMustRead       Boolean       @default(false) // Pin to Must Read section
+
   
   // Dynamic fields
   metadata         Json?

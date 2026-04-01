@@ -174,6 +174,14 @@ const AdminContacts = () => {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <a
+                                                    href={`mailto:${c.email}?subject=Re: ${c.subject || 'Your Inquiry'}`}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-colors"
+                                                    title={t('reply')}
+                                                >
+                                                    <Mail size={16} />
+                                                </a>
                                                 {!c.isRead && (
                                                     <button
                                                         onClick={(e) => handleMarkRead(e, c.id)}
@@ -186,7 +194,7 @@ const AdminContacts = () => {
                                                 <button
                                                     onClick={(e) => handleDelete(e, c.id)}
                                                     className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
-                                                    title="Delete"
+                                                    title={t('delete')}
                                                 >
                                                     <Trash2 size={16} />
                                                 </button>

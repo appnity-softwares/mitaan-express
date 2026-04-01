@@ -31,6 +31,7 @@ exports.getAllArticles = async (req, res) => {
                 shortDescription: true,
                 image: true,
                 authorName: true,
+                authorImage: true,
                 videoUrl: true,
                 views: true,
                 status: true,
@@ -39,6 +40,7 @@ exports.getAllArticles = async (req, res) => {
                 isFeatured: true,
                 isTrending: true,
                 isBreaking: true,
+                isMustRead: true,
                 categoryId: true,
                 createdAt: true,
                 category: {
@@ -124,9 +126,9 @@ const { uploadToR2, processContentImages, isR2Enabled } = require('../utils/r2')
 exports.createArticle = async (req, res) => {
     let {
         title, slug, content, shortDescription, image, videoUrl, categoryId,
-        tags, isBreaking, isTrending, isFeatured,
+        tags, isBreaking, isTrending, isFeatured, isMustRead,
         metaTitle, metaDescription, metaKeywords, status, metadata,
-        priority, scheduledAt, language, authorName
+        priority, scheduledAt, language, authorName, authorImage
     } = req.body;
 
     if (!categoryId || isNaN(parseInt(categoryId))) {
@@ -180,11 +182,13 @@ exports.createArticle = async (req, res) => {
         const article = await prisma.article.create({
             data: {
                 title, slug: finalSlug, content, shortDescription, image, videoUrl,
-                isBreaking: isBreaking || false,
-                isTrending: isTrending || false,
-                isFeatured: isFeatured || false,
+                isBreaking: isBreaking === true || isBreaking === 'true',
+                isTrending: isTrending === true || isTrending === 'true',
+                isFeatured: isFeatured === true || isFeatured === 'true',
+                isMustRead: isMustRead === true || isMustRead === 'true',
                 language: language || 'en',
                 authorName: authorName || null,
+                authorImage: authorImage || null,
                 metaTitle, metaDescription, metaKeywords,
                 metadata: metadata || {},
                 status: status || 'DRAFT',
@@ -223,9 +227,9 @@ exports.updateArticle = async (req, res) => {
 
     let {
         title, slug, content, shortDescription, image, videoUrl, categoryId,
-        tags, isBreaking, isTrending, isFeatured,
+        tags, isBreaking, isTrending, isFeatured, isMustRead,
         metaTitle, metaDescription, metaKeywords, status, metadata,
-        priority, scheduledAt, language, authorName
+        priority, scheduledAt, language, authorName, authorImage
     } = req.body;
 
     try {
@@ -283,11 +287,13 @@ exports.updateArticle = async (req, res) => {
             shortDescription,
             image,
             videoUrl,
-            isBreaking,
-            isTrending,
-            isFeatured,
+            isBreaking: isBreaking !== undefined ? (isBreaking === true || isBreaking === 'true') : undefined,
+            isTrending: isTrending !== undefined ? (isTrending === true || isTrending === 'true') : undefined,
+            isFeatured: isFeatured !== undefined ? (isFeatured === true || isFeatured === 'true') : undefined,
+            isMustRead: isMustRead !== undefined ? (isMustRead === true || isMustRead === 'true') : undefined,
             language: language || 'en',
             authorName: authorName !== undefined ? authorName : undefined,
+            authorImage: authorImage !== undefined ? authorImage : undefined,
             metaTitle,
             metaDescription,
             metaKeywords,

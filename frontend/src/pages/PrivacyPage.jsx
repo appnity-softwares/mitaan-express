@@ -1,126 +1,152 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Lock, Eye, Save, Share2, ShieldCheck, Cookie } from 'lucide-react';
-import legalHero from '../assets/legal-hero.jpg';
+import { ShieldCheck, Mail, Lock, UserCheck, Share2, Eye, HelpCircle } from 'lucide-react';
 
-const PrivacyPage = ({ language }) => {
-    const lastUpdated = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
-
+const PrivacyPage = () => {
     const Section = ({ icon: Icon, title, children }) => (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100 dark:border-white/5 mb-6">
-            <div className="flex items-center gap-4 mb-4">
-                <div className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center shrink-0">
-                    <Icon className="text-red-600" size={20} />
+        <section className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-slate-100 dark:border-white/5 transition-all hover:shadow-xl hover:border-red-600/10 mb-8">
+            <div className="flex items-center gap-6 mb-8">
+                <div className="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-900/10 flex items-center justify-center shrink-0 border border-red-100 dark:border-red-900/20">
+                    <Icon className="text-red-600" size={24} />
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
+                <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white font-serif tracking-tight">
                     {title}
                 </h2>
             </div>
-            <div className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm md:text-base space-y-4">
+            <div className="text-slate-600 dark:text-slate-400 leading-relaxed space-y-6 text-sm md:text-base font-serif italic">
                 {children}
             </div>
-        </div>
+        </section>
     );
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-[#0f172a]">
+        <div className="min-h-screen bg-slate-50 dark:bg-[#030712] transition-colors pb-32">
             {/* Hero Section */}
-            <div className="relative h-[400px] w-full overflow-hidden">
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${legalHero})` }}
-                >
-                    <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm"></div>
+            <div className="relative h-[60vh] flex items-center justify-center overflow-hidden bg-slate-900">
+                <div className="absolute inset-0">
+                    <img 
+                        src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=2000" 
+                        className="w-full h-full object-cover opacity-20 grayscale"
+                        alt="Security and Privacy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-transparent to-transparent"></div>
                 </div>
-
-                <div className="relative h-full max-w-7xl mx-auto px-4 flex flex-col items-center justify-center text-center pt-20">
+                
+                <div className="relative z-10 max-w-4xl mx-auto px-6 text-center space-y-8">
                     <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="inline-block px-4 py-1.5 rounded-full bg-red-600 text-white font-bold text-xs uppercase tracking-widest mb-6"
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-4"
                     >
-                        {language === 'hi' ? 'गोपनीयता' : 'Privacy'}
+                        <span className="text-red-600 font-black text-[10px] uppercase tracking-[0.4em] block">GOVERNANCE & TRUST</span>
+                        <h1 className="text-5xl md:text-8xl font-black text-white font-serif tracking-tighter leading-none">
+                            Privacy <br /> <span className="text-red-600 italic">Protocols.</span>
+                        </h1>
+                        <p className="text-slate-400 font-serif italic text-lg max-w-2xl mx-auto">
+                            How Mitaan Express protects your digital footprint and ensures absolute data integrity.
+                        </p>
                     </motion.div>
-                    <h1 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
-                        {language === 'hi' ? 'गोपनीयता नीति' : 'Privacy Policy'}
-                    </h1>
-                    <p className="text-slate-300 font-medium text-lg">
-                        {language === 'hi' ? `अंतिम अपडेट: ${lastUpdated}` : `Last Updated: ${lastUpdated}`}
-                    </p>
                 </div>
             </div>
 
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="max-w-4xl mx-auto px-4 py-16 -mt-10 relative z-10"
-            >
+            {/* Document Content */}
+            <div className="max-w-4xl mx-auto px-6 -mt-24 relative z-20 space-y-8">
+                <Section icon={ShieldCheck} title="I. GENERAL">
+                    <p>
+                        Mitaan India Media Pvt. Ltd ("Mitaan Express", "we", "or", "us") recognizes the importance of protecting the privacy of your personal information that we collect from you through the Website and other plug-ins exchanging information with Mitaan Express ("Applications"); The Website and Applications are sometimes collectively referred to as "Services" for simplicity.
+                    </p>
+                    <p>
+                        We have prepared this Privacy Policy to provide you with important information about our privacy practices. This Privacy Policy applies when you use a website, mobile or tablet application, or other online services that links or refers to it. This Privacy Policy is incorporated into our Terms of Service and therefore governs your use of the Online Services provided by Mitaan Express.
+                    </p>
+                    <p>
+                        By using our Services, you accept the terms of this Privacy Policy. If you have questions or concerns about the Privacy Policy, please contact us at <a href="mailto:mitaanexpress@gmail.com" className="text-red-600 font-bold hover:underline">mitaanexpress@gmail.com</a>.
+                    </p>
+                </Section>
 
-                <div className="space-y-6">
-                    <Section icon={ShieldCheck} title={language === 'hi' ? 'हमारा प्रतिबद्धता' : 'Our Commitment'}>
+                <Section icon={UserCheck} title="II. INFORMATION WE COLLECT FROM USERS">
+                    <div className="space-y-4">
+                        <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Personal Information that you give to us</h3>
                         <p>
-                            {language === 'hi'
-                                ? 'मितान एक्सप्रेस आपकी गोपनीयता का सम्मान करता है। हम आपके द्वारा साझा की गई किसी भी जानकारी की सुरक्षा के लिए प्रतिबद्ध हैं। यह नीति बताती है कि हम डेटा कैसे एकत्र और उपयोग करते हैं।'
-                                : 'Mitaan Express respects your privacy. We are committed to protecting any personal information you share with us. This policy explains how we collect, use, and safeguard your data.'}
+                            We may collect personal information about our users in various ways. For example, we may collect information that you provide to us, information that we collect from you through the use of the Services, and information that we collect from publicly available sources or third parties.
                         </p>
-                    </Section>
-
-                    <Section icon={Save} title={language === 'hi' ? 'हम क्या जानकारी एकत्र करते हैं' : 'Information We Collect'}>
-                        <ul className="list-disc pl-5 space-y-2">
-                            <li>
-                                <strong>{language === 'hi' ? 'व्यक्तिगत जानकारी:' : 'Personal Information:'}</strong> {language === 'hi' ? 'जब आप न्यूज़लेटर के लिए साइन अप करते हैं या संपर्क करते हैं (जैसे नाम, ईमेल)।' : 'When you subscribe to newsletters or contact us (e.g., Name, Email).'}
-                            </li>
-                            <li>
-                                <strong>{language === 'hi' ? 'डिवाइस जानकारी:' : 'Device Information:'}</strong> {language === 'hi' ? 'आईपी पता, ब्राउज़र प्रकार, और आप हमारी साइट पर कैसे नेविगेट करते हैं।' : 'IP address, browser type, and navigation patterns on our site.'}
-                            </li>
-                        </ul>
-                    </Section>
-
-                    <Section icon={Eye} title={language === 'hi' ? 'हम आपकी जानकारी का उपयोग कैसे करते हैं' : 'How We Use Your Information'}>
                         <p>
-                            {language === 'hi' ? 'हम डेटा का उपयोग निम्नलिखित के लिए करते हैं:' : 'We use the collected data to:'}
-                        </p>
-                        <ul className="list-disc pl-5 space-y-2 mt-2">
-                            <li>{language === 'hi' ? 'खबरों और सामग्री को आपके अनुसार ढालने के लिए।' : 'Personalize news content and recommendations.'}</li>
-                            <li>{language === 'hi' ? 'हमारी वेबसाइट की सुधार और विश्लेषण के लिए।' : 'Analyze traffic to improve website performance.'}</li>
-                            <li>{language === 'hi' ? 'आपको महत्वपूर्ण अपडेट या न्यूज़लेटर भेजने के लिए।' : 'Send important updates or newsletters (only if subscribed).'}</li>
-                        </ul>
-                    </Section>
-
-                    <Section icon={Cookie} title={language === 'hi' ? 'कुकीज़ (Cookies)' : 'Cookies Policy'}>
-                        <p>
-                            {language === 'hi'
-                                ? 'हम आपके अनुभव को बेहतर बनाने के लिए कुकीज़ का उपयोग करते हैं। कुकीज़ छोटी फाइलें होती हैं जो आपके डिवाइस पर सेव होती हैं। हम इनका उपयोग विज्ञापन और साइट एनालिटिक्स के लिए करते हैं।'
-                                : 'We use cookies to enhance your browsing experience. Cookies are small files stored on your device. We use them for analytics and serving relevant advertisements (e.g., via Google AdSense).'}
-                        </p>
-                    </Section>
-
-                    <Section icon={Share2} title={language === 'hi' ? 'थर्ड पार्टी शेयरिंग' : 'Third-Party Sharing'}>
-                        <p>
-                            {language === 'hi'
-                                ? 'हम आपका व्यक्तिगत डेटा किसी को नहीं बेचते। हालांकि, हम एनालिटिक्स (जैसे Google Analytics) और विज्ञापनों के लिए विश्वसनीय थर्ड-पार्टी सेवाओं का उपयोग कर सकते हैं।'
-                                : 'We do not sell your personal data. We may share anonymized data with trusted third-party services for analytics (e.g., Google Analytics) and advertising purposes.'}
-                        </p>
-                    </Section>
-
-                    <Section icon={Lock} title={language === 'hi' ? 'डेटा सुरक्षा' : 'Data Security'}>
-                        <p>
-                            {language === 'hi'
-                                ? 'हमने आपके डेटा को सुरक्षित रखने के लिए उचित सुरक्षा उपाय लागू किए हैं ताकि अनधिकृत पहुंच को रोका जा सके।'
-                                : 'We implement appropriate security measures to protect your data from unauthorized access, alteration, or disclosure.'}
-                        </p>
-                    </Section>
-
-                    <div className="mt-8 text-center text-slate-500 text-sm">
-                        <p>
-                            {language === 'hi'
-                                ? 'गोपनीयता संबंधी प्रश्नों के लिए संपर्क करें: '
-                                : 'For privacy concerns, please contact: '}
-                            <a href="mailto:privacy@mitaanexpress.in" className="text-red-600 hover:underline">privacy@mitaanexpress.in</a>
+                            When you register on our website otherwise interact with the Services, you may be invited to provide personal information to enhance your experience on our site. For example, during account registration, we may ask for information such as your name, e-mail address, year of birth, gender, street address, job title and industry and related information. We may collect payment information, such as your credit card number and expiration date, where appropriate to process a financial transaction you have requested or participates in contests, promotions, surveys, forums, content submissions, requests for suggestions, or other aspects of services offered by Mitaan Express.
                         </p>
                     </div>
+
+                    <div className="space-y-4 mt-8">
+                        <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Information collected by other means</h3>
+                        <p>
+                            We use various internet technologies to manage our Services and track use of the Services. Non-personal information that we collect using these technologies may be combined with other information about you. This may include:
+                        </p>
+                        <ul className="space-y-4 list-none p-0">
+                            <li className="flex gap-4">
+                                <span className="text-red-600 font-bold whitespace-nowrap">DEVICE:</span>
+                                <span>IP address, unique device identifiers, operating system version, browser type and settings, and other transactional information.</span>
+                            </li>
+                            <li className="flex gap-4">
+                                <span className="text-red-600 font-bold whitespace-nowrap">COOKIES:</span>
+                                <span>We use cookies to manage access to and use of the Services, recognize you and provide personalization. We may transmit non-personally identifiable website usage information to third parties in order to show you targeted advertising.</span>
+                            </li>
+                            <li className="flex gap-4">
+                                <span className="text-red-600 font-bold whitespace-nowrap">LOCATION:</span>
+                                <span>We may use your location information through the IP address or your mobile device's GPS signal to provide location-based results.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </Section>
+
+                <Section icon={Eye} title="III. USE OF COLLECTED INFORMATION">
+                    <p>
+                        We use the information we collect from the Online Services to communicate with you, process your orders, manage the services you request, deliver targeted advertising, to better understand our readers and users, and to protect the rights of the services and others.
+                    </p>
+                    <p>
+                        We send promotional and emails and newsletters from time to time to users who have registered on the Website. You can opt-out of promotional communications by using the "Unsubscribe" link or by emailing us at <a href="mailto:mitaanexpress@gmail.com" className="text-red-600 font-bold hover:underline">mitaanexpress@gmail.com</a>.
+                    </p>
+                </Section>
+
+                <Section icon={Share2} title="IV. SHARING OF CUSTOMER INFORMATION">
+                    <p>
+                        We may share your information with our affiliates, business partners, service providers, other parties when required by law or when it is necessary to protect our users and services. We may also share your information with the social media service that you may have used to login to our website.
+                    </p>
+                    <p>
+                        We reserve the right to transfer any information we have about you in the event that we sell or transfer all or a portion of our business or assets to a third party, such as in the event of a merger, acquisition, or in connection with a bankruptcy reorganization.
+                    </p>
+                </Section>
+
+                <Section icon={HelpCircle} title="V. ACCESSING YOUR INFORMATION">
+                    <p>
+                        Upon request, Mitaan Express will provide you with information about whether we hold any of your personal information. In certain circumstances, we may be required by law to retain your personal information or may need to retain your personal information in order to continue providing a service.
+                    </p>
+                    <p>
+                        At the minimum, we will retain your information for as long as needed to provide you services, and as necessary to comply with our legal obligations, resolve disputes, and enforce our agreements.
+                    </p>
+                </Section>
+
+                <Section icon={Lock} title="VI. PROTECTION OF INFORMATION">
+                    <p>
+                        We strive to make certain that our servers and connections incorporate the latest encryption and security devices. We have in place physical, electronic and managerial procedures to protect the information we collect online. However, no security system is impenetrable.
+                    </p>
+                    <p>
+                        Accordingly, we disclaim liability for the theft, loss, or interception of, or unauthorized access or damage to, your data or communications. If you believe your privacy has been breached please contact us immediately at <a href="mailto:mitaanexpress@gmail.com" className="text-red-600 font-bold hover:underline">mitaanexpress@gmail.com</a>.
+                    </p>
+                </Section>
+
+                <Section icon={ShieldCheck} title="VII. CHANGES TO THIS POLICY">
+                    <p>
+                        We may modify this Privacy Policy from time to time. We will notify you of changes by posting changes here, or by other appropriate means. Any changes to the Privacy Policy will become effective when the updated policy is posted on the Services.
+                    </p>
+                </Section>
+
+                <div className="pt-12 text-center space-y-6">
+                    <div className="inline-flex items-center gap-3 px-6 py-3 bg-red-600/10 rounded-full border border-red-600/20">
+                        <Mail className="text-red-600" size={16} />
+                        <span className="text-xs font-black text-red-600 uppercase tracking-widest leading-none">
+                            Questions? mitaanexpress@gmail.com
+                        </span>
+                    </div>
                 </div>
-            </motion.div>
+            </div>
         </div>
     );
 };

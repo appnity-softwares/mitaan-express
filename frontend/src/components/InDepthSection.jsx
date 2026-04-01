@@ -19,7 +19,8 @@ const InDepthSection = ({ language, onCategoryChange, sportsArticles = [], econo
 
     const getDescription = (art) => {
         if (!art) return '';
-        const desc = art.shortDescription || stripHtml(art.content || '') || '';
+        const rawDesc = art.shortDescription || art.content || '';
+        const desc = stripHtml(rawDesc) || '';
         return desc.substring(0, 160) + (desc.length > 160 ? '...' : '');
     };
 
@@ -33,7 +34,7 @@ const InDepthSection = ({ language, onCategoryChange, sportsArticles = [], econo
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
 
                 {/* LEFT COLUMN: Main Feature + Headlines */}
-                <div className="lg:col-span-9 flex flex-col gap-12">
+                <div className={`${sideEconomy.length > 0 ? 'lg:col-span-9' : 'lg:col-span-12'} flex flex-col gap-12`}>
                     {mainSports && (
                         <div className="group grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
                             {/* Text part */}
@@ -123,45 +124,47 @@ const InDepthSection = ({ language, onCategoryChange, sportsArticles = [], econo
                 </div>
 
                 {/* RIGHT COLUMN: Economy Sidebar */}
-                <div className="lg:col-span-3 border-l border-slate-100 dark:border-gray-800 pl-0 lg:pl-10 space-y-10">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">
-                            {language === 'hi' ? 'अर्थव्यवस्था' : 'Economy'}
-                        </h3>
-                        <button
-                            onClick={() => onCategoryChange('economic')}
-                            className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors"
-                        >
-                            <ChevronRight size={18} className="text-red-600" />
-                        </button>
-                    </div>
-
-                    <div className="space-y-8">
-                        {sideEconomy.map((article) => (
-                            <div
-                                key={article.id}
-                                className="flex gap-4 group cursor-pointer items-start"
-                                onClick={() => onArticleClick(article)}
+                {sideEconomy.length > 0 && (
+                    <div className="lg:col-span-3 border-l border-slate-100 dark:border-gray-800 pl-0 lg:pl-10 space-y-10">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">
+                                {language === 'hi' ? 'अर्थव्यवस्था' : 'Economy'}
+                            </h3>
+                            <button
+                                onClick={() => onCategoryChange('economic')}
+                                className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors"
                             >
-                                <div className="w-20 h-20 shrink-0 rounded-2xl overflow-hidden bg-slate-100 dark:bg-gray-800 shadow-md">
-                                    <img
-                                        src={article.image || 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=300'}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                        alt=""
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <h4 className="text-sm font-bold text-slate-800 dark:text-gray-200 leading-tight group-hover:text-red-600 transition-colors line-clamp-3">
-                                        {getTitle(article)}
-                                    </h4>
-                                    <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                                        {new Date(article.createdAt).toLocaleDateString()}
+                                <ChevronRight size={18} className="text-red-600" />
+                            </button>
+                        </div>
+
+                        <div className="space-y-8">
+                            {sideEconomy.map((article) => (
+                                <div
+                                    key={article.id}
+                                    className="flex gap-4 group cursor-pointer items-start"
+                                    onClick={() => onArticleClick(article)}
+                                >
+                                    <div className="w-20 h-20 shrink-0 rounded-2xl overflow-hidden bg-slate-100 dark:bg-gray-800 shadow-md">
+                                        <img
+                                            src={article.image || 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=300'}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                            alt=""
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h4 className="text-sm font-bold text-slate-800 dark:text-gray-200 leading-tight group-hover:text-red-600 transition-colors line-clamp-3">
+                                            {getTitle(article)}
+                                        </h4>
+                                        <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                            {new Date(article.createdAt).toLocaleDateString()}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
 
             </div>
         </section>

@@ -163,15 +163,17 @@ const BlogDetailPage = ({ language }) => {
 
                     <div className="flex flex-wrap items-center gap-6 mb-8 pb-8 border-b border-slate-200 dark:border-slate-800">
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
-                                {blog.author?.image ? (
+                            <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg">
+                                {blog.authorImage ? (
+                                    <img src={blog.authorImage} alt={blog.authorName || 'Author'} className="w-full h-full object-cover" />
+                                ) : blog.author?.image ? (
                                     <img src={blog.author.image} alt={blog.author.name} className="w-full h-full object-cover" />
                                 ) : (
                                     <User size={24} className="text-slate-500" />
                                 )}
                             </div>
-                            <div>
-                                <p className="font-bold text-slate-900 dark:text-white text-sm">{blog.authorName || blog.author?.name || 'Author'}</p>
+                            <div className="text-left">
+                                <p className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wide">{blog.authorName || blog.author?.name || 'Author'}</p>
                                 <p className="text-xs text-slate-500">{formattedDate}</p>
                             </div>
                         </div>

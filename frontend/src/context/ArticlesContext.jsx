@@ -40,10 +40,11 @@ export const ArticlesProvider = ({ children, language }) => {
     } = useCategoriesQuery();
 
     const { featured, trending, breaking, videos, published } = useMemo(() => {
-        const publishedArticles = articles.filter(a => a.status === 'PUBLISHED' && (!a.language || a.language === language || a.language === 'both'))
+        // Stop filtering by language as per user request to show all news regardless of UI language
+        const publishedArticles = articles.filter(a => a.status === 'PUBLISHED')
             .map(a => ({ ...a, type: 'article' }));
 
-        const publishedBlogs = blogs.filter(b => b.status === 'PUBLISHED' && (!b.language || b.language === language || b.language === 'both'))
+        const publishedBlogs = blogs.filter(b => b.status === 'PUBLISHED')
             .map(b => ({ ...b, type: 'blog' }));
 
         const allContent = [...publishedArticles, ...publishedBlogs].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -55,7 +56,7 @@ export const ArticlesProvider = ({ children, language }) => {
             videos: publishedArticles.filter(a => a.videoUrl).slice(0, 10),
             published: allContent
         };
-    }, [articles, blogs, language]);
+    }, [articles, blogs]); // Remove language from dependencies as well
 
     const refetch = () => {
         refetchArticles();

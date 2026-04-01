@@ -6,6 +6,12 @@ exports.getAllCategories = async (req, res) => {
             include: {
                 parent: {
                     select: { id: true, name: true, nameHi: true, slug: true }
+                },
+                _count: {
+                    select: {
+                        articles: true,
+                        blogs: true
+                    }
                 }
             },
             orderBy: [

@@ -29,6 +29,7 @@ const Navbar = ({
     const navigate = useNavigate();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isLangOpen, setIsLangOpen] = useState(false);
     const [categories, setCategories] = useState([]);
     const [email, setEmail] = useState('');
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -51,8 +52,6 @@ const Navbar = ({
         toast.success(`Thank you for subscribing!`);
         setEmail('');
     };
-
-
 
     const iconMap = {
         'TrendingUp': <TrendingUp size={16} />,
@@ -112,11 +111,16 @@ const Navbar = ({
         const tree = [];
         const lookup = {};
 
-        categories.forEach(cat => {
+        const filteredCategories = categories.filter(cat => 
+            (cat._count?.articles || 0) > 0 || (cat._count?.blogs || 0) > 0 || 
+            categories.some(c => c.parentId === cat.id && ((c._count?.articles || 0) > 0 || (c._count?.blogs || 0) > 0))
+        );
+
+        filteredCategories.forEach(cat => {
             lookup[cat.id] = { ...cat, children: [] };
         });
 
-        categories.forEach(cat => {
+        filteredCategories.forEach(cat => {
             if (cat.parentId && lookup[cat.parentId]) {
                 lookup[cat.parentId].children.push(lookup[cat.id]);
             } else if (!cat.parentId) {
@@ -209,25 +213,30 @@ const Navbar = ({
             : 'bg-transparent py-4'
             }`}>
 
-            <nav className="max-w-[1600px] mx-auto px-4 lg:px-8 flex items-center justify-between h-14 lg:h-18">
-                {/* Desktop: Dynamic Segments (Left) | Mobile: Menu Toggle (Left) */}
+            <nav className="max-w-[1600px] mx-auto px-4 lg:px-8 flex items-center justify-between h-14 lg:h-18 relative">
+                {/* 
+                   STRATEGY: 
+                   1. For mobile view matching reference:
+                      [Menu Icon (Left)] [Logo & Search Icon (Center)] [Red Circle Heart Button (Right)]
+                */}
+                
+                {/* LEFT SECTION (Responsive Toggle) */}
                 <div className="flex items-center gap-1 sm:gap-2 lg:gap-4 shrink-0 z-10">
-                    {/* Mobile Only: Menu Toggle (Always first on mobile) */}
                     <div className="lg:hidden">
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className={`flex items-center gap-2 group transition-colors shrink-0 ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
+                            className={`flex items-center group transition-colors shrink-0 ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
                             aria-label="Toggle Menu"
                         >
-                            <div className="relative w-6 h-6 flex flex-col justify-center gap-1.5 shrink-0">
+                            <div className="relative w-6 h-6 flex flex-col justify-center gap-1.5 overflow-hidden">
                                 <span className={`h-0.5 w-full bg-current transition-transform duration-500 rounded-full ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-                                <span className={`h-0.5 w-3/4 bg-current transition-opacity duration-300 rounded-full ${isMenuOpen ? 'opacity-0' : ''}`} />
+                                <span className={`h-0.5 w-full bg-current transition-all duration-300 rounded-full ${isMenuOpen ? 'translate-x-10 opacity-0' : ''}`} />
                                 <span className={`h-0.5 w-full bg-current transition-transform duration-500 rounded-full ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
                             </div>
                         </button>
                     </div>
 
-                    {/* Desktop Segment Orchestrator (Left) */}
+                    {/* Desktop Segment Orchestrator (Hidden on Mobile) */}
                     <div className="hidden lg:flex items-center gap-1 sm:gap-2 lg:gap-4">
                         {(settings?.header_segment_order || 'menu,home,news,categories,info').split(',').map((segId) => {
                             switch (segId.trim()) {
@@ -318,7 +327,7 @@ const Navbar = ({
                                                     <div className="grid grid-cols-1 gap-1">
                                                         {categoryTree.map((parent) => (
                                                             <div key={parent.id} className="group/item">
-                                                                <button
+                                                                 <button
                                                                     onClick={() => handleLinkClick(parent.slug || parent.id)}
                                                                     className="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-left"
                                                                 >
@@ -381,22 +390,28 @@ const Navbar = ({
                     </div>
                 </div>
 
-                {/* Center Section: Logo/Title (Centered on all screens) */}
-                <div className="absolute left-1/2 -translate-x-1/2 flex justify-center z-0 w-full pointer-events-none">
-                    <button onClick={() => handleLinkClick('home')} className="group flex items-center gap-2 lg:gap-3 pointer-events-auto max-w-[60%] sm:max-w-none">
-                        <div className="flex flex-col items-center leading-tight">
-                            <h1 className={`text-lg sm:text-xl lg:text-3xl font-black tracking-tighter font-serif transition-colors drop-shadow-sm ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
+                {/* CENTER SECTION (Mobile Logo & Search Sync) */}
+                <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none px-4">
+                        <button onClick={() => navigate('/')} className="group pointer-events-auto">
+                             <h1 className={`text-xl sm:text-2xl lg:text-4xl mitaan-branding transition-colors drop-shadow-sm flex flex-col items-center leading-none ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
                                 {settings?.site_title || 'Mitaan Express'}
+                                <span className={`hidden lg:block text-[9px] font-black uppercase tracking-[0.4em] opacity-80 mt-1 dark:text-white/60 ${isNavbarSolid ? 'text-white' : 'text-slate-500'}`}>
+                                    {language === 'hi' ? 'निष्पक्ष समाचार' : 'UNBIASED NEWS'}
+                                </span>
                             </h1>
-                            <span className={`hidden lg:block text-[9px] font-black uppercase tracking-[0.4em] opacity-80 ${isNavbarSolid ? 'text-white' : 'text-slate-500'}`}>
-                                {language === 'hi' ? 'निष्पक्ष समाचार' : 'UNBIASED NEWS'}
-                            </span>
-                        </div>
-                    </button>
-                </div>
+                        </button>
+                        {/* Search Icon Right Next to Branding (Mobile Only) */}
+                        <button
+                            onClick={() => setIsSearchOpen(true)}
+                            className={`p-1.5 transition-all lg:hidden ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
+                        >
+                            <Search size={18} strokeWidth={3} />
+                        </button>
+                    </div>
 
-                {/* Right Section: Dynamic Actions */}
+                {/* RIGHT SECTION (Donate & Desktop Actions) */}
                 <div className="flex items-center justify-end gap-1 sm:gap-2 lg:gap-4 shrink-0 z-10">
+                    {/* Desktop Only Actions */}
                     <div className="hidden lg:flex items-center gap-2">
                         {(settings?.header_right_order || 'live,search,lang,theme').split(',').map((item) => {
                             switch (item.trim()) {
@@ -415,13 +430,59 @@ const Navbar = ({
                                     );
                                 case 'lang':
                                     return (
-                                        <div key="right-lang" className="relative group/lang">
-                                            <button onClick={toggleLanguage} className="w-10 h-10 flex items-center justify-center rounded-xl transition-all hover:bg-white/10 border border-white/0 hover:border-white/10">
-                                                <span className={`text-[10px] font-black ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
-                                                    {language.toUpperCase()}
+                                        <div key="right-lang" className="relative">
+                                            <button 
+                                                onClick={() => setIsLangOpen(!isLangOpen)} 
+                                                className={`flex items-center gap-2 h-11 px-3 rounded-xl transition-all hover:bg-white/10 group/lang ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
+                                            >
+                                                <Globe size={18} className="shrink-0" />
+                                                <span className="text-[11px] font-black uppercase tracking-[0.2em] whitespace-nowrap">
+                                                    HI/EN
                                                 </span>
+                                                <ChevronDown size={10} className={`opacity-50 transition-transform ${isLangOpen ? 'rotate-180' : ''}`} />
                                             </button>
-                                            <LanguagePopup onSelect={onLanguageChange} />
+                                            
+                                            <AnimatePresence>
+                                                {isLangOpen && (
+                                                    <div className="absolute top-full right-0 pt-2 z-[110]">
+                                                        <div className="bg-white dark:bg-slate-900 shadow-2xl rounded-3xl border border-slate-100 dark:border-white/5 p-4 min-w-[200px] space-y-4 pointer-events-auto">
+                                                            <div className="flex items-center gap-3 border-b border-slate-100 dark:border-white/5 pb-3">
+                                                                <Globe size={16} className="text-red-600" />
+                                                                <span className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-wider">Select Language</span>
+                                                            </div>
+                                                            <div className="grid grid-cols-1 gap-2">
+                                                                <button
+                                                                    onClick={() => {
+                                                                        onLanguageChange('en');
+                                                                        setIsLangOpen(false);
+                                                                    }}
+                                                                    className={`flex items-center justify-between p-3 rounded-2xl transition-all border ${language === 'en' ? 'bg-red-600 text-white border-red-600' : 'bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-slate-300 border-transparent hover:border-red-600/30'}`}
+                                                                >
+                                                                    <span className="text-xs font-black uppercase tracking-widest">English</span>
+                                                                    {language === 'en' && <Sparkles size={12} />}
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => {
+                                                                        onLanguageChange('hi');
+                                                                        setIsLangOpen(false);
+                                                                    }}
+                                                                    className={`flex items-center justify-between p-3 rounded-2xl transition-all border ${language === 'hi' ? 'bg-red-600 text-white border-red-600' : 'bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-slate-300 border-transparent hover:border-red-600/30'}`}
+                                                                >
+                                                                    <span className="text-xs font-black uppercase tracking-widest">हिन्दी</span>
+                                                                    {language === 'hi' && <Sparkles size={12} />}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </AnimatePresence>
+                                            
+                                            {isLangOpen && (
+                                                <div 
+                                                    className="fixed inset-0 z-[100]" 
+                                                    onClick={() => setIsLangOpen(false)}
+                                                />
+                                            )}
                                         </div>
                                     );
                                 case 'theme':
@@ -440,28 +501,24 @@ const Navbar = ({
                         })}
                     </div>
 
-                    {/* Mobile Search Button */}
-                    <button
-                        onClick={() => setIsSearchOpen(true)}
-                        className={`w-10 h-10 flex items-center justify-center rounded-full transition-all lg:hidden ${isNavbarSolid ? 'text-white hover:bg-white/10' : 'text-red-600 hover:bg-red-50'}`}
-                    >
-                        <Search size={20} />
-                    </button>
-
+                    {/* Mobile: Red Circle Heart Button | Desktop: Full Button */}
                     {isDonationEnabled && (
                         <button
-                            onClick={() => window.location.href = '/donate'}
-                            className={`flex items-center gap-2 px-3 lg:px-5 py-2 rounded-xl font-black text-[10px] lg:text-xs uppercase tracking-widest transition-all ${isNavbarSolid ? 'bg-white text-red-600 hover:bg-white/90' : 'bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20'} shadow-sm shrink-0`}
+                            onClick={() => navigate('/donate')}
+                            className={`flex items-center justify-center shrink-0 transition-all shadow-lg active:scale-95
+                                ${isNavbarSolid 
+                                    ? 'bg-white text-red-600 hover:bg-slate-100' 
+                                    : 'bg-red-600 text-white hover:bg-red-700 shadow-red-600/20'}
+                                w-10 h-10 lg:w-auto lg:h-auto lg:px-5 lg:py-2.5 rounded-full lg:rounded-xl`}
                         >
-                            <HeartIcon size={14} className="fill-current" />
-                            <span className="hidden sm:inline">
+                            <HeartIcon size={18} className="fill-current" />
+                            <span className="hidden lg:inline ml-2 font-black text-xs uppercase tracking-widest whitespace-nowrap">
                                 {language === 'hi' ? 'सहयोग' : 'Donate'}
                             </span>
                         </button>
                     )}
                 </div>
             </nav>
-
 
             <AnimatePresence>
                 {isMenuOpen && (
@@ -491,9 +548,9 @@ const Navbar = ({
                                                     <div className="flex items-center gap-3">
                                                         <Globe size={18} className="text-red-600" />
                                                         <span className="text-[11px] font-black uppercase tracking-tight flex items-center gap-2 text-red-600 dark:text-red-500">
-                                                            <span className={language === 'en' ? 'opacity-100' : 'opacity-40'}>EN</span>
-                                                            <span className="opacity-20">/</span>
                                                             <span className={language === 'hi' ? 'opacity-100' : 'opacity-40'}>HI</span>
+                                                            <span className="opacity-20">/</span>
+                                                            <span className={language === 'en' ? 'opacity-100' : 'opacity-40'}>EN</span>
                                                         </span>
                                                     </div>
                                                     <ChevronDown size={14} className="text-red-600/50" />
@@ -513,7 +570,7 @@ const Navbar = ({
 
                                             {isDonationEnabled && (
                                                 <button
-                                                    onClick={() => window.location.href = '/donate'}
+                                                    onClick={() => navigate('/donate')}
                                                     className="flex items-center justify-between p-3 bg-red-600 text-white rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-red-600/20"
                                                 >
                                                     <div className="flex items-center gap-3">

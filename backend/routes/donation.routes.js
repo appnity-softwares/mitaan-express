@@ -8,5 +8,6 @@ router.post('/', donationController.createDonation);
 
 // Private route for admin to see donations
 router.get('/', authenticateToken, authorizeRoles('ADMIN'), donationController.getAllDonations);
+router.delete('/:id', authenticateToken, authorizeRoles('ADMIN'), donationController.deleteDonation);
 
 module.exports = router;

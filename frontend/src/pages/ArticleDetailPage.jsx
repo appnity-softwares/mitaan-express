@@ -228,7 +228,9 @@ const ArticleDetailPage = ({ language }) => {
                     <div className="flex flex-wrap items-center justify-between gap-4 border-y border-slate-100 dark:border-white/5 py-6 w-full mb-12">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-full ring-2 ring-white dark:ring-slate-800 shadow-lg overflow-hidden">
-                                {article.author?.image ? (
+                                {article.authorImage ? (
+                                    <img src={article.authorImage} alt={article.authorName || 'Author'} className="w-full h-full object-cover" />
+                                ) : article.author?.image ? (
                                     <img src={article.author.image} alt={article.author.name} className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">

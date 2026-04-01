@@ -63,6 +63,19 @@ const AdminDonations = () => {
         }
     };
 
+    const handleDeleteDonation = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this donation record?')) return;
+        
+        try {
+            const token = localStorage.getItem('token');
+            await deleteDonation(id, token);
+            setDonations(prev => prev.filter(d => d.id !== id));
+            alert('Donation deleted successfully');
+        } catch (error) {
+            alert('Failed to delete donation: ' + error.message);
+        }
+    };
+
     const handleSettingsChange = (e) => {
         const { name, value } = e.target;
         setSettingsState(prev => ({ ...prev, [name]: value }));
@@ -164,20 +177,21 @@ const AdminDonations = () => {
                                         <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Message</th>
                                         <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
                                         <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                                        <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 dark:divide-white/10">
                                     {loading ? (
                                         <tr>
-                                            <td colSpan="5" className="px-8 py-20 text-center text-slate-400 italic">Loading donations...</td>
+                                            <td colSpan="6" className="px-8 py-20 text-center text-slate-400 italic">Loading donations...</td>
                                         </tr>
                                     ) : filteredDonations.length === 0 ? (
                                         <tr>
-                                            <td colSpan="5" className="px-8 py-20 text-center text-slate-400 italic">No donations found</td>
+                                            <td colSpan="6" className="px-8 py-20 text-center text-slate-400 italic">No donations found</td>
                                         </tr>
                                     ) : (
                                         filteredDonations.map((donation) => (
-                                            <tr key={donation.id} className="hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors">
+                                            <tr key={donation.id} className="hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors group">
                                                 <td className="px-8 py-6">
                                                     <div className="flex flex-col">
                                                         <span className="font-bold text-slate-900 dark:text-white">{donation.name}</span>
@@ -202,6 +216,15 @@ const AdminDonations = () => {
                                                     <span className="inline-flex items-center px-3 py-1 bg-green-500/10 text-green-500 rounded-full text-[10px] font-black uppercase tracking-widest">
                                                         {donation.status}
                                                     </span>
+                                                </td>
+                                                <td className="px-8 py-6 text-right">
+                                                    <button 
+                                                        onClick={() => handleDeleteDonation(donation.id)}
+                                                        className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                                                        title="Delete Donation Record"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
                                                 </td>
                                             </tr>
                                         ))

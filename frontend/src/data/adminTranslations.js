@@ -15,7 +15,7 @@ export const adminTranslations = {
         reports: "Reports",
         settings: "Settings",
         logout: "Logout",
-        myBlogs: "My Blogs",
+        myBlogs: "News",
         analytics: "Analytics",
         activityLogs: "Activity Logs",
         featured: "Featured",
@@ -52,14 +52,14 @@ export const adminTranslations = {
         liveNowSection: "Live Now Section",
 
         // Stats & Dashboard
-        totalArticles: "Total Articles",
+        totalArticles: "Total News",
         views: "Total Views",
         activeUsers: "Active Users",
         breakingNews: "Breaking News",
         trending: "Trending",
 
         // Analytics
-        publishedArticles: "Published Articles",
+        publishedArticles: "Published News",
         totalComments: "Total Comments",
         todayData: "Today's Data",
         thisWeek: "This Week",
@@ -68,7 +68,7 @@ export const adminTranslations = {
         weekly: "Weekly",
         monthly: "Monthly",
         categoryBreakdown: "Category-wise Breakdown",
-        topPerformingArticles: "Top Performing Articles",
+        topPerformingArticles: "Top Performing News",
         trafficSources: "Traffic Sources",
         userEngagement: "User Engagement Metrics",
         chartsGraphs: "Charts & Graphs",
@@ -103,9 +103,10 @@ export const adminTranslations = {
         author: "Author",
         publish: "Publish",
         saveDraft: "Save Draft",
+        reply: "Reply",
 
         // Article Editor
-        article_title: "Article Headline",
+        article_title: "News Headline",
         article_content: "Content",
         excerpt: "Excerpt / Short Description",
         featured_image: "Featured Image",
@@ -124,10 +125,10 @@ export const adminTranslations = {
         priority: "Priority",
         publishDate: "Publish Date",
         lockedCategory: "Locked to current category",
-        createArticle: "Create New Article",
-        createBlog: "Write New Blog",
-        editArticle: "Edit Article",
-        editBlog: "Edit Blog",
+        createArticle: "Create News",
+        createBlog: "Write News",
+        editArticle: "Edit News",
+        editBlog: "Edit News",
 
         // Ads
         enable_popup: "Enable Homepage Popup",
@@ -175,7 +176,7 @@ export const adminTranslations = {
         reports: "रिपोर्ट्स",
         settings: "सेटिंग्स",
         logout: "लॉग आउट",
-        myBlogs: "मेरे ब्लॉग",
+        myBlogs: "न्यूज़",
         analytics: "एनालिटिक्स",
         activityLogs: "गतिविधि लॉग",
         featured: "फीचर्ड कंटेंट",
@@ -263,6 +264,7 @@ export const adminTranslations = {
         author: "लेखक",
         publish: "प्रकाशित करें",
         saveDraft: "ड्राफ्ट सेव करें",
+        reply: "जवाब दें",
 
         // Article Editor
         article_title: "लेख की हेडलाइन",
@@ -284,10 +286,10 @@ export const adminTranslations = {
         priority: "प्राथमिकता",
         publishDate: "प्रकाशन की तारीख",
         lockedCategory: "वर्तमान श्रेणी के लिए लॉक किया गया",
-        createArticle: "नया लेख बनाएँ",
-        createBlog: "नया ब्लॉग लिखें",
-        editArticle: "लेख संपादित करें",
-        editBlog: "ब्लॉग संपादित करें",
+        createArticle: "नई न्यूज़ बनाएँ",
+        createBlog: "नई न्यूज़ लिखें",
+        editArticle: "न्यूज़ संपादित करें",
+        editBlog: "न्यूज़ संपादित करें",
 
         // Ads
         enable_popup: "होमपेज पॉपअप सक्षम करें",

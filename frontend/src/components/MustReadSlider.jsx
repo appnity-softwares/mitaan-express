@@ -41,7 +41,7 @@ const MustReadSlider = ({ language, onArticleClick }) => {
                         image: a.image || 'https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&q=80&w=1000',
                         author: a.author?.name || 'Mitaan',
                         date: new Date(a.createdAt).toLocaleDateString(),
-                        content: a.shortDescription || stripHtml(a.content || '').substring(0, 100),
+                        content: stripHtml(a.shortDescription || a.content || '').substring(0, 100),
                         slug: a.slug,
                         views: a.views || 0
                     })),
@@ -53,7 +53,7 @@ const MustReadSlider = ({ language, onArticleClick }) => {
                         image: b.image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1000',
                         author: b.author?.name || 'Mitaan',
                         date: new Date(b.createdAt).toLocaleDateString(),
-                        content: b.shortDescription || stripHtml(b.content || '').substring(0, 100),
+                        content: stripHtml(b.shortDescription || b.content || '').substring(0, 100),
                         slug: b.slug,
                         views: b.views || 0
                     }))

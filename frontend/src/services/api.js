@@ -349,3 +349,15 @@ export const globalSearch = async (query) => {
         return { articles: [], blogs: [], categories: [] };
     }
 };
+export const deleteDonation = async (id, token) => {
+    try {
+        const response = await fetch(`${API_URL}/donations/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Failed to delete donation');
+        return true;
+    } catch (error) {
+        throw error;
+    }
+};

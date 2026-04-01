@@ -39,7 +39,21 @@ const getAllDonations = async (req, res) => {
     }
 };
 
+const deleteDonation = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await prisma.donation.delete({
+            where: { id: parseInt(id) }
+        });
+        res.json({ message: 'Donation deleted successfully' });
+    } catch (error) {
+        console.error('Delete donation error:', error);
+        res.status(500).json({ message: 'Error deleting donation', error: error.message });
+    }
+};
+
 module.exports = {
     createDonation,
-    getAllDonations
+    getAllDonations,
+    deleteDonation
 };

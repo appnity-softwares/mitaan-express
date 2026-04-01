@@ -25,6 +25,13 @@ exports.getAllBlogs = async (req, res) => {
                     author: { select: { id: true, name: true, image: true } },
                     tags: true
                 },
+                select: {
+                    id: true, title: true, slug: true, content: true, shortDescription: true,
+                    image: true, authorName: true, authorImage: true, status: true,
+                    language: true, views: true, isBreaking: true, isTrending: true,
+                    isFeatured: true, isMustRead: true, categoryId: true, createdAt: true,
+                    updatedAt: true,
+                },
                 orderBy: { createdAt: 'desc' },
                 skip,
                 take
@@ -68,7 +75,7 @@ const { uploadToR2, processContentImages, isR2Enabled } = require('../utils/r2')
 
 exports.createBlog = async (req, res) => {
     try {
-        let { title, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, createdAt, authorName } = req.body;
+        let { title, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, isMustRead, createdAt, authorName, authorImage } = req.body;
 
         // Handle Featured Image Upload to R2
         if (isR2Enabled && image && image.startsWith('data:image')) {
@@ -110,7 +117,9 @@ exports.createBlog = async (req, res) => {
                 isBreaking: isBreaking === true || isBreaking === 'true',
                 isTrending: isTrending === true || isTrending === 'true',
                 isFeatured: isFeatured === true || isFeatured === 'true',
+                isMustRead: isMustRead === true || isMustRead === 'true',
                 authorName: authorName || null,
+                authorImage: authorImage || null,
                 createdAt: createdAt ? new Date(createdAt) : undefined,
                 author: { connect: { id: req.user.id } },
                 category: categoryId ? { connect: { id: parseInt(categoryId) } } : undefined,
@@ -144,7 +153,7 @@ exports.createBlog = async (req, res) => {
 exports.updateBlog = async (req, res) => {
     try {
         const { id } = req.params;
-        let { title, slug, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, createdAt, authorName } = req.body;
+        let { title, slug, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, isMustRead, createdAt, authorName, authorImage } = req.body;
 
         // Handle Featured Image Upload to R2
         if (isR2Enabled && image && image.startsWith('data:image')) {
@@ -201,7 +210,9 @@ exports.updateBlog = async (req, res) => {
                 isBreaking: isBreaking !== undefined ? (isBreaking === true || isBreaking === 'true') : undefined,
                 isTrending: isTrending !== undefined ? (isTrending === true || isTrending === 'true') : undefined,
                 isFeatured: isFeatured !== undefined ? (isFeatured === true || isFeatured === 'true') : undefined,
+                isMustRead: isMustRead !== undefined ? (isMustRead === true || isMustRead === 'true') : undefined,
                 authorName: authorName !== undefined ? authorName : undefined,
+                authorImage: authorImage !== undefined ? authorImage : undefined,
                 createdAt: createdAt ? new Date(createdAt) : undefined,
                 category: categoryUpdate,
                 tags: tags ? {

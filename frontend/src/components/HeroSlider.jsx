@@ -28,7 +28,7 @@ const HeroSlider = ({ language }) => {
         id: a.id,
         tag: language === 'hi' ? (a.category?.nameHi || 'विशेष') : (a.category?.name || 'FEATURED'),
         title: a.title,
-        description: a.shortDescription || stripHtml(a.content || '').substring(0, 100) || '',
+        description: stripHtml(a.shortDescription || a.content || '').substring(0, 150) || '',
         image: formatImageUrl(a.image),
         articleId: a.id,
         slug: a.slug,
@@ -199,8 +199,8 @@ const HeroSlider = ({ language }) => {
             </div>
 
             {/* Pagination UI */}
-            <div className="absolute bottom-12 left-4 sm:left-6 lg:left-8 right-4 sm:right-6 lg:right-8 z-20 flex items-end justify-between">
-                <div className="flex gap-4">
+            <div className="absolute bottom-12 left-4 sm:left-6 lg:left-8 right-4 sm:right-6 lg:left-8 z-20 flex items-end justify-between">
+                <div className="flex gap-2 sm:gap-4">
                     {slides.map((_, i) => (
                         <button
                             key={i}

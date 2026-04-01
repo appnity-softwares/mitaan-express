@@ -48,8 +48,10 @@ const BlogEditorContent = () => {
         isBreaking: false,
         isTrending: false,
         isFeatured: false,
+        isMustRead: false,
         createdAt: '',
         authorName: '',
+        authorImage: '',
     });
 
     useEffect(() => {
@@ -69,8 +71,10 @@ const BlogEditorContent = () => {
                 isBreaking: article.isBreaking || false,
                 isTrending: article.isTrending || false,
                 isFeatured: article.isFeatured || false,
+                isMustRead: article.isMustRead || false,
                 createdAt: article.createdAt ? new Date(article.createdAt).toISOString().slice(0, 16) : '',
                 authorName: article.authorName || '',
+                authorImage: article.authorImage || '',
             });
         }
     }, [article]);
@@ -111,8 +115,10 @@ const BlogEditorContent = () => {
                 isBreaking: formData.isBreaking,
                 isTrending: formData.isTrending,
                 isFeatured: formData.isFeatured,
+                isMustRead: formData.isMustRead,
                 createdAt: formData.createdAt ? new Date(formData.createdAt).toISOString() : undefined,
                 authorName: formData.authorName,
+                authorImage: formData.authorImage,
                 metadata: { type: 'personal-blog' }
             };
 
@@ -313,18 +319,70 @@ const BlogEditorContent = () => {
                         <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-3">
                             <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Content Placement</label>
 
-                            <div className="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm">
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Display Publisher Name (Override)</label>
+                            <div className="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm space-y-4">
+                                <label className="block text-xs font-bold text-slate-500 uppercase">Publisher Override</label>
+                                
                                 <input
                                     type="text"
                                     name="authorName"
                                     value={formData.authorName}
                                     onChange={handleChange}
-                                    placeholder="e.g. Agency Name, Reporter Name"
+                                    placeholder="Publisher Name..."
                                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-sm outline-none focus:ring-2 ring-red-600 dark:text-white rounded-lg"
                                 />
-                                <p className="text-[10px] text-slate-500 mt-1">If blank, the system name will be shown.</p>
+
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Publisher Image URL</label>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="url"
+                                            name="authorImage"
+                                            value={formData.authorImage}
+                                            onChange={handleChange}
+                                            placeholder="https://..."
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-sm outline-none focus:ring-2 ring-red-600 dark:text-white rounded-lg"
+                                        />
+                                        <label className="p-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg cursor-pointer hover:opacity-90">
+                                            <Upload size={14} />
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                className="hidden"
+                                                onChange={(e) => {
+                                                    if (e.target.files?.[0]) {
+                                                        const file = e.target.files[0];
+                                                        const fmData = new FormData();
+                                                        fmData.append('file', file);
+                                                        fmData.append('type', 'IMAGE');
+                                                        createMediaMutation.mutate({ payload: fmData }, {
+                                                            onSuccess: (data) => setFormData(p => ({ ...p, authorImage: data.url })),
+                                                            onError: (err) => toast.error(err.message)
+                                                        });
+                                                    }
+                                                }}
+                                            />
+                                        </label>
+                                    </div>
+                                    <p className="text-[10px] text-slate-500">Overrides the default system author profile.</p>
+                                </div>
                             </div>
+
+                            <label className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors border border-slate-100 dark:border-white/5">
+                                <input
+                                    type="checkbox"
+                                    name="isMustRead"
+                                    checked={formData.isMustRead}
+                                    onChange={handleChange}
+                                    className="w-5 h-5 text-red-600 rounded focus:ring-2 ring-red-600"
+                                />
+                                <div className="flex-1">
+                                    <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                        <ArrowRight size={16} className="text-blue-600" />
+                                        Must Read
+                                    </div>
+                                    <div className="text-xs text-slate-500">Pin to "Must Read" slider</div>
+                                </div>
+                            </label>
 
                             <label className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors border border-slate-100 dark:border-white/5">
                                 <input
