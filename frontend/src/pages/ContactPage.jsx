@@ -108,7 +108,7 @@ const ContactPage = ({ language }) => {
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-black uppercase tracking-widest opacity-60">{language === 'hi' ? 'कार्यालय' : 'Office'}</p>
-                                        <p className="font-bold text-lg leading-tight">Mitaan Express. A unit of Mitaan India Media Pvt.Ltd <br /> SMRITI NAGAR, BHILAI, CHHATTISGARH</p>
+                                        <p className="font-bold text-lg leading-tight">SMRITI NAGAR, BHILAI</p>
                                     </div>
                                 </div>
                             </div>

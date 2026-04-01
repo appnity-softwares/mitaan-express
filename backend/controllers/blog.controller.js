@@ -20,17 +20,15 @@ exports.getAllBlogs = async (req, res) => {
         const [blogs, total] = await Promise.all([
             prisma.blog.findMany({
                 where,
-                include: {
-                    category: true,
-                    author: { select: { id: true, name: true, image: true } },
-                    tags: true
-                },
                 select: {
                     id: true, title: true, slug: true, content: true, shortDescription: true,
                     image: true, authorName: true, authorImage: true, status: true,
                     language: true, views: true, isBreaking: true, isTrending: true,
                     isFeatured: true, isMustRead: true, categoryId: true, createdAt: true,
                     updatedAt: true,
+                    category: true,
+                    author: { select: { id: true, name: true, image: true } },
+                    tags: true
                 },
                 orderBy: { createdAt: 'desc' },
                 skip,

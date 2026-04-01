@@ -221,11 +221,11 @@ const Navbar = ({
                 */}
                 
                 {/* LEFT SECTION (Responsive Toggle) */}
-                <div className="flex items-center gap-1 sm:gap-2 lg:gap-4 shrink-0 z-10">
+                <div className="flex-1 flex items-center gap-1 sm:gap-2 lg:gap-4 shrink-0 z-10">
                     <div className="lg:hidden">
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className={`flex items-center group transition-colors shrink-0 ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
+                            className={`flex items-center group transition-colors shrink-0 ${isNavbarSolid ? 'text-white' : 'text-white'}`}
                             aria-label="Toggle Menu"
                         >
                             <div className="relative w-6 h-6 flex flex-col justify-center gap-1.5 overflow-hidden">
@@ -391,9 +391,9 @@ const Navbar = ({
                 </div>
 
                 {/* CENTER SECTION (Mobile Logo & Search Sync) */}
-                <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none px-4">
+                <div className="flex-none lg:flex-initial flex items-center justify-center z-10 px-4">
                         <button onClick={() => navigate('/')} className="group pointer-events-auto">
-                             <h1 className={`text-xl sm:text-2xl lg:text-4xl mitaan-branding transition-colors drop-shadow-sm flex flex-col items-center leading-none ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}>
+                             <h1 className={`text-xl sm:text-2xl lg:text-4xl mitaan-branding transition-colors drop-shadow-sm flex flex-col items-center leading-none ${isNavbarSolid ? '!text-white' : 'text-red-600 lg:text-red-600'}`}>
                                 {settings?.site_title || 'Mitaan Express'}
                                 <span className={`hidden lg:block text-[9px] font-black uppercase tracking-[0.4em] opacity-80 mt-1 dark:text-white/60 ${isNavbarSolid ? 'text-white' : 'text-slate-500'}`}>
                                     {language === 'hi' ? 'निष्पक्ष समाचार' : 'UNBIASED NEWS'}
@@ -410,7 +410,7 @@ const Navbar = ({
                     </div>
 
                 {/* RIGHT SECTION (Donate & Desktop Actions) */}
-                <div className="flex items-center justify-end gap-1 sm:gap-2 lg:gap-4 shrink-0 z-10">
+                <div className="flex-1 flex items-center justify-end gap-1 sm:gap-2 lg:gap-4 shrink-0 z-10">
                     {/* Desktop Only Actions */}
                     <div className="hidden lg:flex items-center gap-2">
                         {(settings?.header_right_order || 'live,search,lang,theme').split(',').map((item) => {

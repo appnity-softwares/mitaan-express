@@ -135,6 +135,8 @@ const HeroSlider = ({ language }) => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent"></div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                    {/* Top Shadow for Navbar Legibility */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent"></div>
                 </motion.div>
             </AnimatePresence>
 

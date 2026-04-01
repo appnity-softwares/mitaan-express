@@ -128,7 +128,7 @@ exports.createArticle = async (req, res) => {
         title, slug, content, shortDescription, image, videoUrl, categoryId,
         tags, isBreaking, isTrending, isFeatured, isMustRead,
         metaTitle, metaDescription, metaKeywords, status, metadata,
-        priority, scheduledAt, language, authorName, authorImage
+        priority, scheduledAt, language, authorName, authorImage, createdAt
     } = req.body;
 
     if (!categoryId || isNaN(parseInt(categoryId))) {
@@ -229,7 +229,7 @@ exports.updateArticle = async (req, res) => {
         title, slug, content, shortDescription, image, videoUrl, categoryId,
         tags, isBreaking, isTrending, isFeatured, isMustRead,
         metaTitle, metaDescription, metaKeywords, status, metadata,
-        priority, scheduledAt, language, authorName, authorImage
+        priority, scheduledAt, language, authorName, authorImage, createdAt
     } = req.body;
 
     try {
