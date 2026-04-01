@@ -154,7 +154,7 @@ const Navbar = ({
             { id: 'video', name: language === 'hi' ? 'वीडियो' : 'Videos', icon: <Video size={20} />, key: 'page_live_enabled', order: 3 },
             { id: 'contact', name: language === 'hi' ? 'संपर्क करें' : 'Contact Us', icon: <Mail size={20} />, order: 4 },
             { id: 'poetry', name: language === 'hi' ? 'काव्य' : 'Poetry', icon: <Feather size={20} />, key: 'page_poetry_enabled', order: 5 },
-            { id: 'blogs', name: language === 'hi' ? 'ब्लॉग' : 'Blog', icon: <FileText size={20} />, key: 'page_blogs_enabled', order: 6 },
+            { id: 'insights', name: language === 'hi' ? 'ब्लॉग' : 'Blog', icon: <FileText size={20} />, key: 'page_blogs_enabled', order: 6 },
         ];
 
         let pages = defaultPages;
@@ -390,24 +390,24 @@ const Navbar = ({
                     </div>
                 </div>
 
-                {/* CENTER SECTION (Mobile Logo & Search Sync) */}
-                <div className="flex-none lg:flex-initial flex items-center justify-center z-10 px-4">
-                        <button onClick={() => navigate('/')} className="group pointer-events-auto">
-                             <h1 className={`text-xl sm:text-2xl lg:text-4xl mitaan-branding transition-colors drop-shadow-sm flex flex-col items-center leading-none ${isNavbarSolid ? '!text-white' : 'text-red-600 lg:text-red-600'}`}>
-                                {settings?.site_title || 'Mitaan Express'}
-                                <span className={`hidden lg:block text-[9px] font-black uppercase tracking-[0.4em] opacity-80 mt-1 dark:text-white/60 ${isNavbarSolid ? 'text-white' : 'text-slate-500'}`}>
-                                    {language === 'hi' ? 'निष्पक्ष समाचार' : 'UNBIASED NEWS'}
-                                </span>
-                            </h1>
-                        </button>
-                        {/* Search Icon Right Next to Branding (Mobile Only) */}
-                        <button
-                            onClick={() => setIsSearchOpen(true)}
-                            className={`p-1.5 transition-all lg:hidden ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
-                        >
-                            <Search size={18} strokeWidth={3} />
-                        </button>
-                    </div>
+                {/* CENTER SECTION (Mobile Logo & Search Sync) - Absolutely Centered for Overlap Protection */}
+                <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex items-center justify-center z-10 w-auto">
+                    <button onClick={() => navigate('/')} className="group pointer-events-auto">
+                        <h1 className={`text-xl sm:text-2xl lg:text-4xl mitaan-branding transition-all drop-shadow-xl flex flex-col items-center leading-none ${isNavbarSolid ? '!text-white' : 'text-red-600 lg:text-red-600'}`} style={{ textShadow: isNavbarSolid ? 'none' : '0 1px 2px rgba(255,255,255,0.8)' }}>
+                            {settings?.site_title || 'Mitaan Express'}
+                            <span className={`hidden lg:block text-[9px] font-black uppercase tracking-[0.4em] opacity-80 mt-1 dark:text-white/60 ${isNavbarSolid ? 'text-white' : 'text-slate-500'}`}>
+                                {language === 'hi' ? 'निष्पक्ष समाचार' : 'UNBIASED NEWS'}
+                            </span>
+                        </h1>
+                    </button>
+                    {/* Search Icon Right Next to Branding (Mobile Only) */}
+                    <button
+                        onClick={() => setIsSearchOpen(true)}
+                        className={`p-1.5 transition-all lg:hidden ml-1 ${isNavbarSolid ? 'text-white' : 'text-red-600'}`}
+                    >
+                        <Search size={18} strokeWidth={3} />
+                    </button>
+                </div>
 
                 {/* RIGHT SECTION (Donate & Desktop Actions) */}
                 <div className="flex-1 flex items-center justify-end gap-1 sm:gap-2 lg:gap-4 shrink-0 z-10">

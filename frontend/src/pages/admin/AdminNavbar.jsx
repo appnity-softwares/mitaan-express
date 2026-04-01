@@ -35,7 +35,7 @@ const AdminNavbar = () => {
         { id: 'video', name: 'Videos', nameHi: 'वीडियो', icon: 'Video', pageKey: 'page_live_enabled', order: 3 },
         { id: 'contact', name: 'Contact Us', nameHi: 'संपर्क करें', icon: 'Mail', order: 4 },
         { id: 'poetry', name: 'Poetry', nameHi: 'काव्य', icon: 'Feather', pageKey: 'page_poetry_enabled', order: 5 },
-        { id: 'blogs', name: 'Blog', nameHi: 'ब्लॉग', icon: 'FileText', pageKey: 'page_blogs_enabled', order: 6 },
+        { id: 'insights', name: 'Blog', nameHi: 'ब्लॉग', icon: 'FileText', pageKey: 'page_blogs_enabled', order: 6 },
     ];
 
     useEffect(() => {

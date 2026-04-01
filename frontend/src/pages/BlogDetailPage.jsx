@@ -85,7 +85,7 @@ const BlogDetailPage = ({ language }) => {
             <div className="min-h-screen flex flex-col items-center justify-center space-y-4">
                 <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Blog Not Found</h1>
                 <button
-                    onClick={() => navigate('/blogs')}
+                    onClick={() => navigate('/insights')}
                     className="px-6 py-3 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 transition-colors"
                 >
                     ← Back to Blogs
@@ -141,7 +141,7 @@ const BlogDetailPage = ({ language }) => {
             />
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <button
-                    onClick={() => navigate('/blogs')}
+                    onClick={() => navigate('/insights')}
                     className="group inline-flex items-center gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 hover:border-red-600/30 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all shadow-sm hover:shadow"
                 >
                     <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />

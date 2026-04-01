@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { IndianRupee, Mail, User, MessageSquare, Calendar, ChevronDown, Filter, Search, Settings, PieChart } from 'lucide-react';
+import { IndianRupee, Mail, User, MessageSquare, Calendar, ChevronDown, Filter, Search, Settings, PieChart, Trash2 } from 'lucide-react';
 import DonationSettings from '../../components/admin/settings/DonationSettings';
 import { useSettings } from '../../hooks/useQueries';
 import { useUpdateSettings } from '../../hooks/useMutations';
-import { API_URL } from '../../services/api';
+import { API_URL, deleteDonation } from '../../services/api';
 import { useAdminTranslation } from '../../context/AdminTranslationContext';
 
 const AdminDonations = () => {
