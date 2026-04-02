@@ -197,13 +197,13 @@ const GalleryPage = ({ language }) => {
                                 initial={{ scale: 0.95, opacity: 0, x: 20 }}
                                 animate={{ scale: 1, opacity: 1, x: 0 }}
                                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                className="relative max-h-[75vh] w-auto max-w-full rounded-2xl shadow-2xl overflow-hidden border border-white/10"
+                                className="relative max-h-[65vh] w-auto max-w-full rounded-2xl shadow-2xl overflow-hidden border border-white/10"
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <img
                                     src={selectedImage.url}
                                     alt={selectedImage.title}
-                                    className="max-h-[75vh] w-auto object-contain select-none bg-black"
+                                    className="max-h-[65vh] w-auto object-contain select-none bg-black"
                                 />
                             </motion.div>
 
