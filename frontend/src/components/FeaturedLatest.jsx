@@ -63,11 +63,16 @@ const FeaturedLatest = ({ language, items = [] }) => {
                             onClick={() => handleItemClick(item)}
                             className="group cursor-pointer space-y-5"
                         >
-                            <div className="relative aspect-[16/9] sm:aspect-[4/5] overflow-hidden rounded-[1.5rem] lg:rounded-[2rem] bg-slate-100 dark:bg-slate-800 shadow-xl group-hover:shadow-2xl transition-all duration-500">
+                            <div className="relative h-56 sm:h-64 lg:h-72 overflow-hidden rounded-[1.5rem] lg:rounded-[2rem] bg-slate-100 dark:bg-slate-800 shadow-xl group-hover:shadow-2xl transition-all duration-500">
                                 <img
-                                    src={formatImageUrl(item.image, 600)}
+                                    src={formatImageUrl(item.image, 800)}
                                     alt={item.title}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    loading="lazy"
+                                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = PLACEHOLDER_IMAGE;
+                                    }}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
 

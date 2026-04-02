@@ -89,7 +89,7 @@ const GalleryStrip = ({ language }) => {
                                 <img
                                     src={img.url}
                                     alt={img.title || 'Gallery Image'}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     onError={(e) => {
                                         e.target.onerror = null;
                                         e.target.src = PLACEHOLDER_IMAGE;

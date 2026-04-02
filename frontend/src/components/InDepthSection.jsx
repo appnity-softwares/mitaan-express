@@ -84,12 +84,13 @@ const InDepthSection = ({ language, onCategoryChange, sportsArticles = [], econo
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
                                 onClick={() => onArticleClick(mainSports)}
-                                className="order-1 md:order-2 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl cursor-pointer relative"
+                                className="order-1 md:order-2 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl cursor-pointer relative bg-slate-200 dark:bg-slate-800"
                             >
                                 <img
                                     src={formatImageUrl(mainSports.image, 1000)}
                                     alt={mainSports.title}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                                    className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-1000"
+                                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=600&q=80'; }}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
                                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10 backdrop-blur-[2px]">
@@ -146,11 +147,12 @@ const InDepthSection = ({ language, onCategoryChange, sportsArticles = [], econo
                                     className="flex gap-4 group cursor-pointer items-start"
                                     onClick={() => onArticleClick(article)}
                                 >
-                                    <div className="w-20 h-20 shrink-0 rounded-2xl overflow-hidden bg-slate-100 dark:bg-gray-800 shadow-md">
+                                    <div className="relative w-20 h-20 shrink-0 rounded-2xl overflow-hidden bg-slate-200 dark:bg-gray-800 shadow-md">
                                         <img
                                             src={formatImageUrl(article.image, 300)}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                            className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500"
                                             alt=""
+                                            onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=200&q=80'; }}
                                         />
                                     </div>
                                     <div className="space-y-2">

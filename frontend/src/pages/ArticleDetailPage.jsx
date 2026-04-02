@@ -317,9 +317,23 @@ const ArticleDetailPage = ({ language }) => {
 
                             {/* Article Content */}
                             <div
-                                className="prose prose-base md:prose-lg dark:prose-invert max-w-none prose-headings:font-serif prose-a:text-red-600 prose-img:rounded-2xl overflow-hidden break-words"
+                                className="prose prose-base md:prose-lg dark:prose-invert max-w-none prose-headings:font-serif prose-a:text-red-600 overflow-hidden break-words"
                                 dangerouslySetInnerHTML={{ __html: injectedContent }}
                             />
+                            {/* Force all inline content images to be full reading width */}
+                            <style>{`
+                                .prose img {
+                                    width: 100% !important;
+                                    height: auto !important;
+                                    max-width: 100% !important;
+                                    border-radius: 1rem;
+                                    display: block;
+                                    margin: 1.5rem 0;
+                                }
+                                .prose p > img:only-child {
+                                    width: 100% !important;
+                                }
+                            `}</style>
 
                             {/* Video if exists */}
                             {article.videoUrl && (
@@ -404,18 +418,6 @@ const ArticleDetailPage = ({ language }) => {
                                 </div>
                             </div>
 
-                            {/* Subscribe Box (Mini) */}
-                            <div className="bg-slate-900 dark:bg-red-600 text-white p-6 sm:p-8 rounded-[2rem] text-center relative overflow-hidden group">
-                                <h3 className="text-lg sm:text-xl font-black font-serif mb-3 relative z-10">Stay Updated</h3>
-                                <p className="text-white/70 text-sm mb-4 relative z-10">Get the latest news in your inbox.</p>
-                                <a
-                                    href="#newsletter"
-                                    className="block w-full py-3 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition-colors relative z-10 text-sm"
-                                    onClick={(e) => { e.preventDefault(); document.querySelector('#navbar-subscribe')?.focus(); }}
-                                >
-                                    SUBSCRIBE
-                                </a>
-                            </div>
                         </div>
                     </aside>
                 </div>

@@ -20,9 +20,6 @@ const NavbarMobileMenu = ({
     activeCategory,
     isDonationEnabled,
     socialLinks,
-    email,
-    setEmail,
-    handleSubscribe,
     handleLinkClick,
     onClose,
 }) => {
@@ -207,31 +204,6 @@ const NavbarMobileMenu = ({
                                 </div>
                             </div>
 
-                            <div className="space-y-6 pt-12 border-t border-slate-100 dark:border-white/5">
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center lg:text-left">
-                                        {language === 'hi' ? 'सब्सक्राइब करें' : 'Newsletter'}
-                                    </p>
-                                    <p className="text-[11px] text-slate-500 font-medium leading-relaxed text-center lg:text-left">
-                                        {language === 'hi' ? 'हर सुबह चुनिंदा खबरें सीधे ईमेल पर।' : 'Top stories delivered daily to your inbox.'}
-                                    </p>
-                                </div>
-                                <div className="relative">
-                                    <input
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="email@example.com"
-                                        className="w-full bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-xl px-4 py-4 text-xs font-bold outline-none focus:border-red-600 transition-colors"
-                                    />
-                                    <button
-                                        onClick={handleSubscribe}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all shadow-lg shadow-red-600/20"
-                                    >
-                                        <Share2 size={16} />
-                                    </button>
-                                </div>
-                            </div>
                         </div>
 
                     </div>

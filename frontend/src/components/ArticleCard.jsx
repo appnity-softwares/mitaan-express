@@ -44,12 +44,12 @@ const ArticleCard = ({ article, language }) => {
             className="group grid grid-cols-1 md:grid-cols-12 gap-8 items-center bg-white dark:bg-transparent p-4 rounded-3xl hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-500 relative"
         >
             {/* Image Section */}
-            <div className="md:col-span-5 relative aspect-[16/10] overflow-hidden rounded-2xl shadow-xl">
+            <div className="md:col-span-12 lg:col-span-5 relative aspect-[16/10] overflow-hidden rounded-2xl shadow-xl bg-slate-100 dark:bg-slate-800">
                 <img
-                    src={formatImageUrl(article.image, 600)}
+                    src={formatImageUrl(article.image, 800)}
                     alt={article.title}
                     loading="lazy"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                     onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = PLACEHOLDER_IMAGE;

@@ -25,7 +25,6 @@ const Navbar = ({
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [email, setEmail] = useState('');
     const { data: settings } = useSettings();
 
     const { categoryTree, mainPages, newsItems, headerQuickIcons, iconMap } = useNavbarData(language, settings);
@@ -76,11 +75,6 @@ const Navbar = ({
         setIsMenuOpen(false);
     };
 
-    const handleSubscribe = () => {
-        if (!email) return toast.error('Please enter your email address');
-        toast.success('Thank you for subscribing!');
-        setEmail('');
-    };
 
     const socialLinks = [
         { name: 'Twitter', icon: <Twitter size={20} />, href: settings?.social_twitter || '#' },
@@ -164,9 +158,6 @@ const Navbar = ({
                         activeCategory={activeCategory}
                         isDonationEnabled={isDonationEnabled}
                         socialLinks={socialLinks}
-                        email={email}
-                        setEmail={setEmail}
-                        handleSubscribe={handleSubscribe}
                         handleLinkClick={handleLinkClick}
                         onClose={() => setIsMenuOpen(false)}
                     />

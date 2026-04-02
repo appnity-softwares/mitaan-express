@@ -217,11 +217,11 @@ const BlogDetailPage = ({ language }) => {
                     </div>
 
                     {blog.image && (
-                        <div className="rounded-2xl overflow-hidden mb-8 shadow-lg">
+                        <div className="rounded-2xl overflow-hidden mb-8 shadow-xl">
                             <img
                                 src={formatImageUrl(blog.image, 1200)}
                                 alt={blog.title}
-                                className="w-full h-auto max-h-[400px] object-cover"
+                                className="w-full h-[280px] sm:h-[380px] lg:h-[480px] object-cover object-center block"
                                 onError={(e) => {
                                     e.target.src = 'https://images.unsplash.com/photo-1476242906366-d8eb64c2f661?auto=format&fit=crop&q=80&w=2000';
                                 }}
@@ -230,9 +230,24 @@ const BlogDetailPage = ({ language }) => {
                     )}
 
                     <div
-                        className="prose prose-base dark:prose-invert max-w-none prose-headings:font-serif prose-a:text-red-600 prose-img:rounded-xl overflow-hidden break-words"
+                        className="prose prose-base dark:prose-invert max-w-none prose-headings:font-serif prose-a:text-red-600 overflow-hidden break-words"
                         dangerouslySetInnerHTML={{ __html: blog.content }}
                     />
+                    {/* Force all inline content images to be full reading width */}
+                    <style>{`
+                        .prose img {
+                            width: 100% !important;
+                            height: auto !important;
+                            max-width: 100% !important;
+                            border-radius: 0.75rem;
+                            display: block;
+                            margin: 1.5rem 0;
+                            object-fit: cover;
+                        }
+                        .prose p > img:only-child {
+                            width: 100% !important;
+                        }
+                    `}</style>
 
                     {/* Tags */}
                     {blog.tags && blog.tags.length > 0 && (
@@ -287,11 +302,12 @@ const BlogDetailPage = ({ language }) => {
                             <div className="space-y-6">
                                 {(latestNews.length > 0 ? latestNews : articles.slice(0, 5)).map(news => (
                                     <Link to={`/article/${news.slug || news.id}`} key={news.id} className="group flex gap-4 items-start">
-                                        <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-slate-200">
+                                        <div className="relative w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-slate-200">
                                             <img
                                                 src={formatImageUrl(news.image, 200)}
                                                 alt={news.title}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                                                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=200&q=80'; }}
                                             />
                                         </div>
                                         <div>

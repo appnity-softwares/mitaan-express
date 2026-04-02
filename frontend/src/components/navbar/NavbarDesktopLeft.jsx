@@ -9,7 +9,7 @@ const NewsDropdown = ({ language, newsItems, handleLinkClick, isNavbarSolid, act
     <div className="relative group/news">
         <button className={`flex items-center h-11 px-3 rounded-xl transition-all hover:bg-white/10 group relative ${activeCategory === 'news' ? 'text-white' : (isNavbarSolid ? 'text-white' : 'text-red-600')}`}>
             <TrendingUp size={20} className="shrink-0" />
-            <span className={`ml-2 text-[10px] font-black uppercase whitespace-nowrap ${language === 'hi' ? 'tracking-normal font-bold' : 'tracking-[0.2em]'}`}>
+            <span className={`ml-2 font-black uppercase whitespace-nowrap ${language === 'hi' ? 'text-sm tracking-normal' : 'text-[10px] tracking-[0.2em]'}`}>
                 {language === 'hi' ? 'समाचार' : 'NEWS'}
             </span>
             <ChevronDown size={10} className="ml-1 opacity-50 group-hover/news:rotate-180 transition-transform" />
@@ -43,7 +43,7 @@ const CategoriesDropdown = ({ language, categoryTree, iconMap, handleLinkClick, 
     <div className="relative group/categories">
         <button className={`flex items-center h-11 px-3 rounded-xl transition-all hover:bg-white/10 group relative ${activeCategory === 'categories' ? 'text-white' : (isNavbarSolid ? 'text-white' : 'text-red-600')}`}>
             <FolderTree size={20} className="shrink-0" />
-            <span className={`ml-2 text-[10px] font-black uppercase whitespace-nowrap ${language === 'hi' ? 'tracking-normal font-bold' : 'tracking-[0.2em]'}`}>
+            <span className={`ml-2 font-black uppercase whitespace-nowrap ${language === 'hi' ? 'text-sm tracking-normal' : 'text-[10px] tracking-[0.2em]'}`}>
                 {language === 'hi' ? 'श्रेणियां' : 'CATEGORIES'}
             </span>
             <ChevronDown size={10} className="ml-1 opacity-50 group-hover/categories:rotate-180 transition-transform" />
@@ -124,7 +124,7 @@ const NavbarDesktopLeft = ({
                             <span className={`h-0.5 w-3/4 bg-current transition-opacity duration-300 rounded-full ${isMenuOpen ? 'opacity-0' : ''}`} />
                             <span className={`h-0.5 w-full bg-current transition-transform duration-500 rounded-full ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
                         </div>
-                        <span className="hidden xl:block text-[11px] font-black uppercase tracking-[0.2em] group-hover:opacity-80 transition-all">
+                        <span className={`hidden xl:block font-black uppercase group-hover:opacity-80 transition-all ${language === 'hi' ? 'text-sm tracking-normal' : 'text-[11px] tracking-[0.2em]'}`}>
                             {language === 'hi' ? (isMenuOpen ? 'बंद करें' : 'मेन्यू') : (isMenuOpen ? 'Close' : 'Menu')}
                         </span>
                     </button>
@@ -137,7 +137,7 @@ const NavbarDesktopLeft = ({
                         className={`flex items-center h-11 px-3 rounded-xl transition-all hover:bg-white/10 group relative ${activeCategory === 'home' ? 'text-white' : (isNavbarSolid ? 'text-white' : 'text-red-600')}`}
                     >
                         <Home size={20} className="shrink-0" />
-                        <span className={`ml-2 text-[10px] font-black uppercase whitespace-nowrap ${language === 'hi' ? 'tracking-normal font-bold' : 'tracking-[0.2em]'}`}>
+                        <span className={`ml-2 font-black uppercase whitespace-nowrap ${language === 'hi' ? 'text-sm tracking-normal' : 'text-[10px] tracking-[0.2em]'}`}>
                             {language === 'hi' ? 'मुख्य' : 'HOME'}
                         </span>
                     </button>
