@@ -354,6 +354,9 @@ const BlogEditorContent = () => {
                                                         const fmData = new FormData();
                                                         fmData.append('file', file);
                                                         fmData.append('type', 'IMAGE');
+                                                        fmData.append('title', file.name || 'publisher-avatar');
+                                                        fmData.append('category', 'SYSTEM');
+                                                        fmData.append('size', `${(file.size / 1024).toFixed(0)} KB`);
                                                         createMediaMutation.mutate({ payload: fmData }, {
                                                             onSuccess: (data) => setFormData(p => ({ ...p, authorImage: data.url })),
                                                             onError: (err) => toast.error(err.message)
@@ -418,7 +421,7 @@ const BlogEditorContent = () => {
                                 </div>
                             </label>
 
-                            <label className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors border border-slate-100 dark:border-white/5">
+                            <label className="flex items-center gap-3 p-3 bg-yellow-50 dark:bg-yellow-900/10 rounded-xl cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-900/20 transition-colors border border-yellow-200 dark:border-yellow-700/30">
                                 <input
                                     type="checkbox"
                                     name="isFeatured"
@@ -429,9 +432,9 @@ const BlogEditorContent = () => {
                                 <div className="flex-1">
                                     <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                         <Star size={16} className="text-yellow-500" />
-                                        Featured
+                                        Show on Hero Slider
                                     </div>
-                                    <div className="text-xs text-slate-500">Pin to featured sections</div>
+                                    <div className="text-xs text-slate-500">Displays this blog in the homepage carousel</div>
                                 </div>
                             </label>
                         </div>

@@ -759,6 +759,9 @@ const ArticleEditor = () => {
                                                             const fmData = new FormData();
                                                             fmData.append('file', file);
                                                             fmData.append('type', 'IMAGE');
+                                                            fmData.append('title', file.name || 'publisher-avatar');
+                                                            fmData.append('category', 'SYSTEM');
+                                                            fmData.append('size', `${(file.size / 1024).toFixed(0)} KB`);
                                                             createMediaMutation.mutate({ payload: fmData }, {
                                                                 onSuccess: (data) => setFormData(p => ({ ...p, authorImage: data.url })),
                                                                 onError: (err) => toast.error(err.message)
@@ -805,7 +808,7 @@ const ArticleEditor = () => {
                                     </div>
                                 </label>
 
-                                <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors">
+                                <label className="flex items-center gap-3 p-3 bg-yellow-50 dark:bg-yellow-900/10 rounded-xl cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-900/20 transition-colors border border-yellow-200 dark:border-yellow-700/30">
                                     <input
                                         type="checkbox"
                                         name="isFeatured"
@@ -815,10 +818,10 @@ const ArticleEditor = () => {
                                     />
                                     <div className="flex-1">
                                         <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                            <Eye size={16} className="text-blue-600" />
-                                            Featured Article
+                                            <Eye size={16} className="text-yellow-600" />
+                                            Show on Hero Slider
                                         </div>
-                                        <div className="text-xs text-slate-500">Highlight on homepage</div>
+                                        <div className="text-xs text-slate-500">Displays this article in the full-screen homepage carousel</div>
                                     </div>
                                 </label>
                             </div>
