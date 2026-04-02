@@ -82,11 +82,49 @@ const AdminLive = () => {
     const handleFileUpload = (e, index, field) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = (re) => {
-                updateVideo(index, field, re.target.result);
-            };
-            reader.readAsDataURL(file);
+            // Check if it's an image
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (re) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        // Create canvas for compression
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Max dimension 1000px
+                        const MAX_DIM = 1000;
+                        if (width > MAX_DIM || height > MAX_DIM) {
+                            if (width > height) {
+                                height = Math.round((height * MAX_DIM) / width);
+                                width = MAX_DIM;
+                            } else {
+                                width = Math.round((width * MAX_DIM) / height);
+                                height = MAX_DIM;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Compress as JPEG
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                        updateVideo(index, field, compressedBase64);
+                    };
+                    img.src = re.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // For non-images (like small videos), just read as is but with warning
+                const reader = new FileReader();
+                reader.onload = (re) => {
+                    updateVideo(index, field, re.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
         }
     };
 
@@ -219,10 +257,11 @@ const AdminLive = () => {
                                                                 }
                                                                 const reader = new FileReader();
                                                                 reader.onload = (re) => {
+                                                                    // For video thumbnails, we don't compress here as it's the URL field
                                                                     updateVideo(index, 'url', re.target.result);
                                                                 };
                                                                 reader.readAsDataURL(file);
-                                                                toast.success('Video file selected. It will be uploaded to R2 on save.');
+                                                                toast.success('Video file selected. Note: Large files may exceed server limits.');
                                                             }
                                                         }}
                                                     />
