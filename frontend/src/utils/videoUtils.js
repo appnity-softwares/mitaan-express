@@ -25,7 +25,8 @@ export const getVideoThumbnail = (url, providedThumbnail) => {
 
     const youtubeID = getYouTubeID(url);
     if (youtubeID) {
-        return `https://img.youtube.com/vi/${youtubeID}/maxresdefault.jpg`;
+        // use hqdefault to avoid 404s on lower-res videos
+        return `https://img.youtube.com/vi/${youtubeID}/hqdefault.jpg`;
     }
 
     return 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=800';
