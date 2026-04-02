@@ -132,6 +132,15 @@ const VideoPage = ({ language }) => {
                                             src={getVideoThumbnail(video.url, video.thumbnail)}
                                             alt={video.title}
                                             className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110"
+                                            onError={(e) => {
+                                                const currentUrl = e.target.src;
+                                                if (currentUrl.includes('maxresdefault.jpg')) {
+                                                    e.target.src = currentUrl.replace('maxresdefault.jpg', 'hqdefault.jpg');
+                                                } else {
+                                                    e.target.onerror = null;
+                                                    e.target.src = 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=800';
+                                                }
+                                            }}
                                         />
                                     )}
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500" />

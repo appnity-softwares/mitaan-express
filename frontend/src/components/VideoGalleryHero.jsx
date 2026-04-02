@@ -155,8 +155,13 @@ const VideoGalleryHero = ({ language }) => {
                                 alt={activeVideo.title}
                                 className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-500"
                                 onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = PLACEHOLDER_IMAGE;
+                                    const currentUrl = e.target.src;
+                                    if (currentUrl.includes('maxresdefault.jpg')) {
+                                        e.target.src = currentUrl.replace('maxresdefault.jpg', 'hqdefault.jpg');
+                                    } else {
+                                        e.target.onerror = null;
+                                        e.target.src = PLACEHOLDER_IMAGE;
+                                    }
                                 }}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
@@ -222,8 +227,13 @@ const VideoGalleryHero = ({ language }) => {
                                             className="w-full h-full object-cover"
                                             alt=""
                                             onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = PLACEHOLDER_IMAGE;
+                                                const currentUrl = e.target.src;
+                                                if (currentUrl.includes('maxresdefault.jpg')) {
+                                                    e.target.src = currentUrl.replace('maxresdefault.jpg', 'hqdefault.jpg');
+                                                } else {
+                                                    e.target.onerror = null;
+                                                    e.target.src = PLACEHOLDER_IMAGE;
+                                                }
                                             }}
                                         />
                                         <div className="absolute bottom-1 right-1 bg-black/80 px-1.5 py-0.5 rounded text-[10px] font-bold">
