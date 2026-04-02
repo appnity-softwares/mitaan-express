@@ -32,6 +32,8 @@ export const useArticles = (filters = EMPTY_OBJECT) => {
             filters.lang,
             filters.status
         ),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
     });
 };
 
@@ -42,6 +44,8 @@ export const usePublishedArticles = () => {
     return useQuery({
         queryKey: queryKeys.articles.all,
         queryFn: () => fetchArticles('', '', '', '', 'PUBLISHED'),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
     });
 };
 
@@ -53,6 +57,7 @@ export const useArticle = (idOrSlug) => {
         queryKey: queryKeys.articles.detail(idOrSlug),
         queryFn: () => fetchArticleBySlug(idOrSlug),
         enabled: !!idOrSlug,
+        staleTime: 10 * 60 * 1000,
     });
 };
 
@@ -81,6 +86,8 @@ export const useBlogs = (filters = EMPTY_OBJECT) => {
             filters.page || 1,
             filters.limit || 10
         ),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
     });
 };
 
@@ -92,6 +99,7 @@ export const useBlog = (idOrSlug) => {
         queryKey: queryKeys.blogs.detail(idOrSlug),
         queryFn: () => fetchBlogBySlug(idOrSlug),
         enabled: !!idOrSlug,
+        staleTime: 10 * 60 * 1000,
     });
 };
 
@@ -102,8 +110,8 @@ export const useSettings = () => {
     return useQuery({
         queryKey: queryKeys.settings,
         queryFn: fetchSettings,
-        staleTime: 0, // Always fetch fresh settings
-        refetchOnWindowFocus: true,
+        staleTime: 60 * 60 * 1000, // 1 hour cache
+        refetchOnWindowFocus: false, // Stop constant loading on tab switch
     });
 };
 

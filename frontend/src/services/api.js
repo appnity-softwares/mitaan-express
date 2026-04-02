@@ -1,6 +1,6 @@
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 export const SOCKET_URL = API_URL.replace('/api', '');
-export const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1585829365294-bb8c6f045b88?auto=format&fit=crop&q=80&w=800';
+export const PLACEHOLDER_IMAGE = 'https://plus.unsplash.com/premium_photo-1707080369554-359143c6aa0b?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 
 /**
  * Helper to handle API responses, parse JSON safely, and extract errors
@@ -40,8 +40,8 @@ export const formatImageUrl = (url, width) => {
     // Unsplash Optimization: handle sizing at the source
     if (url.includes('images.unsplash.com') && width) {
         const baseUrl = url.split('?')[0];
-        // Note: fit=crop is standard for our cards
-        return `${baseUrl}?auto=format&fit=crop&q=80&w=${width}`;
+        // Optimized for performance: q=75 and dynamic format
+        return `${baseUrl}?auto=format&fit=crop&q=75&w=${width}`;
     }
 
     if (url.startsWith('http') || url.startsWith('data:')) return url;

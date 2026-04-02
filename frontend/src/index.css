@@ -198,7 +198,7 @@ p a, .chip-inline, .badge-inline, .text-link {
    DARK MODE
    =================================== */
 .dark body {
-    background-color: #000000;
+    background-color: #030712; /* Deep Navy Dark Mode - Premium Feel */
     color: #f8f9fa;
 }
 
