@@ -19,7 +19,7 @@ const HeroSlider = ({ language }) => {
         tag: language === 'hi' ? 'स्वागत' : 'WELCOME',
         title: settings?.hero_welcome_title || (language === 'hi' ? 'मितान एक्सप्रेस में आपका स्वागत है' : 'Welcome to Mitaan Express'),
         description: settings?.hero_welcome_subtitle || (language === 'hi' ? 'समाचार और कहानियों के लिए आपका विश्वसनीय स्रोत।' : 'Your trusted source for news and stories.'),
-        image: settings?.hero_welcome_image || 'https://images.unsplash.com/photo-1476242906366-d8eb64c2f661?auto=format&fit=crop&q=80&w=2000',
+        image: formatImageUrl(settings?.hero_welcome_image || 'https://images.unsplash.com/photo-1476242906366-d8eb64c2f661?auto=format&fit=crop&q=80&w=1200', 1200),
         fallbackLink: settings?.hero_welcome_link || '/about',
         isWelcome: true
     };
@@ -29,7 +29,7 @@ const HeroSlider = ({ language }) => {
         tag: language === 'hi' ? (a.category?.nameHi || 'विशेष') : (a.category?.name || 'FEATURED'),
         title: a.title,
         description: stripHtml(a.shortDescription || a.content || '').substring(0, 150) || '',
-        image: formatImageUrl(a.image),
+        image: formatImageUrl(a.image, 1200),
         articleId: a.id,
         slug: a.slug,
         type: a.type
@@ -42,9 +42,9 @@ const HeroSlider = ({ language }) => {
 
     const paginate = useCallback((newDirection) => {
         if (slides.length > 0) {
-            setPage([page + newDirection, newDirection]);
+            setPage(([prevPage]) => [prevPage + newDirection, newDirection]);
         }
-    }, [page, slides.length]);
+    }, [slides.length]);
 
     useEffect(() => {
         if (slides.length > 1) {
@@ -108,7 +108,7 @@ const HeroSlider = ({ language }) => {
     };
 
     return (
-        <section className="relative h-[85vh] md:h-[95vh] min-h-[600px] bg-slate-900 dark:bg-black overflow-hidden group/hero">
+        <section className="relative h-[100svh] md:h-[95vh] min-h-[580px] max-h-[900px] overflow-hidden group/hero" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)' }}>
             <AnimatePresence initial={false} custom={direction} mode="popLayout">
                 <motion.div
                     key={page}
@@ -121,17 +121,19 @@ const HeroSlider = ({ language }) => {
                 >
                     <motion.img
                         src={currentSlide.image}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover object-center"
                         alt=""
                         loading="eager"
-                        fetchpriority="high"
-                        initial={{ scale: 1.2 }}
+                        fetchPriority="high"
+                        initial={{ scale: 1.08 }}
                         animate={{ scale: 1 }}
                         transition={{ duration: 8, ease: "linear" }}
                         onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = PLACEHOLDER_IMAGE;
+                            e.target.style.opacity = '0.6';
                         }}
+                        style={{ willChange: 'transform' }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent"></div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
@@ -140,14 +142,14 @@ const HeroSlider = ({ language }) => {
                 </motion.div>
             </AnimatePresence>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 h-full flex items-center">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
                 <div className="w-full">
                     <motion.div
                         key={activeIndex}
                         variants={containerVariants}
                         initial="hidden"
                         animate="visible"
-                        className="space-y-6 md:space-y-8 mt-12 md:mt-0"
+                        className="space-y-4 md:space-y-8 mt-16 md:mt-0"
                     >
                         <motion.div variants={itemVariants} className="flex items-center gap-4">
                             <span className="bg-red-600 text-white text-[10px] md:text-[10px] font-black px-4 py-1.5 uppercase tracking-widest inline-block skew-x-[-12deg]">
@@ -201,8 +203,8 @@ const HeroSlider = ({ language }) => {
             </div>
 
             {/* Pagination UI */}
-            <div className="absolute bottom-12 left-4 sm:left-6 lg:left-8 right-4 sm:right-6 lg:left-8 z-20 flex items-end justify-between">
-                <div className="flex gap-2 sm:gap-4">
+            <div className="absolute bottom-8 sm:bottom-12 left-4 sm:left-6 lg:left-8 right-4 sm:right-6 lg:right-8 z-20 flex items-end justify-between gap-4">
+                <div className="flex flex-wrap gap-2 sm:gap-4 max-w-[60vw]">
                     {slides.map((_, i) => (
                         <button
                             key={i}

@@ -58,13 +58,14 @@ export const ArticlesProvider = ({ children, language }) => {
         };
     }, [articles, blogs]); // Remove language from dependencies as well
 
-    const refetch = () => {
+    const refetch = React.useCallback(() => {
         refetchArticles();
         refetchCategories();
         refetchBlogs();
-    };
-
-    const value = {
+    }, [refetchArticles, refetchCategories, refetchBlogs]);
+    
+    // Memoize the context value to prevent unnecessary re-renders of all consumers
+    const value = useMemo(() => ({
         articles,
         blogs,
         categories,
@@ -76,7 +77,22 @@ export const ArticlesProvider = ({ children, language }) => {
         videos,
         published,
         refetch
-    };
+    }), [
+        articles, 
+        blogs, 
+        categories, 
+        articlesLoading, 
+        categoriesLoading, 
+        blogsLoading, 
+        articlesError, 
+        categoriesError, 
+        featured, 
+        trending, 
+        breaking, 
+        videos, 
+        published, 
+        refetch
+    ]);
 
     return (
         <ArticlesContext.Provider value={value}>

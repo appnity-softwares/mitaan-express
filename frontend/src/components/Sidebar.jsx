@@ -1,12 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import WeatherWidget from './WeatherWidget';
 import AdSpace from './AdSpace';
 import { useArticles } from '../context/ArticlesContext';
 
 const Sidebar = ({ language, showWeather = true }) => {
     const { trending, loading } = useArticles();
+    const navigate = useNavigate();
 
     // Map trending articles to sidebar format
     const sidebarArticles = trending.length > 0
@@ -14,7 +16,7 @@ const Sidebar = ({ language, showWeather = true }) => {
             id: a.id,
             title: a.title,
             image: a.image,
-            category: a.category?.name || 'TRENDING',
+            category: language === 'hi' ? (a.category?.nameHi || a.category?.name) : (a.category?.name || 'TRENDING'),
             slug: a.slug,
             type: a.type
         }))
@@ -25,8 +27,13 @@ const Sidebar = ({ language, showWeather = true }) => {
             category: 'News'
         }];
 
+    const handleItemClick = (article) => {
+        const path = article.type === 'blog' ? `/insight/${article.slug || article.id}` : `/article/${article.slug || article.id}`;
+        navigate(path);
+    };
+
     return (
-        <aside className="sticky top-32 space-y-8">
+        <aside className="lg:sticky lg:top-32 space-y-8">
             <div className="space-y-4">
                 {showWeather && <WeatherWidget language={language} />}
                 <div className="pt-2">
@@ -54,7 +61,7 @@ const Sidebar = ({ language, showWeather = true }) => {
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
                             className="group flex gap-4 cursor-pointer items-start border-b border-slate-50 dark:border-white/5 pb-6 last:border-0 last:pb-0"
-                            onClick={() => window.location.href = article.type === 'blog' ? `/insight/${article.slug || article.id}` : `/article/${article.slug || article.id}`}
+                            onClick={() => handleItemClick(article)}
                         >
                             <span className="text-3xl font-black text-black-600 dark:text-white/10 group-hover:text-red-600/30 transition-colors font-serif leading-none mt-1">
                                 {index + 1}

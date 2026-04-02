@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Clock, User, Share2, Check, Copy } from 'lucide-react';
-import { PLACEHOLDER_IMAGE } from '../services/api';
+import { formatImageUrl, PLACEHOLDER_IMAGE } from '../services/api';
 
 const ArticleCard = ({ article, language }) => {
     const [showShare, setShowShare] = useState(false);
@@ -27,6 +27,15 @@ const ArticleCard = ({ article, language }) => {
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const renderSafe = (val, fallback = '') => {
+        if (!val) return fallback;
+        if (typeof val === 'string') return val;
+        if (typeof val === 'object') {
+            return val.nameHi || val.name || val.title || JSON.stringify(val).substring(0, 20);
+        }
+        return String(val);
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -37,7 +46,7 @@ const ArticleCard = ({ article, language }) => {
             {/* Image Section */}
             <div className="md:col-span-5 relative aspect-[16/10] overflow-hidden rounded-2xl shadow-xl">
                 <img
-                    src={article.image}
+                    src={formatImageUrl(article.image, 600)}
                     alt={article.title}
                     loading="lazy"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -48,7 +57,7 @@ const ArticleCard = ({ article, language }) => {
                 />
                 <div className="absolute top-4 left-4">
                     <span className="bg-red-600 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-lg">
-                        {article.category}
+                        {renderSafe(article.category)}
                     </span>
                 </div>
             </div>
@@ -59,11 +68,11 @@ const ArticleCard = ({ article, language }) => {
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
                             <User size={14} className="text-red-600" />
-                            <span className="text-[10px] font-black uppercase tracking-widest">{article.author}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest">{renderSafe(article.author, 'Mitaan')}</span>
                         </div>
                         <div className="flex items-center gap-2 border-l border-slate-200 dark:border-white/10 pl-4">
                             <Clock size={14} />
-                            <span className="text-[10px] font-black uppercase tracking-widest">{article.date}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest">{renderSafe(article.date)}</span>
                         </div>
                     </div>
 

@@ -51,7 +51,7 @@ const BlogsPage = ({ language }) => {
         return (
             <div className="min-h-screen bg-white dark:bg-[#030712] text-slate-900 dark:text-white pb-32 transition-colors">
                 {/* Header Section */}
-                <div className="relative bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10 py-20 px-6 lg:px-8 mb-16 overflow-hidden">
+                <div className="relative bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10 py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 mb-10 sm:mb-16 overflow-hidden">
                     <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
                         <span className="text-[20rem] font-black font-serif leading-none">B</span>
                     </div>
@@ -101,7 +101,7 @@ const BlogsPage = ({ language }) => {
     return (
         <div className="min-h-screen bg-white dark:bg-[#030712] text-slate-900 dark:text-white pb-20 transition-colors">
             {/* Header Section */}
-            <div className="relative bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10 py-20 px-6 lg:px-8 mb-16 overflow-hidden">
+            <div className="relative bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10 py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 mb-10 sm:mb-16 overflow-hidden">
                 <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
                     <span className="text-[20rem] font-black font-serif leading-none">B</span>
                 </div>
@@ -135,8 +135,8 @@ const BlogsPage = ({ language }) => {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                <div className="flex flex-col lg:flex-row gap-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
                     {/* Main Content (8 cols logic) */}
                     <div className="flex-1 space-y-20">
                         <div ref={contentRef} className="space-y-20">
@@ -285,10 +285,11 @@ const BlogsPage = ({ language }) => {
                                                             setPage(p);
                                                             window.scrollTo({ top: 300, behavior: 'smooth' });
                                                         }}
-                                                        className={`w - 9 h - 9 sm: w - 10 sm: h - 10 rounded - full font - black text - xs transition - all ${page === p
-                                                            ? 'bg-red-600 text-white shadow-lg shadow-red-600/20'
-                                                            : 'hover:bg-slate-100 dark:hover:bg-white/10'
-                                                            } `}
+                                                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full font-black text-xs transition-all ${
+                                                            page === p
+                                                                ? 'bg-red-600 text-white shadow-lg shadow-red-600/20'
+                                                                : 'hover:bg-slate-100 dark:hover:bg-white/10'
+                                                        }`}
                                                     >
                                                         {p}
                                                     </button>

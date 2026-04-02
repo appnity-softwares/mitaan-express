@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Clock, User, TrendingUp } from 'lucide-react';
+import { ArrowRight, Clock, User, TrendingUp, Share2, Check, Copy } from 'lucide-react';
+import { formatImageUrl, PLACEHOLDER_IMAGE } from '../services/api';
 
 const FeaturedLatest = ({ language, items = [] }) => {
     const navigate = useNavigate();
@@ -20,7 +21,7 @@ const FeaturedLatest = ({ language, items = [] }) => {
     };
 
     return (
-        <section className="bg-white dark:bg-[#030712] py-20 relative overflow-hidden">
+        <section className="bg-white dark:bg-[#030712] py-12 sm:py-16 lg:py-20 relative overflow-hidden">
             {/* Background Accent */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
 
@@ -51,7 +52,7 @@ const FeaturedLatest = ({ language, items = [] }) => {
                     </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                     {displayItems.map((item, index) => (
                         <motion.div
                             key={`${item.type}-${item.id}`}
@@ -62,9 +63,9 @@ const FeaturedLatest = ({ language, items = [] }) => {
                             onClick={() => handleItemClick(item)}
                             className="group cursor-pointer space-y-5"
                         >
-                            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-slate-100 dark:bg-slate-800 shadow-xl group-hover:shadow-2xl transition-all duration-500">
+                            <div className="relative aspect-[16/9] sm:aspect-[4/5] overflow-hidden rounded-[1.5rem] lg:rounded-[2rem] bg-slate-100 dark:bg-slate-800 shadow-xl group-hover:shadow-2xl transition-all duration-500">
                                 <img
-                                    src={item.image}
+                                    src={formatImageUrl(item.image, 600)}
                                     alt={item.title}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
@@ -72,16 +73,16 @@ const FeaturedLatest = ({ language, items = [] }) => {
 
                                 <div className="absolute top-4 left-4">
                                     <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[9px] font-black text-white uppercase tracking-widest border border-white/20">
-                                        {item.category?.name || (language === 'hi' ? 'समाचार' : 'NEWS')}
+                                        {typeof item.category === 'object' ? (language === 'hi' ? item.category?.nameHi || item.category?.name : item.category?.name) : (item.category || (language === 'hi' ? 'समाचार' : 'NEWS'))}
                                     </span>
                                 </div>
                             </div>
 
                             <div className="space-y-3">
-                                <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                 <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                                     <div className="flex items-center gap-1.5">
                                         <Clock size={12} className="text-red-600" />
-                                        {new Date(item.createdAt).toLocaleDateString()}
+                                        {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ''}
                                     </div>
                                     <div className="flex items-center gap-1.5">
                                         <User size={12} className="text-red-600" />

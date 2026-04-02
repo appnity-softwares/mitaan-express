@@ -36,7 +36,7 @@ const Footer = ({ language }) => {
         <footer className="bg-white dark:bg-[#030712] border-t border-slate-100 dark:border-white/5 pt-12 pb-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Top Section: Staggered Dynamic Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-24 mb-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-16 mb-8">
                     {/* Brand Section */}
                     <div className="lg:col-span-5 space-y-8">
                         <div 
@@ -131,7 +131,7 @@ const Footer = ({ language }) => {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="pt-12 border-t border-slate-100 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="pt-6 border-t border-slate-100 dark:border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
                     <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">
                         © {new Date().getFullYear()} Mitaan Express. All rights reserved. 
                         <span className="mx-2 opacity-30">|</span> 

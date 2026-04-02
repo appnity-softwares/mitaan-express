@@ -6,7 +6,7 @@ import {
     Share2, Bookmark, Check, Copy,
     Facebook, Twitter, Linkedin
 } from 'lucide-react';
-import { fetchBlogBySlug, fetchArticles } from '../services/api';
+import { fetchBlogBySlug, fetchArticles, formatImageUrl } from '../services/api';
 import AdSpace from '../components/AdSpace';
 import SEO from '../components/SEO';
 import FloatingShareButtons from '../components/FloatingShareButtons';
@@ -139,7 +139,7 @@ const BlogDetailPage = ({ language }) => {
                 title={blog.title}
                 shortDescription={blog.shortDescription || ''}
             />
-            <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="max-w-7xl mx-auto px-4 pt-28 sm:pt-32 pb-8">
                 <button
                     onClick={() => navigate('/insights')}
                     className="group inline-flex items-center gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 hover:border-red-600/30 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all shadow-sm hover:shadow"
@@ -154,7 +154,7 @@ const BlogDetailPage = ({ language }) => {
                 {/* Main Content */}
                 <article className="lg:col-span-8">
                     <div className="inline-block text-xs font-black text-red-600 uppercase tracking-widest mb-4">
-                        {blog.category?.name || 'BLOG'}
+                        {typeof blog.category === 'object' ? (language === 'hi' ? blog.category?.nameHi || blog.category?.name : blog.category?.name) : (blog.category || (language === 'hi' ? 'ब्लॉग' : 'BLOG'))}
                     </div>
 
                     <div className="text-2xl md:text-3xl lg:text-3xl font-black text-slate-900 dark:text-white leading-tight mb-6 font-serif">
@@ -219,7 +219,7 @@ const BlogDetailPage = ({ language }) => {
                     {blog.image && (
                         <div className="rounded-2xl overflow-hidden mb-8 shadow-lg">
                             <img
-                                src={blog.image}
+                                src={formatImageUrl(blog.image, 1200)}
                                 alt={blog.title}
                                 className="w-full h-auto max-h-[400px] object-cover"
                                 onError={(e) => {
@@ -289,7 +289,7 @@ const BlogDetailPage = ({ language }) => {
                                     <Link to={`/article/${news.slug || news.id}`} key={news.id} className="group flex gap-4 items-start">
                                         <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-slate-200">
                                             <img
-                                                src={news.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=200'}
+                                                src={formatImageUrl(news.image, 200)}
                                                 alt={news.title}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             />

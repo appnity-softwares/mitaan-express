@@ -31,10 +31,19 @@ const handleResponse = async (response) => {
 /**
  * Formats image URLs to handle local assets, R2 URLs, and base64
  * @param {string} url - The image URL or path
+ * @param {number} [width] - Optional width for Unsplash optimization
  * @returns {string} - Formatted URL
  */
-export const formatImageUrl = (url) => {
+export const formatImageUrl = (url, width) => {
     if (!url) return PLACEHOLDER_IMAGE;
+    
+    // Unsplash Optimization: handle sizing at the source
+    if (url.includes('images.unsplash.com') && width) {
+        const baseUrl = url.split('?')[0];
+        // Note: fit=crop is standard for our cards
+        return `${baseUrl}?auto=format&fit=crop&q=80&w=${width}`;
+    }
+
     if (url.startsWith('http') || url.startsWith('data:')) return url;
 
     // Clean up path and join with SOCKET_URL

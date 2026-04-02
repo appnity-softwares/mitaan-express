@@ -89,7 +89,7 @@ const CategoryPage = ({ language }) => {
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/5 blur-[120px] rounded-full -mr-64 -mt-32 pointer-events-none"></div>
             <div className="absolute top-1/2 left-0 w-[300px] h-[300px] bg-blue-600/5 blur-[100px] rounded-full -ml-32 pointer-events-none"></div>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-32">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 lg:pt-32 pb-20 lg:pb-32">
                 {/* Breadcrumbs */}
                 <nav className="mb-8 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                     <span className="cursor-pointer hover:text-red-600 transition-colors" onClick={() => navigate('/')}>
@@ -116,7 +116,7 @@ const CategoryPage = ({ language }) => {
                                 {language === 'hi' ? 'कहानियाँ' : 'STORY ARCHIVE'}
                             </span>
                         </div>
-                        <h1 className="text-7xl md:text-9xl font-black uppercase tracking-tighter text-slate-900 dark:text-white leading-[0.8] mb-4">
+                        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black uppercase tracking-tighter text-slate-900 dark:text-white leading-[0.85] mb-4 break-words">
                             {categoryTitle}<span className="text-red-600">.</span>
                         </h1>
                         <p className="text-xl text-slate-500 dark:text-gray-400 font-medium max-w-lg leading-relaxed">
@@ -156,7 +156,7 @@ const CategoryPage = ({ language }) => {
                     </div>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-20">
+                <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
                     {/* Main Content Area */}
                     <div className="flex-1">
                         <div

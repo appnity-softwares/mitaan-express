@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
 import { stripHtml } from '../utils/textUtils';
-import { API_URL } from '../services/api';
+import { API_URL, formatImageUrl } from '../services/api';
 
 // Dummy data removed for API
 
@@ -18,8 +18,8 @@ const MustReadSlider = ({ language, onArticleClick }) => {
             try {
                 // Fetch both articles and blogs
                 const [articlesRes, blogsRes] = await Promise.all([
-                    fetch(`${API_URL}/articles`),
-                    fetch(`${API_URL}/blogs?limit=20`)
+                    fetch(`${API_URL}/articles?limit=30&status=PUBLISHED`),
+                    fetch(`${API_URL}/blogs?limit=20&status=PUBLISHED`)
                 ]);
 
                 if (!articlesRes.ok || !blogsRes.ok) throw new Error('Failed to fetch content');
@@ -32,39 +32,40 @@ const MustReadSlider = ({ language, onArticleClick }) => {
                 const finalBlogs = Array.isArray(blogsData) ? blogsData : [];
 
                 // Combine and normalize data
-                const combined = [
-                    ...articlesData.filter(a => a.status === 'PUBLISHED').map(a => ({
-                        id: a.id,
-                        type: 'article',
-                        category: a.category?.name?.toUpperCase() || (language === 'hi' ? 'समाचार' : 'NEWS'),
-                        title: a.title,
-                        image: a.image || 'https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&q=80&w=1000',
-                        author: a.author?.name || 'Mitaan',
-                        date: new Date(a.createdAt).toLocaleDateString(),
-                        content: stripHtml(a.shortDescription || a.content || '').substring(0, 100),
-                        slug: a.slug,
-                        views: a.views || 0
-                    })),
-                    ...finalBlogs.filter(b => b.status === 'PUBLISHED').map(b => ({
-                        id: b.id,
-                        type: 'blog',
-                        category: language === 'hi' ? 'ब्लॉग' : 'BLOG',
-                        title: b.title,
-                        image: b.image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1000',
-                        author: b.author?.name || 'Mitaan',
-                        date: new Date(b.createdAt).toLocaleDateString(),
-                        content: stripHtml(b.shortDescription || b.content || '').substring(0, 100),
-                        slug: b.slug,
-                        views: b.views || 0
-                    }))
-                ];
+                const rawArticles = articlesData.filter(a => a.status === 'PUBLISHED').map(a => ({...a, type: 'article'}));
+                const rawBlogs = finalBlogs.filter(b => b.status === 'PUBLISHED').map(b => ({...b, type: 'blog'}));
 
-                // Sort by views, filter out articles with no images, take top 10 combined
-                const validContentList = combined.filter(c => c.image && !c.image.includes('unsplash.com/photo-1518') && !c.title.includes('Draft'));
-                const sorted = validContentList.sort((a, b) => b.views - a.views).slice(0, 10);
+                const normalize = (item) => ({
+                    id: item.id,
+                    type: item.type,
+                    category: item.type === 'blog'
+                        ? (language === 'hi' ? 'ब्लॉग' : 'BLOG')
+                        : (language === 'hi'
+                            ? (item.category?.nameHi || item.category?.name || 'समाचार')
+                            : (item.category?.name?.toUpperCase() || 'NEWS')),
+                    title: item.title,
+                    image: formatImageUrl(item.image || 'https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&q=80&w=1000', 800),
+                    author: item.author?.name || item.authorName || 'Mitaan',
+                    date: new Date(item.createdAt).toLocaleDateString(),
+                    content: stripHtml(item.shortDescription || item.content || '').substring(0, 100),
+                    slug: item.slug,
+                    views: item.views || 0,
+                    isMustRead: item.isMustRead
+                });
+
+                const allNormalized = [...rawArticles, ...rawBlogs].map(normalize);
+                const mustReadSelection = allNormalized.filter(item => item.isMustRead);
+
+                // If we don't have enough 'isMustRead' items, use all normalized items (fallback to high-view)
+                const combined = mustReadSelection.length >= 3 ? mustReadSelection : allNormalized;
+
+                // Sort by views, filter incomplete items, take top 10
+                const sorted = combined
+                    .filter(c => c.image && c.title)
+                    .sort((a, b) => b.views - a.views);
 
                 if (sorted.length > 0) {
-                    setMustReadArticles(sorted);
+                    setMustReadArticles(sorted.slice(0, 10));
                 } else {
                     // Fallback
                     setMustReadArticles([{
@@ -122,7 +123,7 @@ const MustReadSlider = ({ language, onArticleClick }) => {
                         <span className="text-red-500 font-bold tracking-[0.3em] text-[10px] uppercase pl-1">
                             {language === 'hi' ? 'संपादकीय चयन' : 'Editorial Picks'}
                         </span>
-                        <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white font-serif tracking-tighter">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white font-serif tracking-tighter">
                             MUST READ
                         </h2>
                     </div>
@@ -151,7 +152,7 @@ const MustReadSlider = ({ language, onArticleClick }) => {
                 <div
                     ref={sliderRef}
                     onScroll={checkScroll}
-                    className="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-10"
+                    className="flex gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-6 sm:pb-10 -mx-4 px-4"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                     {mustReadArticles.map((article, index) => (
@@ -162,7 +163,7 @@ const MustReadSlider = ({ language, onArticleClick }) => {
                             whileHover={{ scale: 1.03, y: -8 }}
                             transition={{ delay: index * 0.1, duration: 0.5 }}
                             onClick={() => onArticleClick(article)}
-                            className="bg-gray-900 rounded-[2rem] overflow-hidden flex-shrink-0 w-[75vw] md:w-[480px] h-[350px] md:h-[420px] relative group cursor-pointer snap-start border border-white/5 shadow-2xl hover:shadow-red-900/20"
+                            className="bg-gray-900 rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden flex-shrink-0 w-[82vw] sm:w-[75vw] md:w-[480px] h-[320px] md:h-[420px] relative group cursor-pointer snap-start border border-white/5 shadow-2xl hover:shadow-red-900/20"
                         >
                             <div className="absolute inset-0">
                                 <motion.img

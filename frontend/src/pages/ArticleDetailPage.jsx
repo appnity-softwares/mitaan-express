@@ -13,6 +13,7 @@ import RelatedPosts from '../components/RelatedPosts';
 import useIsShort from '../hooks/useIsShort';
 import SEO from '../components/SEO';
 import FloatingShareButtons from '../components/FloatingShareButtons';
+import { formatImageUrl } from '../services/api';
 
 const ArticleDetailPage = ({ language }) => {
     const { id } = useParams();
@@ -192,7 +193,7 @@ const ArticleDetailPage = ({ language }) => {
             />
 
             {/* Back Button */}
-            <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="max-w-7xl mx-auto px-4 pt-28 sm:pt-32 pb-8">
                 <button
                     onClick={() => navigate(-1)}
                     className="group inline-flex items-center gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 hover:border-red-600/30 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all shadow-sm hover:shadow"
@@ -203,7 +204,7 @@ const ArticleDetailPage = ({ language }) => {
             </div>
 
             {/* Article Header */}
-            <article className="max-w-7xl mx-auto px-4 pb-32">
+            <article className="max-w-7xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24 lg:pb-32">
                 {/* Header Content */}
                 <div className="w-full text-left mb-12 relative">
                     {/* Decorative Background Blur */}
@@ -214,7 +215,7 @@ const ArticleDetailPage = ({ language }) => {
                         to={`/category/${article.category?.slug || 'news'}`}
                         className="inline-flex items-center justify-center px-4 py-1.5 bg-red-600/5 text-red-600 text-xs font-black uppercase tracking-[0.2em] rounded-full mb-6 hover:bg-red-600 hover:text-white transition-all border border-red-600/20"
                     >
-                        {article.category?.name || 'NEWS'}
+                        {typeof article.category === 'object' ? (language === 'hi' ? article.category?.nameHi || article.category?.name : article.category?.name) : (article.category || (language === 'hi' ? 'समाचार' : 'NEWS'))}
                     </Link>
 
                     {/* Title */}
@@ -225,9 +226,9 @@ const ArticleDetailPage = ({ language }) => {
                     </h1>
 
                     {/* Meta Info */}
-                    <div className="flex flex-wrap items-center justify-between gap-4 border-y border-slate-100 dark:border-white/5 py-6 w-full mb-12">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full ring-2 ring-white dark:ring-slate-800 shadow-lg overflow-hidden">
+                    <div className="flex flex-wrap items-center justify-between gap-4 border-y border-slate-100 dark:border-white/5 py-4 sm:py-6 w-full mb-8 sm:mb-12">
+                        <div className="flex flex-wrap items-center gap-3">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-white dark:ring-slate-800 shadow-lg overflow-hidden shrink-0">
                                 {article.authorImage ? (
                                     <img src={article.authorImage} alt={article.authorName || 'Author'} className="w-full h-full object-cover" />
                                 ) : article.author?.image ? (
@@ -245,14 +246,14 @@ const ArticleDetailPage = ({ language }) => {
                         </div>
 
                         {/* Actions */}
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-white/5 rounded-full text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                            <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-white/5 rounded-full text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                                 <Clock size={14} /> 5 MIN READ
                             </div>
                             <div className="h-8 w-px bg-slate-200 dark:bg-white/10 hidden sm:block"></div>
                             <button
                                 onClick={() => handleShare('copy')}
-                                className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors text-xs font-black uppercase tracking-widest shadow-sm"
+                                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors text-xs font-black uppercase tracking-widest shadow-sm"
                                 title="Copy Readable Link"
                             >
                                 {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -276,7 +277,7 @@ const ArticleDetailPage = ({ language }) => {
                                         handleShare('copy');
                                     }
                                 }}
-                                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors text-xs font-black uppercase tracking-widest shadow-sm"
+                                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors text-xs font-black uppercase tracking-widest shadow-sm"
                             >
                                 <Share2 size={14} />
                                 <span className="hidden sm:inline-block">{language === 'hi' ? 'शेयर' : 'SHARE'}</span>
@@ -297,7 +298,7 @@ const ArticleDetailPage = ({ language }) => {
                             {article.image && (
                                 <div className="rounded-3xl overflow-hidden mb-12 shadow-2xl">
                                     <img
-                                        src={article.image}
+                                        src={formatImageUrl(article.image, 1200)}
                                         alt={article.title}
                                         className="w-full h-auto object-cover"
                                         onError={(e) => {
@@ -391,7 +392,7 @@ const ArticleDetailPage = ({ language }) => {
                                             </span>
                                             <div>
                                                 <span className="text-xs font-bold text-red-600 uppercase tracking-wider">
-                                                    {item.category?.name || 'News'}
+                                                    {typeof item.category === 'object' ? (language === 'hi' ? item.category?.nameHi || item.category?.name : item.category?.name) : (item.category || (language === 'hi' ? 'समाचार' : 'NEWS'))}
                                                 </span>
                                                 <h4 className="font-bold text-slate-800 dark:text-white group-hover:text-red-600 transition-colors line-clamp-3 leading-snug mb-2">
                                                     {item.title}
@@ -404,12 +405,16 @@ const ArticleDetailPage = ({ language }) => {
                             </div>
 
                             {/* Subscribe Box (Mini) */}
-                            <div className="bg-slate-900 dark:bg-red-600 text-white p-8 rounded-[2rem] text-center relative overflow-hidden group">
-                                <h3 className="text-xl font-black font-serif mb-4 relative z-10">Mitaan Express Details</h3>
-                                <p className="text-white/70 text-sm mb-6 relative z-10">Get the latest news directly to your inbox.</p>
-                                <button className="w-full py-3 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition-colors relative z-10">
+                            <div className="bg-slate-900 dark:bg-red-600 text-white p-6 sm:p-8 rounded-[2rem] text-center relative overflow-hidden group">
+                                <h3 className="text-lg sm:text-xl font-black font-serif mb-3 relative z-10">Stay Updated</h3>
+                                <p className="text-white/70 text-sm mb-4 relative z-10">Get the latest news in your inbox.</p>
+                                <a
+                                    href="#newsletter"
+                                    className="block w-full py-3 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition-colors relative z-10 text-sm"
+                                    onClick={(e) => { e.preventDefault(); document.querySelector('#navbar-subscribe')?.focus(); }}
+                                >
                                     SUBSCRIBE
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </aside>

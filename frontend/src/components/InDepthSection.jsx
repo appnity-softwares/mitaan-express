@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Clock, User, ChevronRight } from 'lucide-react';
 import { stripHtml } from '../utils/textUtils';
+import { formatImageUrl } from '../services/api';
 
 const InDepthSection = ({ language, onCategoryChange, sportsArticles = [], economyArticles = [], onArticleClick }) => {
     // Get main sports feature
@@ -64,7 +65,7 @@ const InDepthSection = ({ language, onCategoryChange, sportsArticles = [], econo
                                     </div>
                                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
                                         <User size={12} className="text-red-600" />
-                                        <span>{mainSports.author?.name || 'Mitaan'}</span>
+                                        <span>{mainSports.authorName || (typeof mainSports.author === 'object' ? mainSports.author?.name : (mainSports.author || 'Mitaan'))}</span>
                                     </div>
                                 </div>
 
@@ -86,7 +87,7 @@ const InDepthSection = ({ language, onCategoryChange, sportsArticles = [], econo
                                 className="order-1 md:order-2 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl cursor-pointer relative"
                             >
                                 <img
-                                    src={mainSports.image || 'https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?auto=format&fit=crop&q=80&w=1000'}
+                                    src={formatImageUrl(mainSports.image, 1000)}
                                     alt={mainSports.title}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                                 />
@@ -147,7 +148,7 @@ const InDepthSection = ({ language, onCategoryChange, sportsArticles = [], econo
                                 >
                                     <div className="w-20 h-20 shrink-0 rounded-2xl overflow-hidden bg-slate-100 dark:bg-gray-800 shadow-md">
                                         <img
-                                            src={article.image || 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=300'}
+                                            src={formatImageUrl(article.image, 300)}
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                             alt=""
                                         />
