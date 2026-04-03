@@ -33,7 +33,7 @@ const Footer = ({ language }) => {
     ];
 
     return (
-        <footer className="bg-white dark:bg-[#030712] border-t border-slate-100 dark:border-white/5 pt-12 pb-8">
+        <footer className="bg-white dark:bg-[#030712] border-t border-slate-100 dark:border-white/5 pt-12 pb-8 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Top Section: Staggered Dynamic Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-16 mb-8">
@@ -49,7 +49,7 @@ const Footer = ({ language }) => {
                                 <span className="mitaan-branding text-4xl">Mitaan Express</span>
                             )}
                         </div>
-                        <p className="text-lg text-slate-500 dark:text-slate-400 font-serif italic leading-relaxed max-w-md">
+                        <p className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-serif italic leading-relaxed max-w-full sm:max-w-md">
                             {language === 'hi' 
                                 ? 'मितान एक्सप्रेस: सच्चाई की आवाज़, निष्पक्ष पत्रकारिता और गहरी अंतर्दृष्टि के लिए आपका विश्वसनीय स्रोत।' 
                                 : 'Voice of Truth. Your trusted source for unbiased journalism, deep insights, and the latest stories from across the globe.'}
@@ -71,7 +71,7 @@ const Footer = ({ language }) => {
                     </div>
 
                     {/* Links Sections: Fragmented Staggered Layout */}
-                    <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8">
+                    <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-8">
                         <div className="space-y-8">
                             <h4 className="text-[10px] font-black text-red-600 uppercase tracking-[0.4em]">Explore</h4>
                             <ul className="space-y-4">
@@ -131,16 +131,19 @@ const Footer = ({ language }) => {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="pt-6 border-t border-slate-100 dark:border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                <div className="pt-6 border-t border-slate-100 dark:border-white/5 flex flex-col items-center sm:flex-row justify-between gap-6 sm:gap-4">
+                    <p className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium text-center sm:text-left">
                         © {new Date().getFullYear()} Mitaan Express. All rights reserved. 
-                        <span className="mx-2 opacity-30">|</span> 
+                        <span className="hidden sm:inline mx-2 opacity-30">|</span> 
+                        <br className="sm:hidden" />
                         Crafted with ❤️ for Excellence
                     </p>
-                    <div className="flex items-center gap-6">
-                        <button className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 dark:hover:text-white transition-colors">English</button>
-                        <button className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 dark:hover:text-white transition-colors">हिंदी</button>
-                        <div className="w-[1px] h-4 bg-slate-200 dark:bg-white/10 mx-2"></div>
+                    <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6">
+                        <div className="flex items-center gap-3">
+                            <button className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 dark:hover:text-white transition-colors">English</button>
+                            <button className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 dark:hover:text-white transition-colors">हिंदी</button>
+                        </div>
+                        <div className="hidden sm:block w-[1px] h-4 bg-slate-200 dark:bg-white/10 mx-2"></div>
                         <Link to="/contact" className="text-[10px] font-black text-red-600 uppercase tracking-[0.2em] hover:opacity-80 flex items-center gap-2">
                             Support <ArrowRight size={12} />
                         </Link>
