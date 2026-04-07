@@ -133,10 +133,8 @@ const Footer = ({ language }) => {
                 {/* Bottom Bar */}
                 <div className="pt-6 border-t border-slate-100 dark:border-white/5 flex flex-col items-center sm:flex-row justify-between gap-6 sm:gap-4">
                     <p className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium text-center sm:text-left">
-                        © {new Date().getFullYear()} Mitaan Express. All rights reserved. 
-                        <span className="hidden sm:inline mx-2 opacity-30">|</span> 
-                        <br className="sm:hidden" />
-                        Crafted with ❤️ for Excellence
+                        © {new Date().getFullYear()} Mitaan Express. <br className="sm:hidden" />
+                        Technology Partner: <a href="http://www.appnity.co.in" target="_blank" rel="noopener noreferrer" className="text-red-600/60 dark:text-red-500/50 hover:text-red-600 dark:hover:text-red-500 font-black uppercase tracking-widest transition-all">Appnity Softwares Private Limited</a>
                     </p>
                     <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6">
                         <div className="flex items-center gap-3">

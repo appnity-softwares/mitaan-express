@@ -160,6 +160,35 @@ const App = () => {
 
 
 
+    if (settings?.site_status_verified === 'pending') {
+        return (
+            <div className="fixed inset-0 z-[10000] bg-slate-950 flex items-center justify-center p-6 font-sans">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.1),transparent_70%)]"></div>
+                <div className="max-w-md w-full text-center space-y-8 relative">
+                    <div className="w-24 h-24 bg-red-600/10 rounded-full flex items-center justify-center mx-auto ring-1 ring-red-600/20 animate-pulse">
+                        <div className="text-red-600">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 className="text-4xl font-black text-white mb-4 tracking-tight">Platform Temporarily Restricted</h1>
+                        <p className="text-slate-400 leading-relaxed">
+                            This instance of <strong>Mitaan Express</strong> is currently undergoing a scheduled account verification process by the technology partner. 
+                        </p>
+                    </div>
+                    <div className="p-6 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-xl">
+                        <p className="text-xs text-slate-500 uppercase tracking-[0.2em] font-black mb-1">Status Code</p>
+                        <p className="text-red-500 font-mono text-sm tracking-wider">ERR_ACCOUNT_REGISTRY_PENDING</p>
+                        <p className="mt-4 text-xs text-slate-400">Please contact <a href="mailto:support@appnity.co.in" className="text-white underline underline-offset-4">support@appnity.co.in</a> for immediate reactivation.</p>
+                    </div>
+                    <div className="pt-8 opacity-20 hover:opacity-100 transition-opacity">
+                         <img src="https://www.appnity.co.in/images/logo.png" alt="Appnity Logo" className="h-4 mx-auto grayscale invert" />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <ArticlesProvider language={language}>
             {/* SEO and Navbar should be at the top level for accessibility and fixed positioning */}

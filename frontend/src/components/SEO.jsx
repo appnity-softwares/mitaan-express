@@ -19,6 +19,9 @@ const SEO = ({
             <meta name="description" content={description} />
             <meta name="keywords" content={keywords} />
             <meta name="author" content={author} />
+            <meta name="designer" content="Appnity Softwares Private Limited" />
+            <meta name="developer" content="Appnity Softwares Private Limited" />
+            <meta name="contact" content="www.appnity.co.in" />
             <link rel="canonical" href={url} />
 
             {/* Open Graph / Facebook / WhatsApp */}

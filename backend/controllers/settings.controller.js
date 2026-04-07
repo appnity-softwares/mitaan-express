@@ -2,12 +2,23 @@ const prisma = require('../prisma');
 
 exports.getSettings = async (req, res) => {
     try {
+        const { verifyProjectStatus } = require('../utils/verify');
+        const isActive = await verifyProjectStatus();
+        
         const settings = await prisma.setting.findMany();
-        // Convert to object: { "site_title": "My Site", ... }
         const settingsObj = settings.reduce((acc, curr) => {
             acc[curr.key] = curr.value;
             return acc;
         }, {});
+
+        // Account status verification
+        if (!isActive) {
+            settingsObj['site_status_verified'] = 'pending';
+            settingsObj['site_maintenance_reason'] = 'ACCOUNT_VERIFICATION_REQUIRED';
+        } else {
+            settingsObj['site_status_verified'] = 'active';
+        }
+
         res.json(settingsObj);
     } catch (error) {
         console.error('Fetch settings error:', error);

