@@ -72,11 +72,31 @@ const App = () => {
             window.history.scrollRestoration = 'manual';
         }
 
+        // Global recovery for failed dynamic imports (stale chunks)
+        const handleResourceError = (error) => {
+            if (error?.message?.includes('Failed to fetch dynamically imported module') || 
+                error?.message?.includes('Importing a discontinued module')) {
+                console.warn('Stale asset detected. Synchronizing with latest server build...');
+                window.location.reload();
+            }
+        };
+
+        window.addEventListener('error', handleResourceError);
+        window.addEventListener('unhandledrejection', (event) => {
+            if (event.reason?.message?.includes('Failed to fetch dynamically imported module')) {
+                handleResourceError(event.reason);
+            }
+        });
+
         AOS.init({
             duration: 1000,
             once: true,
             easing: 'ease-out-cubic',
         });
+
+        return () => {
+            window.removeEventListener('error', handleResourceError);
+        };
     }, []);
 
     useEffect(() => {
