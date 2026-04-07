@@ -216,6 +216,7 @@ const AdminSidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout, theme, to
                                 <SidebarLink to="/admin/poetry" icon={<Feather size={17} />} label={t('featuredPoetry')} />
                                 <SidebarLink to="/admin/live" icon={<Video size={17} />} label={t('liveNowSection')} />
                                 <SidebarLink to="/admin/navbar" icon={<MenuIcon size={17} />} label={t('navbarManager')} />
+                                <SidebarLink to="/admin/hero" icon={<Star size={17} />} label="Hero Designer" />
                                 <SidebarLink to="/admin/ads" icon={<DollarSign size={17} />} label={t('ads')} />
                                 <SidebarLink to="/admin/settings" icon={<Settings size={17} />} label={t('settings')} />
                             </>

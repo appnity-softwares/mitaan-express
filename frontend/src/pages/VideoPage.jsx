@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Video as VideoIcon, Play, Clock, Eye, X, MonitorPlay } from 'lucide-react';
 import { usePublicMedia, useIncrementViews } from '../hooks/useMedia';
@@ -12,6 +13,7 @@ const isDirectVideo = (url) => {
 const VideoPage = ({ language }) => {
     const [filter, setFilter] = useState('All');
     const [selectedVideo, setSelectedVideo] = useState(null);
+    const navigate = useNavigate();
 
     // Fetch videos from API
     const { data: mediaResponse, isLoading } = usePublicMedia('VIDEO');
@@ -38,6 +40,16 @@ const VideoPage = ({ language }) => {
         setSelectedVideo(video);
         incrementViewsMutation.mutate(video.id);
     };
+
+    // Sync modal state with body class to hide navbar
+    React.useEffect(() => {
+        if (selectedVideo) {
+            document.body.classList.add('media-modal-open');
+        } else {
+            document.body.classList.remove('media-modal-open');
+        }
+        return () => document.body.classList.remove('media-modal-open');
+    }, [selectedVideo]);
 
     if (isLoading) {
         return (
@@ -201,7 +213,7 @@ const VideoPage = ({ language }) => {
                             onClick={() => setSelectedVideo(null)}
                             className="fixed inset-0 bg-slate-900/95 backdrop-blur-3xl z-[200] flex items-center justify-center p-4 sm:p-8"
                         >
-                            <button
+                             <button
                                 onClick={() => setSelectedVideo(null)}
                                 className="absolute top-6 right-6 sm:top-10 sm:right-10 w-14 h-14 bg-white/5 border border-white/10 backdrop-blur-2xl rounded-full flex items-center justify-center hover:bg-red-600 transition-all z-50 group hover:scale-110 hover:shadow-lg shadow-black"
                             >
@@ -209,15 +221,15 @@ const VideoPage = ({ language }) => {
                             </button>
 
                             <motion.div
-                                initial={{ scale: 0.95, opacity: 0, y: 30 }}
+                                initial={{ scale: 0.9, opacity: 0, y: 30 }}
                                 animate={{ scale: 1, opacity: 1, y: 0 }}
-                                exit={{ scale: 0.95, opacity: 0 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
                                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                 onClick={(e) => e.stopPropagation()}
-                                className="w-full max-w-6xl flex flex-col items-center gap-8"
+                                className="w-full max-w-5xl flex flex-col items-center justify-center min-h-screen py-12"
                             >
                                 {/* Video Player Frame */}
-                                <div className="w-full aspect-video rounded-[2rem] overflow-hidden bg-black shadow-2xl relative group border border-white/10">
+                                <div className="w-full aspect-video rounded-[2.5rem] overflow-hidden bg-black shadow-[0_0_100px_rgba(220,38,38,0.2)] relative group border border-white/10 ring-1 ring-white/5">
                                     <div className="absolute inset-0 bg-gradient-to-tr from-red-600/10 to-transparent pointer-events-none mix-blend-screen z-10"></div>
                                     {isDirectVideo(selectedVideo.url) ? (
                                         <video
@@ -231,33 +243,28 @@ const VideoPage = ({ language }) => {
                                         <iframe
                                             src={getVideoEmbedUrl(selectedVideo.url)}
                                             title={selectedVideo.title}
-                                            className="w-full h-full relative z-20"
+                                            className="w-full h-full relative z-20 border-none"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                             allowFullScreen
                                         />
                                     )}
                                 </div>
-
+                                
                                 {/* Typography Overlay */}
-                                <div className="text-center max-w-4xl px-4 w-full">
-                                    <h2 className="text-3xl md:text-5xl font-black text-white font-serif mb-6 tracking-tight drop-shadow-xl">
-                                        {selectedVideo.title}
-                                    </h2>
-
-                                    <div className="flex items-center justify-center gap-6 mb-6">
-                                        {selectedVideo.category && (
-                                            <span className="px-4 py-1.5 bg-red-600/20 text-red-400 border border-red-500/30 rounded-full text-[10px] font-black uppercase tracking-[0.3em]">
-                                                {selectedVideo.category}
-                                            </span>
-                                        )}
-                                        <div className="flex items-center gap-2 text-slate-400 text-sm font-bold tracking-widest uppercase">
-                                            <Eye size={16} className="text-red-500" />
-                                            <span>{selectedVideo.views || 0} Broadcasts</span>
+                                <div className="text-center w-full mt-10">
+                                    <div className="flex items-center justify-center gap-4 mb-6">
+                                        <div className="flex items-center gap-2 text-red-500 text-xs font-black tracking-[0.4em] uppercase">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></div>
+                                            {selectedVideo.category || "BROADCAST"}
                                         </div>
                                     </div>
 
+                                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white font-serif mb-4 tracking-tighter drop-shadow-2xl">
+                                        {selectedVideo.title}
+                                    </h2>
+
                                     {selectedVideo.description && (
-                                        <p className="text-slate-300 max-w-3xl mx-auto font-serif italic text-lg md:text-xl leading-relaxed opacity-90">
+                                        <p className="text-slate-400 max-w-2xl mx-auto font-serif italic text-lg leading-relaxed opacity-80">
                                             "{selectedVideo.description}"
                                         </p>
                                     )}

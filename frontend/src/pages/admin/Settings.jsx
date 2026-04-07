@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../hooks/useQueries';
 import { useUpdateSettings } from '../../hooks/useMutations';
+import { useCreateMedia } from '../../hooks/useMedia';
 import {
     Save, Globe, Phone, Mail, MapPin, Facebook, Twitter, Instagram,
     Youtube, Image, Type, Megaphone, Zap, Layout, Settings as SettingsIcon,
     ShieldCheck, BarChart3, Palette, BookOpen, Feather, PenTool,
     Heart as HeartIcon, Video, Star, Lock, Fingerprint, Upload, AlertCircle,
-    Home, Info, User, FileText, Trophy, Users
+    Home, Info, User, FileText, Trophy, Users, Plus, Trash2, X, Sparkles, ArrowRight
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { API_URL } from '../../services/api';
@@ -17,15 +18,17 @@ const Settings = () => {
     const navigate = useNavigate();
     const { data: initialData, isLoading: initialLoading } = useSettings();
     const updateMutation = useUpdateSettings();
+    const createMediaMutation = useCreateMedia();
 
     const [activeTab, setActiveTab] = useState('identity');
     const [settings, setSettings] = useState({
         site_title: '', site_description: '', logo_url: '', footer_text: '',
         contact_email: '', contact_phone: '', contact_address: '',
         social_facebook: '', social_twitter: '', social_instagram: '', social_youtube: '',
-        ad_homepage_top_code: '', ad_homepage_top_enabled: 'false',
-        ad_article_top_code: '', ad_article_top_enabled: 'false',
-        ad_article_bottom_code: '', ad_article_bottom_enabled: 'false',
+        ad_homepage_top_enabled: 'false', ad_homepage_top_image_url: '', ad_homepage_top_link_url: '',
+        ad_hero_slider_enabled: 'false', ad_hero_slider_image_url: '', ad_hero_slider_link_url: '', ad_hero_slider_title: '',
+        ad_sidebar_enabled: 'false', ad_sidebar_image_url: '', ad_sidebar_link_url: '',
+        ad_skyscraper_enabled: 'false', ad_skyscraper_image_url: '', ad_skyscraper_link_url: '',
         ad_popup_enabled: 'true', ad_popup_type: 'promo', ad_popup_image_url: '', ad_popup_link_url: '',
         section_hero_enabled: 'true', section_ticker_enabled: 'true', section_indepth_enabled: 'true',
         section_poetry_enabled: 'true', section_gallery_enabled: 'true', section_live_enabled: 'true',
@@ -136,6 +139,29 @@ const Settings = () => {
         </div>
     );
 
+    const handleFileChange = async (e, fieldName) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const toastId = toast.loading('Uploading high-res asset...');
+        try {
+            const fmData = new FormData();
+            fmData.append('file', file);
+            fmData.append('type', 'IMAGE');
+            fmData.append('title', file.name || 'hero-asset');
+            fmData.append('category', 'SYSTEM');
+            fmData.append('size', `${(file.size / 1024).toFixed(0)} KB`);
+
+            const result = await createMediaMutation.mutateAsync({ payload: fmData });
+            setSettings(prev => ({ ...prev, [fieldName]: result.url }));
+            toast.success('Asset synchronized successfully.', { id: toastId });
+        } catch (error) {
+            toast.error('Upload failed: ' + error.message, { id: toastId });
+        } finally {
+            e.target.value = ''; // Reset input
+        }
+    };
+
     return (
         <div className="p-4 lg:p-10 max-w-7xl mx-auto pb-32">
             {/* Header */}
@@ -245,7 +271,13 @@ const Settings = () => {
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <input name="hero_welcome_title" value={settings.hero_welcome_title} onChange={handleChange} className="px-4 py-3 bg-white dark:bg-slate-800 rounded-xl outline-none focus:ring-2 ring-red-500 text-sm font-bold" placeholder="Welcome Headline" />
                                                 <input name="hero_welcome_subtitle" value={settings.hero_welcome_subtitle} onChange={handleChange} className="px-4 py-3 bg-white dark:bg-slate-800 rounded-xl outline-none focus:ring-2 ring-red-500 text-sm font-medium" placeholder="Subtext description" />
-                                                <input name="hero_welcome_image" value={settings.hero_welcome_image} onChange={handleChange} className="px-4 py-3 bg-white dark:bg-slate-800 rounded-xl outline-none focus:ring-2 ring-red-500 text-sm font-mono" placeholder="Background Image URL" />
+                                                <div className="flex gap-2">
+                                                    <input name="hero_welcome_image" value={settings.hero_welcome_image} onChange={handleChange} className="flex-1 px-4 py-3 bg-white dark:bg-slate-800 rounded-xl outline-none focus:ring-2 ring-red-500 text-sm font-mono" placeholder="Background Image URL" />
+                                                    <label className="p-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl cursor-pointer hover:opacity-90 flex items-center justify-center shrink-0">
+                                                        <Upload size={18} />
+                                                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileChange(e, 'hero_welcome_image')} />
+                                                    </label>
+                                                </div>
                                                 <input name="hero_welcome_link" value={settings.hero_welcome_link} onChange={handleChange} className="px-4 py-3 bg-white dark:bg-slate-800 rounded-xl outline-none focus:ring-2 ring-red-500 text-sm font-mono" placeholder="Destination Link (e.g., /about)" />
                                             </div>
                                         </div>
@@ -306,9 +338,85 @@ const Settings = () => {
                             <motion.div key="network" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
                                 <div className="flex justify-between items-center border-b border-slate-100 dark:border-white/10 pb-4">
                                     <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Ad Network & Promos</h2>
-                                    <button onClick={() => handleSaveSection(['ad_popup_enabled', 'ad_popup_type', 'ad_popup_image_url', 'ad_popup_link_url'])} className="px-6 py-2.5 bg-orange-600 text-white font-bold rounded-xl text-xs uppercase tracking-widest hover:bg-orange-700 transition shadow-lg shadow-orange-600/20">Sync Ads</button>
+                                    <button onClick={() => handleSaveSection([
+                                        'ad_homepage_top_enabled', 'ad_homepage_top_image_url', 'ad_homepage_top_link_url',
+                                        'ad_hero_slider_enabled', 'ad_hero_slider_image_url', 'ad_hero_slider_link_url', 'ad_hero_slider_title',
+                                        'ad_sidebar_enabled', 'ad_sidebar_image_url', 'ad_sidebar_link_url',
+                                        'ad_skyscraper_enabled', 'ad_skyscraper_image_url', 'ad_skyscraper_link_url',
+                                        'ad_popup_enabled', 'ad_popup_type', 'ad_popup_image_url', 'ad_popup_link_url'
+                                    ])} className="px-6 py-2.5 bg-orange-600 text-white font-bold rounded-xl text-xs uppercase tracking-widest hover:bg-orange-700 transition shadow-lg shadow-orange-600/20">Sync Ads</button>
                                 </div>
-                                <div className="p-8 bg-orange-50 dark:bg-orange-900/10 rounded-3xl border border-orange-100 dark:border-orange-900/20">
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    {/* Homepage Top Ad */}
+                                    <div className="p-6 bg-slate-50 dark:bg-slate-900/40 rounded-3xl border border-slate-100 dark:border-white/5">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="font-black text-sm uppercase tracking-widest text-slate-900 dark:text-white">Homepage Top Banner</h3>
+                                            <select name="ad_homepage_top_enabled" value={settings.ad_homepage_top_enabled} onChange={handleChange} className={`px-3 py-1 rounded-lg text-[10px] font-black outline-none border cursor-pointer ${settings.ad_homepage_top_enabled === 'true' ? 'bg-emerald-50 text-emerald-600' : 'bg-transparent text-slate-400'}`}>
+                                                <option value="true">ON</option>
+                                                <option value="false">OFF</option>
+                                            </select>
+                                        </div>
+                                        <input name="ad_homepage_top_image_url" value={settings.ad_homepage_top_image_url} onChange={handleChange} placeholder="Image URL" className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl mb-3 text-xs outline-none focus:ring-1 ring-orange-500" />
+                                        <input name="ad_homepage_top_link_url" value={settings.ad_homepage_top_link_url} onChange={handleChange} placeholder="Destination Link" className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl text-xs outline-none focus:ring-1 ring-orange-500" />
+                                    </div>
+
+                                    {/* Link to Dedicated Hero Manager */}
+                                    <div className="md:col-span-2 p-10 bg-slate-900 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden group">
+                                         <div className="absolute top-0 right-0 p-10 text-white/5 pointer-events-none group-hover:text-red-500/10 transition-colors">
+                                             <Sparkles size={140} />
+                                         </div>
+                                         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                                             <div className="text-center md:text-left">
+                                                 <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2 flex items-center justify-center md:justify-start gap-3">
+                                                     Interactive Hero Designer
+                                                     <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 2 }}>
+                                                         <Zap className="text-amber-400" size={24} />
+                                                     </motion.div>
+                                                 </h3>
+                                                 <p className="text-sm text-slate-400 font-medium max-w-lg leading-relaxed">
+                                                     We've moved the hero slider management to a high-fidelity visual workspace. 
+                                                     Experience real-time previews, drag-and-drop reordering, and premium styling controls.
+                                                 </p>
+                                             </div>
+                                             <button 
+                                                 onClick={() => navigate('/admin/hero')}
+                                                 className="px-10 py-5 bg-red-600 text-white font-black rounded-3xl text-[11px] uppercase tracking-[0.2em] hover:bg-red-700 transition-all flex items-center gap-4 shadow-2xl shadow-red-600/40 active:scale-95 group"
+                                             >
+                                                 Command Hero Deck
+                                                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                                             </button>
+                                         </div>
+                                    </div>
+
+                                    {/* Sidebar Ad */}
+                                    <div className="p-6 bg-slate-50 dark:bg-slate-900/40 rounded-3xl border border-slate-100 dark:border-white/5">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="font-black text-sm uppercase tracking-widest text-slate-900 dark:text-white">Common Sidebar Box</h3>
+                                            <select name="ad_sidebar_enabled" value={settings.ad_sidebar_enabled} onChange={handleChange} className={`px-3 py-1 rounded-lg text-[10px] font-black outline-none border cursor-pointer ${settings.ad_sidebar_enabled === 'true' ? 'bg-emerald-50 text-emerald-600' : 'bg-transparent text-slate-400'}`}>
+                                                <option value="true">ON</option>
+                                                <option value="false">OFF</option>
+                                            </select>
+                                        </div>
+                                        <input name="ad_sidebar_image_url" value={settings.ad_sidebar_image_url} onChange={handleChange} placeholder="Image URL" className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl mb-3 text-xs outline-none focus:ring-1 ring-orange-500" />
+                                        <input name="ad_sidebar_link_url" value={settings.ad_sidebar_link_url} onChange={handleChange} placeholder="Destination Link" className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl text-xs outline-none focus:ring-1 ring-orange-500" />
+                                    </div>
+
+                                    {/* Skyscraper Ad */}
+                                    <div className="p-6 bg-slate-50 dark:bg-slate-900/40 rounded-3xl border border-slate-100 dark:border-white/5">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="font-black text-sm uppercase tracking-widest text-slate-900 dark:text-white">Skyscraper (Vertical Detail)</h3>
+                                            <select name="ad_skyscraper_enabled" value={settings.ad_skyscraper_enabled} onChange={handleChange} className={`px-3 py-1 rounded-lg text-[10px] font-black outline-none border cursor-pointer ${settings.ad_skyscraper_enabled === 'true' ? 'bg-emerald-50 text-emerald-600' : 'bg-transparent text-slate-400'}`}>
+                                                <option value="true">ON</option>
+                                                <option value="false">OFF</option>
+                                            </select>
+                                        </div>
+                                        <input name="ad_skyscraper_image_url" value={settings.ad_skyscraper_image_url} onChange={handleChange} placeholder="Image URL (Vertical 300x600 recommended)" className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl mb-3 text-xs outline-none focus:ring-1 ring-orange-500" />
+                                        <input name="ad_skyscraper_link_url" value={settings.ad_skyscraper_link_url} onChange={handleChange} placeholder="Destination Link" className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl text-xs outline-none focus:ring-1 ring-orange-500" />
+                                    </div>
+                                </div>
+
+                                <div className="p-8 bg-orange-50 dark:bg-orange-900/10 rounded-3xl border border-orange-100 dark:border-orange-900/20 mt-8">
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                                         <div>
                                             <h3 className="font-black text-slate-900 dark:text-white uppercase tracking-tight text-lg mb-1">Entry Screen Takeover</h3>

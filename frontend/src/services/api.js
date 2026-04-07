@@ -21,8 +21,23 @@ const handleResponse = async (response) => {
     }
 
     if (!response.ok) {
-        const errorMsg = (data && data.error) || (typeof data === 'string' && data && !data.includes('<!DOCTYPE')) ? data : null;
-        throw new Error(errorMsg || `Error ${response.status}: ${response.statusText}`);
+        let errorMsg = 'An unknown error occurred';
+        
+        if (data && typeof data === 'object') {
+            if (data.error) {
+                errorMsg = typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
+            } else if (data.message) {
+                errorMsg = typeof data.message === 'string' ? data.message : JSON.stringify(data.message);
+            } else {
+                errorMsg = JSON.stringify(data);
+            }
+        } else if (typeof data === 'string' && data && !data.includes('<!DOCTYPE')) {
+            errorMsg = data;
+        } else {
+            errorMsg = `Error ${response.status}: ${response.statusText}`;
+        }
+
+        throw new Error(errorMsg);
     }
 
     return data;

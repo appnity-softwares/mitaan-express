@@ -18,12 +18,18 @@ import { formatImageUrl } from '../services/api';
 const ArticleDetailPage = ({ language }) => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { articles, blogs, loading } = useArticles();
+    const { articles, blogs, loading, categories } = useArticles();
     const { data: settings } = useSettings();
     const [article, setArticle] = useState(null);
     const [copied, setCopied] = useState(false);
     const [relatedArticles, setRelatedArticles] = useState([]);
     const [contentRef, isShort] = useIsShort(150);
+
+    const isPoetry = React.useMemo(() => {
+        if (!article || !categories) return false;
+        const cat = categories.find(c => c.id === article.categoryId);
+        return cat?.name === 'Poetry' || cat?.name === 'काव्य';
+    }, [article, categories]);
 
     // Inject Ad into Content
     const injectedContent = React.useMemo(() => {
@@ -36,9 +42,9 @@ const ArticleDetailPage = ({ language }) => {
 
         const adHtml = `
             <div class="my-8 w-full flex justify-center clear-both">
-                <a href="${settings.ad_in_article_link_url || '#'}" target="_blank" rel="noopener noreferrer" class="block w-full max-w-4xl group relative overflow-hidden rounded-xl shadow-sm border border-slate-100 dark:border-white/10">
-                    <div class="absolute top-2 right-2 px-2 py-0.5 bg-black/50 text-[10px] text-white uppercase tracking-widest rounded backdrop-blur-sm">Advertisement</div>
-                    <img src="${settings.ad_in_article_image_url}" alt="Advertisement" class="w-full h-auto transform group-hover:scale-[1.01] transition-transform duration-500" />
+                <a href="${settings.ad_in_article_link_url || '#'}" target="_blank" rel="noopener noreferrer" class="block w-full max-w-4xl group relative overflow-hidden rounded-xl shadow-sm border border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-black/20">
+                    <div class="absolute top-2 right-2 px-2 py-0.5 bg-black/50 text-[10px] text-white uppercase tracking-widest rounded backdrop-blur-sm z-10">Advertisement</div>
+                    <img src="${settings.ad_in_article_image_url}" alt="Advertisement" class="w-full h-full max-h-[300px] md:max-h-[350px] object-contain transform group-hover:scale-[1.01] transition-transform duration-500" />
                 </a>
             </div>
         `;
@@ -219,8 +225,9 @@ const ArticleDetailPage = ({ language }) => {
                     </Link>
 
                     {/* Title */}
-                    <h1 className="text-3xl md:text-5xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.05] mb-10 font-serif tracking-tighter max-w-5xl">
-                        <span className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent italic">
+                    {/* Title: Robust Handling for Hindi/Devanagari to prevent clipping */}
+                    <h1 className={`text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.1] mb-10 font-serif max-w-5xl tracking-normal`}>
+                        <span className={`px-1 pr-4 inline-block ${/[\u0900-\u097F]/.test(article.title) ? 'text-slate-900 dark:text-white' : 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent italic'}`}>
                             {article.title}
                         </span>
                     </h1>
@@ -316,10 +323,37 @@ const ArticleDetailPage = ({ language }) => {
                             )}
 
                             {/* Article Content */}
-                            <div
-                                className="prose prose-base md:prose-lg dark:prose-invert max-w-none prose-headings:font-serif prose-a:text-red-600 overflow-hidden break-words"
-                                dangerouslySetInnerHTML={{ __html: injectedContent }}
-                            />
+                            {/* Article Content */}
+                            {isPoetry ? (
+                                <div className="max-w-4xl mx-auto">
+                                    <div className="relative py-12 md:py-20 px-8 md:px-16 bg-[#fcf9f2] dark:bg-white/5 rounded-[4rem] border border-[#e8e2d4] dark:border-white/10 shadow-inner overflow-hidden">
+                                        {/* Artistic background accents */}
+                                        <div className="absolute top-0 right-0 p-8 opacity-[0.03] dark:opacity-[0.05] pointer-events-none select-none">
+                                            <Feather size={200} className="text-slate-900 dark:text-white" />
+                                        </div>
+                                        <div className="absolute bottom-0 left-0 p-8 opacity-[0.03] dark:opacity-[0.05] rotate-180 pointer-events-none select-none">
+                                            <Quote size={200} className="text-slate-900 dark:text-white" />
+                                        </div>
+
+                                        <div
+                                            className={`relative z-10 prose prose-xl md:prose-2xl dark:prose-invert max-w-none font-serif text-center leading-[1.8] text-slate-800 dark:text-slate-200 whitespace-pre-line ${language === 'hi' ? '' : 'italic'}`}
+                                            dangerouslySetInnerHTML={{ __html: injectedContent }}
+                                        />
+                                    </div>
+                                    <div className="mt-8 text-center">
+                                        <div className="inline-flex items-center gap-4 text-xs font-black uppercase tracking-[0.3em] text-slate-400">
+                                            <div className="h-px w-8 bg-slate-200 dark:bg-white/10"></div>
+                                            {language === 'hi' ? 'कलम से मितान तक' : 'From Pen to Mitaan'}
+                                            <div className="h-px w-8 bg-slate-200 dark:bg-white/10"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div
+                                    className="prose prose-base md:prose-lg dark:prose-invert max-w-none prose-headings:font-serif prose-a:text-red-600 overflow-hidden break-words"
+                                    dangerouslySetInnerHTML={{ __html: injectedContent }}
+                                />
+                            )}
                             {/* Force all inline content images to be full reading width */}
                             <style>{`
                                 .prose img {
@@ -417,7 +451,8 @@ const ArticleDetailPage = ({ language }) => {
                                     ))}
                                 </div>
                             </div>
-
+                            
+                            <AdSpace position="skyscraper" />
                         </div>
                     </aside>
                 </div>

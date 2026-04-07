@@ -27,6 +27,7 @@ import AdminAbout from './admin/AdminAbout';
 import AdminNavbar from './admin/AdminNavbar';
 import AdminPoetry from './admin/AdminPoetry';
 import AdminLive from './admin/AdminLive';
+import AdminHero from './admin/AdminHero';
 
 // Placeholders
 
@@ -230,6 +231,7 @@ const AdminContent = () => {
                         <Route path="/contacts" element={<AdminRoute><AdminContacts /></AdminRoute>} />
                         <Route path="/donations" element={<AdminRoute><AdminDonations /></AdminRoute>} />
                         <Route path="/ads" element={<AdminRoute><AdminAds /></AdminRoute>} />
+                        <Route path="/hero" element={<AdminRoute><AdminHero /></AdminRoute>} />
                         <Route path="/about" element={<AdminRoute><AdminAbout /></AdminRoute>} />
                         <Route path="/navbar" element={<AdminRoute><AdminNavbar /></AdminRoute>} />
                         <Route path="/poetry" element={<AdminRoute><AdminPoetry /></AdminRoute>} />

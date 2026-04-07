@@ -14,18 +14,18 @@ const AdBanner = ({ imageUrl, linkUrl, enabled = true, className = '' }) => {
         <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`w-full overflow-hidden ${className}`}
+            className={`w-full overflow-hidden flex items-center justify-center bg-slate-50 dark:bg-slate-900/50 ${className}`}
         >
             <div
                 onClick={handleClick}
-                className={`relative w-full ${linkUrl ? 'cursor-pointer' : ''} group`}
+                className={`relative w-full h-full flex items-center justify-center ${linkUrl ? 'cursor-pointer' : ''} group`}
                 role={linkUrl ? 'link' : 'img'}
                 tabIndex={linkUrl ? 0 : -1}
             >
                 <img
                     src={imageUrl}
                     alt="Advertisement"
-                    className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    className="w-full h-full max-h-[inherit] object-contain transition-all duration-300 group-hover:scale-[1.01]"
                     loading="lazy"
                 />
                 {linkUrl && (

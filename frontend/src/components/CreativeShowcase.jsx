@@ -117,7 +117,7 @@ const CreativeShowcase = ({ language, setActiveCategory }) => {
                 </motion.div>
 
                 {/* Main Content: 2-Column Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
 
                     {/* Left: Featured Poetry with Typewriter */}
                     <div className="lg:col-span-3">
@@ -128,9 +128,9 @@ const CreativeShowcase = ({ language, setActiveCategory }) => {
                             className="relative bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-white/5 overflow-hidden shadow-xl shadow-slate-200/50 dark:shadow-black/20"
                         >
                             {/* Top decorative bar */}
-                            <div className="h-1.5 bg-gradient-to-r from-red-600 via-orange-500 to-red-600" />
+                            <div className="h-1 bg-gradient-to-r from-red-600 via-orange-500 to-red-600" />
 
-                            <div className="p-8 md:p-10 space-y-8">
+                            <div className="p-6 md:p-10 space-y-6 md:space-y-8">
                                 {/* Poem Header */}
                                 <div className="flex items-start justify-between">
                                     <div className="flex items-center gap-3">
@@ -156,59 +156,62 @@ const CreativeShowcase = ({ language, setActiveCategory }) => {
                                         initial={{ opacity: 0, y: 15 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -15 }}
-                                        className="text-3xl md:text-4xl font-black font-serif tracking-tight text-slate-900 dark:text-white"
+                                        className="text-2xl md:text-4xl font-black font-serif tracking-tight text-slate-900 dark:text-white"
                                     >
                                         {currentPoem.title}
                                     </motion.h3>
                                 </AnimatePresence>
 
                                 {/* Typewriter Poetry */}
-                                <div className="min-h-[120px] relative">
+                                <div className="min-h-[140px] md:min-h-[120px] relative">
                                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-red-600 to-orange-500 rounded-full" />
-                                    <div className="pl-6">
-                                        <p className="text-lg md:text-xl font-serif text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line italic">
+                                    <div className="pl-5 md:pl-6">
+                                        <p className="text-base md:text-xl font-serif text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line italic">
                                             {displayedText}
-                                            <span className="inline-block w-0.5 h-5 bg-red-600 ml-0.5 animate-pulse" />
+                                            <span className="inline-block w-0.5 h-4 md:h-5 bg-red-600 ml-0.5 animate-pulse" />
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Author & Navigation */}
-                                <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-white/5">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-600 to-orange-500 flex items-center justify-center text-white font-black text-sm">
+                                <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-slate-100 dark:border-white/5">
+                                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-600 to-orange-500 flex items-center justify-center text-white font-black text-sm shrink-0">
                                             {currentPoem.author?.[0] || 'M'}
                                         </div>
                                         <div>
-                                            <p className="text-sm font-black text-slate-900 dark:text-white">{currentPoem.author}</p>
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                            <p className="text-sm font-black text-slate-900 dark:text-white leading-none mb-1">{currentPoem.author}</p>
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
                                                 {language === 'hi' ? 'मितान एक्सप्रेस' : 'Mitaan Express'}
                                             </p>
                                         </div>
                                     </div>
 
                                     {/* Poem Navigation */}
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center justify-center gap-3 w-full sm:w-auto bg-slate-50 dark:bg-white/5 p-2 sm:p-0 rounded-2xl sm:bg-transparent">
                                         <button
                                             onClick={() => setActivePoem(prev => (prev - 1 + poems.length) % poems.length)}
-                                            className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all text-slate-500"
+                                            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 sm:bg-slate-100 sm:dark:bg-white/5 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all text-slate-500 shadow-sm sm:shadow-none"
+                                            aria-label="Previous poem"
                                         >
-                                            <ChevronLeft size={16} />
+                                            <ChevronLeft size={18} />
                                         </button>
-                                        <div className="flex gap-1.5 px-2">
+                                        <div className="flex gap-2 px-2">
                                             {poems.map((_, i) => (
                                                 <button
                                                     key={i}
                                                     onClick={() => setActivePoem(i)}
                                                     className={`h-1.5 rounded-full transition-all duration-300 ${i === activePoem % poems.length ? 'w-6 bg-red-600' : 'w-1.5 bg-slate-200 dark:bg-white/10'}`}
+                                                    aria-label={`Go to poem ${i + 1}`}
                                                 />
                                             ))}
                                         </div>
                                         <button
                                             onClick={() => setActivePoem(prev => (prev + 1) % poems.length)}
-                                            className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all text-slate-500"
+                                            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 sm:bg-slate-100 sm:dark:bg-white/5 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all text-slate-500 shadow-sm sm:shadow-none"
+                                            aria-label="Next poem"
                                         >
-                                            <ChevronRight size={16} />
+                                            <ChevronRight size={18} />
                                         </button>
                                     </div>
                                 </div>
@@ -225,13 +228,13 @@ const CreativeShowcase = ({ language, setActiveCategory }) => {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             onClick={() => setActiveCategory('poetry')}
-                            className="group relative h-[220px] rounded-[2.5rem] overflow-hidden cursor-pointer bg-slate-900 border border-white/10 shadow-2xl"
+                            className="group relative min-h-[180px] md:h-[220px] rounded-3xl md:rounded-[2.5rem] overflow-hidden cursor-pointer bg-slate-900 border border-white/10 shadow-2xl"
                         >
                             {/* Animated Background Mesh */}
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(220,38,38,0.2),transparent_70%)]" />
                             <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
 
-                            <div className="absolute inset-0 p-10 flex flex-col justify-between z-10">
+                            <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-between z-10">
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-full bg-red-600/20 flex items-center justify-center">
                                         <Sparkles size={14} className="text-red-500" />
@@ -262,9 +265,9 @@ const CreativeShowcase = ({ language, setActiveCategory }) => {
                             viewport={{ once: true }}
                             transition={{ delay: 0.1 }}
                             onClick={() => setActiveCategory('insights')}
-                            className="group relative flex-1 min-h-[220px] rounded-[2.5rem] overflow-hidden cursor-pointer bg-gradient-to-br from-red-600 to-red-700 border border-red-500/20"
+                            className="group relative flex-1 min-h-[180px] md:min-h-[220px] rounded-3xl md:rounded-[2.5rem] overflow-hidden cursor-pointer bg-gradient-to-br from-red-600 to-red-700 border border-red-500/20"
                         >
-                            <div className="absolute inset-0 p-8 flex flex-col justify-between z-10">
+                            <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-between z-10">
                                 <div className="flex items-center gap-2">
                                     <FileText size={16} className="text-white/70" />
                                     <span className="text-[10px] font-black text-white/70 uppercase tracking-[0.3em]">

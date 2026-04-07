@@ -64,6 +64,7 @@ const App = () => {
     }, [location.pathname]);
 
     const isAdminRoute = location.pathname.startsWith('/admin');
+    const shouldHideNavbar = isAdminRoute;
 
     useEffect(() => {
         // Prevent browser from restoring scroll position on refresh
@@ -141,25 +142,30 @@ const App = () => {
 
     return (
         <ArticlesProvider language={language}>
-            <SEO
+            {/* SEO and Navbar should be at the top level for accessibility and fixed positioning */}
+            <SEO 
                 title={settings?.site_title ? `${settings.site_title} - Premium News` : "Mitaan Express"}
                 description={settings?.site_description || "Unbiased news, deep insights, and real-time updates from Mitaan Express."}
                 image={formatImageUrl(settings?.logo_url) || "https://mitaanexpress.com/default-og.jpg"}
             />
-            <div className={`min-h-screen ${theme} bg-white dark:bg-[#030712] text-slate-900 dark:text-white transition-colors duration-300 font-sans selection:bg-red-600 selection:text-white`}>
-                {!isAdminRoute && (
-                    <Navbar
-                        activeCategory={activeCategory}
-                        onCategoryChange={handleCategoryChange}
-                        theme={theme}
-                        toggleTheme={toggleTheme}
-                        language={language}
-                        toggleLanguage={toggleLanguage}
-                        onLanguageChange={setLanguage}
-                    />
-                )}
 
-                <main className={`relative ${!isAdminRoute && activeCategory !== 'home' ? 'pt-14 lg:pt-20' : ''}`}>
+            {!shouldHideNavbar && (
+                <Navbar
+                    activeCategory={activeCategory}
+                    onCategoryChange={handleCategoryChange}
+                    theme={theme}
+                    toggleTheme={toggleTheme}
+                    language={language}
+                    toggleLanguage={toggleLanguage}
+                    onLanguageChange={setLanguage}
+                />
+            )}
+
+            <div className={`min-h-screen ${theme} bg-white dark:bg-[#030712] text-slate-900 dark:text-white transition-colors duration-300 font-sans selection:bg-red-600 selection:text-white relative`}>
+                {/* Scroll Trigger for Navbar */}
+                <div id="nav-trigger" className="absolute top-0 left-0 w-px h-10 pointer-events-none opacity-0"></div>
+
+                <main className={`relative ${!shouldHideNavbar && activeCategory !== 'home' ? 'pt-14 lg:pt-20' : ''}`}>
                     <React.Suspense fallback={<LoadingSkeletons type="page" />}>
                         <AnimatePresence mode="wait">
                             <Routes location={location} key={location.pathname}>
@@ -188,11 +194,10 @@ const App = () => {
                     </React.Suspense>
                 </main>
 
-                {!isAdminRoute && (
+                {!shouldHideNavbar && (
                     <>
                         <BackToTop />
-                        <Footer language={language} onCategoryChange={handleCategoryChange} />
-
+                        <Footer language={language} />
                     </>
                 )}
                 <Toaster position="top-center" reverseOrder={false} />

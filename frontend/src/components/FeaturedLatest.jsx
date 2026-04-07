@@ -65,16 +65,16 @@ const FeaturedLatest = ({ language, items = [] }) => {
                         >
                             <div className="relative h-56 sm:h-64 lg:h-72 overflow-hidden rounded-[1.5rem] lg:rounded-[2rem] bg-slate-100 dark:bg-slate-800 shadow-xl group-hover:shadow-2xl transition-all duration-500">
                                 <img
-                                    src={formatImageUrl(item.image, 800)}
+                                    src={formatImageUrl(item.image, 1000)}
                                     alt={item.title}
                                     loading="lazy"
-                                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-115 scale-105"
                                     onError={(e) => {
                                         e.target.onerror = null;
                                         e.target.src = PLACEHOLDER_IMAGE;
                                     }}
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-40 transition-opacity" />
 
                                 <div className="absolute top-4 left-4">
                                     <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[9px] font-black text-white uppercase tracking-widest border border-white/20">

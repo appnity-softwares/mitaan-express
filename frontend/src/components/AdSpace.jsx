@@ -52,12 +52,12 @@ const AdSpace = ({ position = 'homepage_top', className = '' }) => {
     const ad = mockAds[adIndex];
 
     // Override with custom text promo if configured
-    if (position === 'sidebar' && (isPromoType || !imageUrl)) {
-        ad.title = settings?.ad_sidebar_promo_title || ad.title;
-        ad.subtitle = settings?.ad_sidebar_promo_subtitle || ad.subtitle;
-        ad.cta = settings?.ad_sidebar_promo_cta || ad.cta;
-        ad.icon = settings?.ad_sidebar_promo_icon || ad.icon;
-        ad.link = settings?.ad_sidebar_promo_link || '#';
+    if (isPromoType || !imageUrl) {
+        ad.title = settings?.[`ad_${position}_promo_title`] || ad.title;
+        ad.subtitle = settings?.[`ad_${position}_promo_subtitle`] || ad.subtitle;
+        ad.cta = settings?.[`ad_${position}_promo_cta`] || ad.cta;
+        ad.icon = settings?.[`ad_${position}_promo_icon`] || ad.icon;
+        ad.link = settings?.[`ad_${position}_promo_link`] || linkUrl || '#';
     }
 
     // If ads are disabled or no image or forced promo, show the Promo Card
@@ -92,13 +92,21 @@ const AdSpace = ({ position = 'homepage_top', className = '' }) => {
     }
 
     // Render image-based ad using AdBanner
+    const positionClasses = {
+        homepage_top: 'h-[100px] md:h-[140px]',
+        article_bottom: 'h-[100px] md:h-[120px]',
+        in_article: 'h-auto max-h-[320px]',
+        skyscraper: 'h-[600px]',
+        popup: 'h-auto max-h-[400px]'
+    };
+
     return (
-        <div className={`${className}`}>
+        <div className={`my-8 sm:my-12 ${positionClasses[position] || ''} ${className}`}>
             <AdBanner
                 imageUrl={imageUrl}
                 linkUrl={linkUrl}
                 enabled={isEnabled}
-                className="rounded-xl overflow-hidden shadow-lg"
+                className="w-full h-full rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-black/20"
             />
         </div>
     );

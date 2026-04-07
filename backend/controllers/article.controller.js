@@ -178,6 +178,10 @@ exports.createArticle = async (req, res) => {
             return res.status(401).json({ error: 'User authentication failed. Please login again.' });
         }
 
+        if (!title || !content) {
+            return res.status(400).json({ error: 'Title and content are required.' });
+        }
+
         console.log('Creating article with data:', { title, slug: finalSlug, categoryId, userId: req.user.id });
         const article = await prisma.article.create({
             data: {
@@ -209,11 +213,18 @@ exports.createArticle = async (req, res) => {
         // Return specific error message if it's a unique constraint violation
         if (error.code === 'P2002') {
             return res.status(400).json({
-                error: `Failed: An article with slug already exists. Please change the title or URL slug.`
+                error: `Failed: An article with this slug or title already exists.`
             });
         }
 
-        res.status(500).json({ error: 'Failed to create article: ' + (error.message || 'Unknown error') });
+        // Handle case where category or author doesn't exist
+        if (error.code === 'P2025') {
+            return res.status(400).json({
+                error: 'The selected category or author was not found.'
+            });
+        }
+
+        res.status(500).json({ error: 'Failed to create article: ' + (error.message || 'Server error') });
     }
 };
 
@@ -306,7 +317,11 @@ exports.updateArticle = async (req, res) => {
             tags: tagData
         };
 
-        if (categoryId) updateData.category = { connect: { id: parseInt(categoryId) } };
+        if (categoryId && !isNaN(parseInt(categoryId))) {
+            updateData.category = { connect: { id: parseInt(categoryId) } };
+        } else if (categoryId) {
+            return res.status(400).json({ error: 'Invalid category ID' });
+        }
 
         const article = await prisma.article.update({
             where: { id: articleId },
@@ -315,7 +330,15 @@ exports.updateArticle = async (req, res) => {
         res.json(article);
     } catch (error) {
         console.error('Update error:', error);
-        res.status(500).json({ error: 'Update failed' });
+        
+        if (error.code === 'P2002') {
+            return res.status(400).json({ error: 'An article with this slug already exists.' });
+        }
+        if (error.code === 'P2025') {
+            return res.status(404).json({ error: 'Article not found.' });
+        }
+
+        res.status(500).json({ error: 'Update failed: ' + (error.message || 'Server error') });
     }
 };
 

@@ -21,6 +21,7 @@ const HeroSlider = ({ language }) => {
         description: settings?.hero_welcome_subtitle || (language === 'hi' ? 'समाचार और कहानियों के लिए आपका विश्वसनीय स्रोत।' : 'Your trusted source for news and stories.'),
         image: formatImageUrl(settings?.hero_welcome_image || 'https://images.unsplash.com/photo-1476242906366-d8eb64c2f661?auto=format&fit=crop&q=80&w=1200', 1200),
         fallbackLink: settings?.hero_welcome_link || '/about',
+        buttonText: settings?.hero_welcome_button_text || (language === 'hi' ? 'जानीए हमारे बारे में' : 'LEARN MORE'),
         isWelcome: true
     };
 
@@ -35,7 +36,54 @@ const HeroSlider = ({ language }) => {
         type: a.type
     }));
 
-    const slides = [welcomeSlide, ...articleSlides];
+    // Multi-Ad/Promo Slider logic (Support both modern dynamic list and legacy slots)
+    const promoSlides = [];
+    
+    // 1. Dynamic List (New)
+    try {
+        if (settings?.hero_promo_slides) {
+            const dynamicSlides = JSON.parse(settings.hero_promo_slides);
+            if (Array.isArray(dynamicSlides)) {
+                dynamicSlides.forEach((s, idx) => {
+                    if (s.enabled !== false) {
+                        promoSlides.push({
+                            id: `dynamic-${idx}`,
+                            tag: language === 'hi' ? (s.tag_hi || 'प्रायोजित') : (s.tag || 'SPONSORED'),
+                            title: (language === 'hi' ? s.title_hi : s.title) || s.title || 'Special Offer',
+                            description: (language === 'hi' ? s.subtitle_hi : s.subtitle) || s.subtitle || '',
+                            image: formatImageUrl(s.image_url, 1200),
+                            fallbackLink: s.link_url || '#',
+                            buttonText: s.button_text || '',
+                            isAd: true
+                        });
+                    }
+                });
+            }
+        }
+    } catch (e) {
+        console.error('Failed to parse dynamic hero slides:', e);
+    }
+
+    // 2. Legacy Slots (Fallback/Compatibility)
+    if (promoSlides.length === 0) {
+        for (let i = 1; i <= 6; i++) {
+            const prefix = i === 1 ? 'ad_hero_slider' : `ad_hero_slider_${i}`;
+            if (settings?.[`${prefix}_enabled`] === 'true' && settings?.[`${prefix}_image_url` ]) {
+                promoSlides.push({
+                    id: `promo-${i}`,
+                    tag: language === 'hi' ? (settings?.[`${prefix}_tag_hi`] || 'प्रायोजित') : (settings?.[`${prefix}_tag`] || 'SPONSORED'),
+                    title: (language === 'hi' ? settings?.[`${prefix}_title_hi`] : settings?.[`${prefix}_title` ]) || settings?.[`${prefix}_title`] || 'Special Offer',
+                    description: (language === 'hi' ? settings?.[`${prefix}_subtitle_hi`] : settings?.[`${prefix}_subtitle` ]) || settings?.[`${prefix}_subtitle` ] || '',
+                    image: formatImageUrl(settings?.[`${prefix}_image_url`], 1200),
+                    fallbackLink: settings?.[`${prefix}_link_url`] || '#',
+                    buttonText: settings?.[`${prefix}_button_text`] || '',
+                    isAd: true
+                });
+            }
+        }
+    }
+
+    const slides = [welcomeSlide, ...articleSlides, ...promoSlides];
 
     const activeIndex = slides.length > 0 ? (page % slides.length + slides.length) % slides.length : 0;
     const currentSlide = slides[activeIndex];
@@ -124,7 +172,7 @@ const HeroSlider = ({ language }) => {
                         className="w-full h-full object-cover object-center"
                         alt=""
                         loading="eager"
-                        fetchPriority="high"
+                        fetchpriority="high"
                         initial={{ scale: 1.08 }}
                         animate={{ scale: 1 }}
                         transition={{ duration: 8, ease: "linear" }}
@@ -167,14 +215,28 @@ const HeroSlider = ({ language }) => {
 
                         <motion.div variants={itemVariants} className="flex pt-4 sm:pt-6">
                             <button
-                                onClick={() => currentSlide.isWelcome ? navigate(currentSlide.fallbackLink || '/about') : navigate(currentSlide.type === 'blog' ? `/insight/${currentSlide.slug || currentSlide.articleId}` : `/article/${currentSlide.slug || currentSlide.articleId}`)}
+                                onClick={() => {
+                                    const link = currentSlide.fallbackLink || '#';
+                                    const isExternal = link.startsWith('http');
+                                    
+                                    if (currentSlide.isWelcome || currentSlide.isAd) {
+                                        if (isExternal) {
+                                            window.open(link, '_blank', 'noopener,noreferrer');
+                                        } else {
+                                            navigate(link);
+                                        }
+                                    } else {
+                                        // Article/Blog Slides
+                                        navigate(currentSlide.type === 'blog' ? `/insight/${currentSlide.slug || currentSlide.articleId}` : `/article/${currentSlide.slug || currentSlide.articleId}`);
+                                    }
+                                }}
                                 className="group relative px-6 py-3 sm:px-10 sm:py-4 overflow-hidden rounded-xl transition-all duration-500 cursor-pointer"
                             >
                                 <span className="absolute inset-0 bg-red-600 transition-transform duration-500 group-hover:scale-105"></span>
                                 <span className="absolute inset-0 bg-gradient-to-r from-red-700 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
                                 <span className="absolute inset-0 w-1/2 h-full bg-white/20 -skew-x-[25deg] -translate-x-[150%] group-hover:translate-x-[300%] transition-transform duration-1000 ease-in-out"></span>
                                 <span className="relative z-10 flex items-center justify-center gap-2 sm:gap-3 text-white font-black text-[11px] sm:text-[12px] uppercase tracking-[0.15em] sm:tracking-[0.2em] whitespace-nowrap">
-                                    {currentSlide.isWelcome ? (language === 'hi' ? 'जानीए हमारे बारे में' : 'LEARN MORE') : (language === 'hi' ? 'अभी पढ़ें' : 'READ STORY')}
+                                    {currentSlide.buttonText || (currentSlide.isWelcome ? (language === 'hi' ? 'जानीए हमारे बारे में' : 'LEARN MORE') : (currentSlide.isAd ? (language === 'hi' ? 'अभी देखें' : 'VIEW NOW') : (language === 'hi' ? 'अभी पढ़ें' : 'READ STORY')))}
                                     <ArrowRight size={16} className="group-hover:translate-x-1.5 transition-transform duration-300 ml-1" />
                                 </span>
                             </button>

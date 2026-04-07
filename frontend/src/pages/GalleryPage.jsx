@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Image as ImageIcon, ZoomIn, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Image as ImageIcon, ZoomIn, X, ChevronLeft, ChevronRight, Home } from 'lucide-react';
 import { usePublicMedia, useIncrementViews } from '../hooks/useMedia';
 
 const GalleryPage = ({ language }) => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [filter, setFilter] = useState('All');
+    const navigate = useNavigate();
 
     // Fetch images from API
     const { data: mediaResponse, isLoading } = usePublicMedia('IMAGE');
@@ -31,6 +33,16 @@ const GalleryPage = ({ language }) => {
         setSelectedImage(image);
         incrementViewsMutation.mutate(image.id);
     };
+
+    // Sync modal state with body class to hide navbar
+    React.useEffect(() => {
+        if (selectedImage) {
+            document.body.classList.add('media-modal-open');
+        } else {
+            document.body.classList.remove('media-modal-open');
+        }
+        return () => document.body.classList.remove('media-modal-open');
+    }, [selectedImage]);
 
     if (isLoading) {
         return (
@@ -194,16 +206,16 @@ const GalleryPage = ({ language }) => {
                         <div className="w-full max-w-7xl h-full flex flex-col justify-center items-center gap-8 relative">
                             <motion.div
                                 key={selectedImage.id}
-                                initial={{ scale: 0.95, opacity: 0, x: 20 }}
+                                initial={{ scale: 0.9, opacity: 0, x: 20 }}
                                 animate={{ scale: 1, opacity: 1, x: 0 }}
                                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                className="relative max-h-[65vh] w-auto max-w-full rounded-2xl shadow-2xl overflow-hidden border border-white/10"
+                                className="relative max-h-[85vh] w-auto max-w-full rounded-[2.5rem] shadow-[0_0_100px_rgba(220,38,38,0.15)] overflow-hidden border border-white/10"
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <img
                                     src={selectedImage.url}
                                     alt={selectedImage.title}
-                                    className="max-h-[65vh] w-auto object-contain select-none bg-black"
+                                    className="max-h-[85vh] w-auto object-contain select-none bg-black"
                                 />
                             </motion.div>
 
@@ -215,18 +227,15 @@ const GalleryPage = ({ language }) => {
                                 className="text-center max-w-3xl px-4"
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                <h2 className="text-3xl md:text-5xl font-black text-white font-serif mb-4 tracking-tight drop-shadow-lg">
+                                <div className="flex items-center justify-center gap-2 text-red-500 text-xs font-black tracking-[0.4em] uppercase mb-4">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></div>
+                                    {selectedImage.category || "GALLERY"}
+                                </div>
+                                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white font-serif mb-4 tracking-tighter drop-shadow-2xl">
                                     {selectedImage.title}
                                 </h2>
-                                <div className="flex items-center justify-center gap-4">
-                                    {selectedImage.category && (
-                                        <span className="px-4 py-1.5 bg-red-600/20 text-red-400 border border-red-500/30 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
-                                            {selectedImage.category}
-                                        </span>
-                                    )}
-                                </div>
                                 {selectedImage.description && (
-                                    <p className="mt-6 text-slate-300/90 text-xl leading-relaxed font-serif italic drop-shadow-md">
+                                    <p className="text-slate-400 font-serif italic text-lg md:text-xl leading-relaxed opacity-80">
                                         "{selectedImage.description}"
                                     </p>
                                 )}

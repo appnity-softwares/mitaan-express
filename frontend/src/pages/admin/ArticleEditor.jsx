@@ -143,8 +143,28 @@ const ArticleEditor = () => {
     const updateArticleMutation = useUpdateArticle();
 
     const handleSubmit = async (e, statusOverride) => {
-        e.preventDefault();
+        if (e && e.preventDefault) e.preventDefault();
         if (loading) return;
+
+        // Basic validation
+        if (!formData.title?.trim()) {
+            toast.error('Article title is required');
+            return;
+        }
+
+        if (!formData.categoryId || isNaN(parseInt(formData.categoryId))) {
+            toast.error('Please select a category first');
+            setActiveTab('settings'); // Switch to settings tab where category is
+            return;
+        }
+
+        // Strip HTML to check if content is actually empty
+        const contentText = formData.content?.replace(/<[^>]*>/g, '').trim();
+        if (!contentText && !formData.content?.includes('<img')) {
+            toast.error('Article content is required');
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -152,7 +172,7 @@ const ArticleEditor = () => {
                 ...formData,
                 shortDescription: formData.excerpt,
                 videoUrl: formData.videoUrl,
-                status: statusOverride || formData.status,
+                status: (typeof statusOverride === 'string') ? statusOverride : formData.status,
                 language: formData.language,
                 categoryId: parseInt(formData.categoryId),
                 tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
@@ -177,7 +197,9 @@ const ArticleEditor = () => {
             navigate('/admin/articles');
         } catch (error) {
             console.error('Save error:', error);
-            toast.error('Failed to save article: ' + error.message);
+            // Use fallback message if error.message is weirdly formatted
+            const msg = error.message || 'Server returned an error';
+            toast.error('Failed to save article: ' + (msg.includes('[object') ? 'Check all fields and try again' : msg));
         } finally {
             setLoading(false);
         }
@@ -302,8 +324,8 @@ const ArticleEditor = () => {
                 onChange={handleImageUpload}
             />
 
-            {/* Header */}
-            <div className="flex items-center justify-between">
+            {/* Header - Made Sticky */}
+            <div className="sticky top-0 z-30 bg-slate-50/80 dark:bg-[#0b0f1a]/80 backdrop-blur-md -mx-4 lg:-mx-8 px-4 lg:px-8 py-5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate('/admin/articles')}

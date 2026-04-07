@@ -29,20 +29,22 @@ const Navbar = ({
 
     const { categoryTree, mainPages, newsItems, headerQuickIcons, iconMap } = useNavbarData(language, settings);
 
-    // Throttled scroll listener
+    // Scroll Trigger using Intersection Observer (more reliable)
     useEffect(() => {
-        let ticking = false;
-        const handleScroll = () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    setIsScrolled(window.scrollY > 50);
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        };
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
+        const trigger = document.getElementById('nav-trigger');
+        if (!trigger) {
+            // Fallback to simple scroll if element missing
+            const handleScroll = () => setIsScrolled(window.scrollY > 20);
+            window.addEventListener('scroll', handleScroll, { passive: true });
+            return () => window.removeEventListener('scroll', handleScroll);
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            setIsScrolled(!entries[0].isIntersecting);
+        }, { threshold: 0 });
+
+        observer.observe(trigger);
+        return () => observer.disconnect();
     }, []);
 
     // Keyboard shortcut: Cmd+K / Ctrl+K
@@ -83,10 +85,21 @@ const Navbar = ({
     ];
 
     return (
-        <header className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out ${isNavbarSolid
-            ? 'bg-red-600/95 backdrop-blur-md shadow-xl py-2'
-            : 'bg-transparent py-4'
-            }`}>
+        <header 
+            id="main-navbar"
+            style={{ 
+                position: 'fixed', 
+                top: '0px', 
+                left: '0px', 
+                right: '0px', 
+                zIndex: 2147483647,
+                transition: 'all 400ms cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'block'
+            }}
+            className={isNavbarSolid
+                ? 'bg-red-600 shadow-2xl py-1 md:py-2'
+                : 'bg-transparent py-4 md:py-6'
+            }>
 
             <nav className="max-w-[1600px] mx-auto px-4 lg:px-8 flex items-center justify-between h-14 lg:h-18 relative">
 

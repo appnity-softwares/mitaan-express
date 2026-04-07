@@ -53,8 +53,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
     max-width: 100vw;
-    /* Hardware acceleration hint */
-    will-change: transform;
     /* Safe area support for notched phones */
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
@@ -93,6 +91,13 @@ body[data-lang="hi"],
     letter-spacing: 0 !important;
     word-spacing: 0 !important;
     font-family: var(--font-hindi);
+    font-style: normal !important; /* Never slant Devanagari */
+}
+
+/* Prevent clipping of Devanagari glyphs in tight headers */
+:is([lang="hi"], .lang-hi, body[data-lang="hi"], .hindi-text) :is(h1, h2, h3, h4, h5, h6) {
+    padding-inline: 0.02em; /* Tiny safety bleed */
+    letter-spacing: normal !important; /* Override Tailwind tracking utilities */
 }
 
 /* Navbar-specific: when language is Hindi, all nav labels must shed tracking */
@@ -118,7 +123,6 @@ img, video, iframe, embed, object {
 }
 
 img {
-    height: auto;
     display: block;
 }
 
@@ -252,4 +256,14 @@ p a, .chip-inline, .badge-inline, .text-link {
 
 .no-scrollbar::-webkit-scrollbar {
     display: none;
+}
+
+/* ===================================
+   MEDIA MODAL IMMERSION
+   =================================== */
+body.media-modal-open #main-navbar {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(-100%) !important;
+    visibility: hidden !important;
 }
