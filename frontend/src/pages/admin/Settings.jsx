@@ -218,9 +218,33 @@ const Settings = () => {
                                         <p className="text-[10px] text-slate-400 mt-2 font-bold tracking-tight">Recommended: 150-160 characters for optimal search display.</p>
                                     </div>
                                     <div className="md:col-span-2">
-                                        <label className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">High-Res Logo URL</label>
-                                        <input name="logo_url" value={settings.logo_url} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 ring-red-500 font-mono text-sm" placeholder="https://..." />
-                                        {settings.logo_url && <div className="mt-4 p-4 bg-slate-100 dark:bg-slate-900 rounded-2xl inline-block border border-slate-200 dark:border-white/10"><img src={settings.logo_url} alt="Logo Preview" className="h-10 object-contain mx-auto" /></div>}
+                                        <label className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">High-Res Logo Image</label>
+                                        <div className="flex gap-4">
+                                            <input 
+                                                name="logo_url" 
+                                                value={settings.logo_url} 
+                                                onChange={handleChange} 
+                                                className="flex-1 px-5 py-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl outline-none focus:ring-2 ring-red-500 font-mono text-sm" 
+                                                placeholder="https://..." 
+                                            />
+                                            <label className="p-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl cursor-pointer hover:bg-red-600 dark:hover:bg-red-600 hover:text-white transition-all flex items-center justify-center shrink-0 shadow-lg group">
+                                                <Upload size={20} className="group-hover:scale-110 transition-transform" />
+                                                <input 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    className="hidden" 
+                                                    onChange={(e) => handleFileChange(e, 'logo_url')} 
+                                                />
+                                            </label>
+                                        </div>
+                                        {settings.logo_url && (
+                                            <div className="mt-4 p-6 bg-slate-100 dark:bg-slate-900 rounded-3xl inline-block border border-slate-200 dark:border-white/10 shadow-inner group">
+                                                <div className="relative">
+                                                    <img src={settings.logo_url} alt="Logo Preview" className="h-12 object-contain mx-auto" />
+                                                    <div className="absolute inset-0 bg-red-600/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="md:col-span-2">
                                         <label className="block text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">Footer Legal Text</label>
@@ -357,7 +381,24 @@ const Settings = () => {
                                                 <option value="false">OFF</option>
                                             </select>
                                         </div>
-                                        <input name="ad_homepage_top_image_url" value={settings.ad_homepage_top_image_url} onChange={handleChange} placeholder="Image URL" className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl mb-3 text-xs outline-none focus:ring-1 ring-orange-500" />
+                                        <div className="flex gap-2 mb-3">
+                                            <input 
+                                                name="ad_homepage_top_image_url" 
+                                                value={settings.ad_homepage_top_image_url} 
+                                                onChange={handleChange} 
+                                                placeholder="Image URL" 
+                                                className="flex-1 px-4 py-3 bg-white dark:bg-slate-800 rounded-xl text-xs outline-none focus:ring-1 ring-orange-500" 
+                                            />
+                                            <label className="p-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl cursor-pointer hover:bg-orange-600 dark:hover:bg-orange-600 hover:text-white transition-all flex items-center justify-center shrink-0 shadow-md group">
+                                                <Upload size={16} className="group-hover:scale-110 transition-transform" />
+                                                <input 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    className="hidden" 
+                                                    onChange={(e) => handleFileChange(e, 'ad_homepage_top_image_url')} 
+                                                />
+                                            </label>
+                                        </div>
                                         <input name="ad_homepage_top_link_url" value={settings.ad_homepage_top_link_url} onChange={handleChange} placeholder="Destination Link" className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl text-xs outline-none focus:ring-1 ring-orange-500" />
                                     </div>
 
@@ -398,7 +439,24 @@ const Settings = () => {
                                                 <option value="false">OFF</option>
                                             </select>
                                         </div>
-                                        <input name="ad_sidebar_image_url" value={settings.ad_sidebar_image_url} onChange={handleChange} placeholder="Image URL" className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl mb-3 text-xs outline-none focus:ring-1 ring-orange-500" />
+                                        <div className="flex gap-2 mb-3">
+                                            <input 
+                                                name="ad_sidebar_image_url" 
+                                                value={settings.ad_sidebar_image_url} 
+                                                onChange={handleChange} 
+                                                placeholder="Image URL" 
+                                                className="flex-1 px-4 py-3 bg-white dark:bg-slate-800 rounded-xl text-xs outline-none focus:ring-1 ring-orange-500" 
+                                            />
+                                            <label className="p-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl cursor-pointer hover:bg-orange-600 dark:hover:bg-orange-600 hover:text-white transition-all flex items-center justify-center shrink-0 shadow-md group">
+                                                <Upload size={16} className="group-hover:scale-110 transition-transform" />
+                                                <input 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    className="hidden" 
+                                                    onChange={(e) => handleFileChange(e, 'ad_sidebar_image_url')} 
+                                                />
+                                            </label>
+                                        </div>
                                         <input name="ad_sidebar_link_url" value={settings.ad_sidebar_link_url} onChange={handleChange} placeholder="Destination Link" className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl text-xs outline-none focus:ring-1 ring-orange-500" />
                                     </div>
 
@@ -411,7 +469,24 @@ const Settings = () => {
                                                 <option value="false">OFF</option>
                                             </select>
                                         </div>
-                                        <input name="ad_skyscraper_image_url" value={settings.ad_skyscraper_image_url} onChange={handleChange} placeholder="Image URL (Vertical 300x600 recommended)" className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl mb-3 text-xs outline-none focus:ring-1 ring-orange-500" />
+                                        <div className="flex gap-2 mb-3">
+                                            <input 
+                                                name="ad_skyscraper_image_url" 
+                                                value={settings.ad_skyscraper_image_url} 
+                                                onChange={handleChange} 
+                                                placeholder="Image URL (Vertical 300x600 recommended)" 
+                                                className="flex-1 px-4 py-3 bg-white dark:bg-slate-800 rounded-xl text-xs outline-none focus:ring-1 ring-orange-500" 
+                                            />
+                                            <label className="p-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl cursor-pointer hover:bg-orange-600 dark:hover:bg-orange-600 hover:text-white transition-all flex items-center justify-center shrink-0 shadow-md group">
+                                                <Upload size={16} className="group-hover:scale-110 transition-transform" />
+                                                <input 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    className="hidden" 
+                                                    onChange={(e) => handleFileChange(e, 'ad_skyscraper_image_url')} 
+                                                />
+                                            </label>
+                                        </div>
                                         <input name="ad_skyscraper_link_url" value={settings.ad_skyscraper_link_url} onChange={handleChange} placeholder="Destination Link" className="w-full px-4 py-3 bg-white dark:bg-slate-800 rounded-xl text-xs outline-none focus:ring-1 ring-orange-500" />
                                     </div>
                                 </div>
@@ -438,7 +513,24 @@ const Settings = () => {
 
                                             {settings.ad_popup_type === 'ad' && (
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                                    <input name="ad_popup_image_url" value={settings.ad_popup_image_url} onChange={handleChange} className="px-5 py-4 bg-white dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-orange-500 text-sm font-mono" placeholder="Creative Image URL" />
+                                                    <div className="flex gap-2">
+                                                        <input 
+                                                            name="ad_popup_image_url" 
+                                                            value={settings.ad_popup_image_url} 
+                                                            onChange={handleChange} 
+                                                            className="flex-1 px-5 py-4 bg-white dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-orange-500 text-sm font-mono" 
+                                                            placeholder="Creative Image URL" 
+                                                        />
+                                                        <label className="p-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl cursor-pointer hover:bg-orange-600 dark:hover:bg-orange-600 hover:text-white transition-all flex items-center justify-center shrink-0 shadow-lg group">
+                                                            <Upload size={20} className="group-hover:scale-110 transition-transform" />
+                                                            <input 
+                                                                type="file" 
+                                                                accept="image/*" 
+                                                                className="hidden" 
+                                                                onChange={(e) => handleFileChange(e, 'ad_popup_image_url')} 
+                                                            />
+                                                        </label>
+                                                    </div>
                                                     <input name="ad_popup_link_url" value={settings.ad_popup_link_url} onChange={handleChange} className="px-5 py-4 bg-white dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-orange-500 text-sm font-mono" placeholder="Destination Link" />
                                                 </div>
                                             )}
