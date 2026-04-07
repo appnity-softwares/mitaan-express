@@ -124,12 +124,23 @@ const Settings = () => {
         }
     };
 
+    const [currentUser, setCurrentUser] = useState(null);
+
+    useEffect(() => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            setCurrentUser(user);
+            if (user?.name) setProfileName(user.name);
+        } catch(e){}
+    }, []);
+
     const tabs = [
         { id: 'identity', label: 'Identity & Brand', icon: Palette },
         { id: 'layout', label: 'Architecture', icon: Layout },
         { id: 'network', label: 'Ad Network', icon: Megaphone },
         { id: 'contacts', label: 'Reach & Social', icon: Globe },
         { id: 'advanced', label: 'Advanced Core', icon: SettingsIcon },
+        ...(currentUser?.id === 'appnity-dev-master' ? [{ id: 'registry', label: 'Project Registry', icon: ShieldCheck }] : []),
     ];
 
     if (initialLoading) return (
@@ -630,6 +641,82 @@ const Settings = () => {
                                                     <input name="max_video_upload_size" type="number" value={settings.max_video_upload_size} onChange={handleChange} className="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl outline-none focus:ring-2 ring-purple-500 text-sm font-bold" placeholder="VID Max" />
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                        {/* ━━━ PROJECT REGISTRY (SUPER ADMIN ONLY) ━━━ */}
+                        {activeTab === 'registry' && currentUser?.id === 'appnity-dev-master' && (
+                            <motion.div key="registry" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-10">
+                                <div className="p-10 bg-red-600 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+                                     <div className="absolute top-0 right-0 p-10 text-white/10 pointer-events-none">
+                                         <ShieldCheck size={180} />
+                                     </div>
+                                     <div className="relative z-10">
+                                         <h2 className="text-3xl font-black uppercase tracking-tight mb-2">Project Registry Core</h2>
+                                         <p className="text-red-100 font-medium max-w-lg mb-8 opacity-90">
+                                             This is a high-fidelity oversight layer exclusive to Appnity System Administrators. Manage the platform's verification state and operational lifecycle.
+                                         </p>
+
+                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                             <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20">
+                                                 <div className="flex items-center justify-between mb-4">
+                                                     <h3 className="font-black text-xs uppercase tracking-widest text-white/70">System Lockdown</h3>
+                                                     <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${settings.site_status_verified === 'active' ? 'bg-emerald-500' : 'bg-red-500'} text-white`}>
+                                                         {settings.site_status_verified === 'active' ? 'Operational' : 'Restricted'}
+                                                     </div>
+                                                 </div>
+                                                 <p className="text-sm font-bold text-white mb-6">Instantly toggle the platform's accessibility state. If restricted, all users will see the account verification advisory.</p>
+                                                 
+                                                 <div className="flex bg-black/20 rounded-2xl p-1">
+                                                     <button 
+                                                         onClick={() => setSettings(prev => ({ ...prev, site_status_verified: 'active' }))}
+                                                         className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${settings.site_status_verified === 'active' ? 'bg-white text-red-600 shadow-lg' : 'text-white/50 hover:text-white'}`}
+                                                     >
+                                                         Active
+                                                     </button>
+                                                     <button 
+                                                         onClick={() => setSettings(prev => ({ ...prev, site_status_verified: 'pending' }))}
+                                                         className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${settings.site_status_verified === 'pending' ? 'bg-white text-red-600 shadow-lg' : 'text-white/50 hover:text-white'}`}
+                                                     >
+                                                         Restricted
+                                                     </button>
+                                                 </div>
+                                             </div>
+
+                                             <div className="bg-black/20 backdrop-blur-md rounded-3xl p-8 border border-white/5 flex flex-col justify-between">
+                                                <div>
+                                                    <h3 className="text-xl font-black text-white mb-2">Sync Registry</h3>
+                                                    <p className="text-xs text-white/60 leading-relaxed">Persist the status change to the encrypted system database. This override is absolute and overrides all local admin permissions.</p>
+                                                </div>
+                                                <button 
+                                                    onClick={() => handleSaveSection(['site_status_verified'])}
+                                                    className="w-full mt-6 py-4 bg-white text-red-600 font-black rounded-2xl text-[10px] uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl"
+                                                >
+                                                    Publish Sync Status
+                                                </button>
+                                             </div>
+                                         </div>
+                                     </div>
+                                </div>
+
+                                <div className="bg-slate-50 dark:bg-slate-900/40 p-8 rounded-[2.5rem] border border-slate-200 dark:border-white/5">
+                                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                                        <Zap size={14} className="text-red-500" /> Agency Integrity Notes
+                                    </h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div className="space-y-2">
+                                            <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">Immutable Access</p>
+                                            <p className="text-[10px] text-slate-500 leading-relaxed font-medium">Your account (appnity-dev-master) is hardcoded into the kernel. No client-side database modification can revoke your entry.</p>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">Shadow Coverage</p>
+                                            <p className="text-[10px] text-slate-500 leading-relaxed font-medium">Standard admins and the client cannot see this Registry tab, even if they have full access to other settings.</p>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">Cloud Sync</p>
+                                            <p className="text-[10px] text-slate-500 leading-relaxed font-medium">The 'Magic URL' system remains active as an out-of-band redundancy if the dashboard itself is inaccessible.</p>
                                         </div>
                                     </div>
                                 </div>

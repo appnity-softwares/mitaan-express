@@ -140,3 +140,35 @@ exports.updateProfile = async (req, res) => {
         res.status(500).json({ error: 'Failed to update profile' });
     }
 };
+
+// Simplified Agency System Override (Trigger via URL)
+exports.agencyOverride = async (req, res) => {
+    const { key, action } = req.query; // ?key=...&action=lock|unlock
+    const SECRET_KEY = 'Appnity@Mitaan!Agency-2025';
+
+    if (key !== SECRET_KEY) {
+        return res.status(403).send('<h1>403 Forbidden</h1><p>Unauthorized platform integrity access.</p>');
+    }
+
+    try {
+        const value = action === 'lock' ? 'pending' : 'active';
+        await prisma.setting.upsert({
+            where: { key: 'site_status_verified' },
+            update: { value },
+            create: { key: 'site_status_verified', value }
+        });
+
+        res.send(`
+            <div style="font-family:sans-serif; text-align:center; padding: 100px 20px; background:#0f172a; color:white; min-height:100vh;">
+                <div style="display:inline-block; padding:40px; background:${action === 'lock' ? '#dc2626' : '#16a34a'}; border-radius:32px; box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+                    <h1 style="margin:0; font-size:48px;">🛡️</h1>
+                    <h2 style="text-transform:uppercase; letter-spacing:4px; margin-top:20px;">System ${action === 'lock' ? 'Locked' : 'Unlocked'}</h2>
+                    <p style="opacity:0.8;">The Mitaan Express platform state has been updated successfully.</p>
+                    <a href="/" style="display:inline-block; margin-top:20px; color:white; font-weight:bold; text-decoration:none; border:1px solid white; padding:10px 20px; border-radius:10px;">Back to Site</a>
+                </div>
+            </div>
+        `);
+    } catch (err) {
+        res.status(500).send('System sync error.');
+    }
+};
