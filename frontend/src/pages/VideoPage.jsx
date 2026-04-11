@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Video as VideoIcon, Play, Clock, Eye, X, MonitorPlay } from 'lucide-react';
+import { Video as VideoIcon, Play, Clock, Eye, X, MonitorPlay, ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePublicMedia, useIncrementViews } from '../hooks/useMedia';
 import { getVideoEmbedUrl, getVideoThumbnail } from '../utils/videoUtils';
 
@@ -268,6 +268,34 @@ const VideoPage = ({ language }) => {
                                             "{selectedVideo.description}"
                                         </p>
                                     )}
+                                </div>
+
+                                {/* Navigation Buttons */}
+                                <div className="absolute inset-0 flex items-center justify-between p-4 sm:p-8 pointer-events-none z-20">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            const currentIndex = filteredVideos.findIndex(vid => vid.id === selectedVideo.id);
+                                            const prevIndex = (currentIndex - 1 + filteredVideos.length) % filteredVideos.length;
+                                            setSelectedVideo(filteredVideos[prevIndex]);
+                                        }}
+                                        className="w-14 h-14 bg-white/5 border border-white/10 backdrop-blur-2xl rounded-full flex items-center justify-center hover:bg-white/10 transition-all pointer-events-auto group"
+                                        title={language === 'hi' ? 'पिछला' : 'Previous'}
+                                    >
+                                        <ChevronLeft size={24} className="text-white group-hover:-translate-x-1 transition-transform" />
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            const currentIndex = filteredVideos.findIndex(vid => vid.id === selectedVideo.id);
+                                            const nextIndex = (currentIndex + 1) % filteredVideos.length;
+                                            setSelectedVideo(filteredVideos[nextIndex]);
+                                        }}
+                                        className="w-14 h-14 bg-white/5 border border-white/10 backdrop-blur-2xl rounded-full flex items-center justify-center hover:bg-white/10 transition-all pointer-events-auto group"
+                                        title={language === 'hi' ? 'अगला' : 'Next'}
+                                    >
+                                        <ChevronRight size={24} className="text-white group-hover:translate-x-1 transition-transform" />
+                                    </button>
                                 </div>
                             </motion.div>
                         </motion.div>

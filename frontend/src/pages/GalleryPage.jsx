@@ -175,35 +175,7 @@ const GalleryPage = ({ language }) => {
                             <X size={24} className="text-white group-hover:rotate-90 transition-transform duration-300" />
                         </button>
 
-                        {/* Navigation Buttons */}
-                        <div className="absolute inset-0 flex items-center justify-between p-4 sm:p-8 pointer-events-none">
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    const currentIndex = filteredImages.findIndex(img => img.id === selectedImage.id);
-                                    const prevIndex = (currentIndex - 1 + filteredImages.length) % filteredImages.length;
-                                    setSelectedImage(filteredImages[prevIndex]);
-                                }}
-                                className="w-14 h-14 bg-white/5 border border-white/10 backdrop-blur-2xl rounded-full flex items-center justify-center hover:bg-white/10 transition-all pointer-events-auto group"
-                                title={language === 'hi' ? 'पिछला' : 'Previous'}
-                            >
-                                <ChevronLeft size={24} className="text-white group-hover:-translate-x-1 transition-transform" />
-                            </button>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    const currentIndex = filteredImages.findIndex(img => img.id === selectedImage.id);
-                                    const nextIndex = (currentIndex + 1) % filteredImages.length;
-                                    setSelectedImage(filteredImages[nextIndex]);
-                                }}
-                                className="w-14 h-14 bg-white/5 border border-white/10 backdrop-blur-2xl rounded-full flex items-center justify-center hover:bg-white/10 transition-all pointer-events-auto group"
-                                title={language === 'hi' ? 'अगला' : 'Next'}
-                            >
-                                <ChevronRight size={24} className="text-white group-hover:translate-x-1 transition-transform" />
-                            </button>
-                        </div>
-
-                        <div className="w-full max-w-7xl h-full flex flex-col justify-center items-center gap-8 relative">
+                        <div className="w-full max-w-7xl h-full flex flex-col justify-center items-center gap-8 relative z-10">
                             <motion.div
                                 key={selectedImage.id}
                                 initial={{ scale: 0.9, opacity: 0, x: 20 }}
@@ -240,6 +212,34 @@ const GalleryPage = ({ language }) => {
                                     </p>
                                 )}
                             </motion.div>
+                        </div>
+
+                        {/* Navigation Buttons - Moved after content and added higher z-index */}
+                        <div className="absolute inset-0 flex items-center justify-between p-4 sm:p-8 pointer-events-none z-20">
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    const currentIndex = filteredImages.findIndex(img => img.id === selectedImage.id);
+                                    const prevIndex = (currentIndex - 1 + filteredImages.length) % filteredImages.length;
+                                    setSelectedImage(filteredImages[prevIndex]);
+                                }}
+                                className="w-14 h-14 bg-white/5 border border-white/10 backdrop-blur-2xl rounded-full flex items-center justify-center hover:bg-white/10 transition-all pointer-events-auto group"
+                                title={language === 'hi' ? 'पिछला' : 'Previous'}
+                            >
+                                <ChevronLeft size={24} className="text-white group-hover:-translate-x-1 transition-transform" />
+                            </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    const currentIndex = filteredImages.findIndex(img => img.id === selectedImage.id);
+                                    const nextIndex = (currentIndex + 1) % filteredImages.length;
+                                    setSelectedImage(filteredImages[nextIndex]);
+                                }}
+                                className="w-14 h-14 bg-white/5 border border-white/10 backdrop-blur-2xl rounded-full flex items-center justify-center hover:bg-white/10 transition-all pointer-events-auto group"
+                                title={language === 'hi' ? 'अगला' : 'Next'}
+                            >
+                                <ChevronRight size={24} className="text-white group-hover:translate-x-1 transition-transform" />
+                            </button>
                         </div>
                     </motion.div>
                 )}
