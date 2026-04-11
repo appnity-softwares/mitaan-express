@@ -13,6 +13,11 @@ import FloatingShareButtons from '../components/FloatingShareButtons';
 
 import { useArticles } from '../context/ArticlesContext';
 
+const stripHtml = (html) => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+};
+
 const BlogDetailPage = ({ language }) => {
     const { slug } = useParams();
     const navigate = useNavigate();
@@ -52,9 +57,8 @@ const BlogDetailPage = ({ language }) => {
 
     const handleShare = async (platform) => {
         const rawUrl = window.location.href;
-        const readableUrl = decodeURI(rawUrl); // Decode %E0%... → readable Hindi
-        const encodedUrl = encodeURI(readableUrl); // Re-encode for social share APIs
-        const text = blog?.title || 'Check this blog';
+        const readableUrl = decodeURIComponent(rawUrl); // Decode %E0%... → readable Hindi
+        const cleanTitle = stripHtml(blog?.title) || 'Check this blog';
 
         if (platform === 'copy') {
             await navigator.clipboard.writeText(readableUrl); // Copy readable URL
@@ -64,8 +68,9 @@ const BlogDetailPage = ({ language }) => {
         }
 
         const shareUrls = {
+            whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(cleanTitle + ' - ')}${readableUrl}`,
             facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(readableUrl)}`,
-            twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(readableUrl)}&text=${encodeURIComponent(text)}`,
+            twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(readableUrl)}&text=${encodeURIComponent(cleanTitle)}`,
             linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(readableUrl)}`
         };
 
@@ -197,9 +202,9 @@ const BlogDetailPage = ({ language }) => {
                                     if (navigator.share) {
                                         try {
                                             await navigator.share({
-                                                title: blog.title,
-                                                text: blog.shortDescription,
-                                                url: decodeURI(window.location.href),
+                                                title: stripHtml(blog.title),
+                                                text: stripHtml(blog.shortDescription),
+                                                url: decodeURIComponent(window.location.href),
                                             });
                                         } catch (err) {
                                             console.log('Error sharing:', err);

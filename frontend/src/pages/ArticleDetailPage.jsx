@@ -15,6 +15,11 @@ import SEO from '../components/SEO';
 import FloatingShareButtons from '../components/FloatingShareButtons';
 import { formatImageUrl } from '../services/api';
 
+const stripHtml = (html) => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+};
+
 const ArticleDetailPage = ({ language }) => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -96,8 +101,8 @@ const ArticleDetailPage = ({ language }) => {
 
     const handleShare = async (platform) => {
         const rawUrl = window.location.href;
-        const readableUrl = decodeURI(rawUrl);
-        const text = article?.title || 'Check this article';
+        const readableUrl = decodeURIComponent(rawUrl);
+        const cleanTitle = stripHtml(article?.title) || 'Check this article';
 
         if (platform === 'copy') {
             await navigator.clipboard.writeText(readableUrl);
@@ -107,8 +112,9 @@ const ArticleDetailPage = ({ language }) => {
         }
 
         const shareUrls = {
+            whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(cleanTitle + ' - ')}${readableUrl}`,
             facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(readableUrl)}`,
-            twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(readableUrl)}&text=${encodeURIComponent(text)}`,
+            twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(readableUrl)}&text=${encodeURIComponent(cleanTitle)}`,
             linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(readableUrl)}`
         };
 
@@ -273,9 +279,9 @@ const ArticleDetailPage = ({ language }) => {
                                     if (navigator.share) {
                                         try {
                                             await navigator.share({
-                                                title: article.title,
-                                                text: article.shortDescription,
-                                                url: decodeURI(window.location.href),
+                                                title: stripHtml(article.title),
+                                                text: stripHtml(article.shortDescription),
+                                                url: decodeURIComponent(window.location.href),
                                             });
                                         } catch (err) {
                                             console.log('Error sharing:', err);

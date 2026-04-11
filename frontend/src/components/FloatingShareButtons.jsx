@@ -14,6 +14,11 @@ const WhatsAppIcon = ({ size = 20 }) => (
 );
 
 
+const stripHtml = (html) => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+};
+
 const FloatingShareButtons = ({ title, url, shortDescription }) => {
     const [copied, setCopied] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -21,7 +26,8 @@ const FloatingShareButtons = ({ title, url, shortDescription }) => {
     // Always calculate URLs correctly using browser globals only inside functions
     const getReadableUrl = () => {
         try {
-            return decodeURI(url || window.location.href);
+            const currentUrl = url || window.location.href;
+            return decodeURIComponent(currentUrl);
         } catch {
             return window.location.href;
         }
@@ -29,7 +35,10 @@ const FloatingShareButtons = ({ title, url, shortDescription }) => {
 
     const handleShare = async (platform) => {
         const readableUrl = getReadableUrl();
-        const text = title || 'Check this out';
+        const cleanTitle = stripHtml(title) || 'Check this out';
+        const cleanDesc = stripHtml(shortDescription);
+        
+        const shareText = cleanTitle;
 
         if (platform === 'copy') {
             await navigator.clipboard.writeText(readableUrl);
@@ -42,8 +51,8 @@ const FloatingShareButtons = ({ title, url, shortDescription }) => {
             if (navigator.share) {
                 try {
                     await navigator.share({
-                        title: title,
-                        text: shortDescription || text,
+                        title: cleanTitle,
+                        text: cleanDesc || cleanTitle,
                         url: readableUrl,
                     });
                 } catch (err) {
@@ -56,9 +65,9 @@ const FloatingShareButtons = ({ title, url, shortDescription }) => {
         }
 
         const shareUrls = {
-            whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' - ' + readableUrl)}`,
+            whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' - ')}${readableUrl}`,
             facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(readableUrl)}`,
-            twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(readableUrl)}&text=${encodeURIComponent(text)}`,
+            twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(readableUrl)}&text=${encodeURIComponent(shareText)}`,
             linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(readableUrl)}`
         };
 
