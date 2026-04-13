@@ -23,17 +23,20 @@ const seoRenderer = async (req, res, next) => {
     }
 
     try {
-        const parts = req.path.split('/').filter(Boolean);
-        let identifier = parts.pop();
-
-        if (!identifier) return next();
+        const identifier = req.params.slug || req.params.id;
+        
+        if (!identifier) {
+            console.warn('[SEO Renderer] No identifier found in params');
+            return next();
+        }
         
         // Decode identifier for Hindi/International characters
+        let decodedId = identifier;
         try {
-            identifier = decodeURIComponent(identifier).trim();
-            console.log(`[SEO Renderer] Handling ${req.path} -> decoded identifier: "${identifier}"`);
+            decodedId = decodeURIComponent(identifier).trim();
+            console.log(`[SEO Renderer] Route: ${req.path} | Identifier: "${identifier}" | Decoded: "${decodedId}"`);
         } catch (e) {
-            console.warn('SEO Renderer: Failed to decode identifier', identifier);
+            console.warn('[SEO Renderer] Decode failed for', identifier);
         }
 
         let data = null;
@@ -41,21 +44,21 @@ const seoRenderer = async (req, res, next) => {
         const DOMAIN = process.env.FRONTEND_URL || 'https://mitaanexpress.com';
 
         if (isArticle) {
-            const isNumeric = /^\d+$/.test(identifier);
+            const isNumeric = /^\d+$/.test(decodedId);
             data = await prisma.article.findUnique({
-                where: isNumeric ? { id: parseInt(identifier) } : { slug: identifier },
+                where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
                 select: { title: true, shortDescription: true, image: true, updatedAt: true, metaTitle: true, metaDescription: true }
             });
         } else if (isBlog) {
-            const isNumeric = /^\d+$/.test(identifier);
+            const isNumeric = /^\d+$/.test(decodedId);
             data = await prisma.blog.findUnique({
-                where: isNumeric ? { id: parseInt(identifier) } : { slug: identifier },
+                where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
                 select: { title: true, shortDescription: true, image: true, updatedAt: true }
             });
         } else if (isCategory) {
             contentType = 'website';
             data = await prisma.category.findUnique({
-                where: { slug: identifier },
+                where: { slug: decodedId },
                 select: { name: true, nameHi: true, description: true, image: true }
             });
             if (data) {
@@ -67,7 +70,7 @@ const seoRenderer = async (req, res, next) => {
 
         // If no content found, let the frontend handle the 404
         if (!data) {
-            console.warn(`[SEO Renderer] No content found for identifier: "${identifier}"`);
+            console.warn(`[SEO Renderer] Data lookup failed in DB for "${decodedId}"`);
             return next();
         }
         console.log(`[SEO Renderer] Found content: "${data.title}"`);
@@ -117,26 +120,40 @@ const seoRenderer = async (req, res, next) => {
         }
 
         const pageUrl = `${DOMAIN}${req.path}`;
+        const siteName = 'Mitaan Express';
 
         // Construct Meta Tags
-        const metaTags = `
-    <title>${title} | Mitaan Express</title>
+        let metaTags = `
+    <title>${title} | ${siteName}</title>
     <meta name="description" content="${description}" />
     <meta property="og:title" content="${title}" />
     <meta property="og:description" content="${description}" />
     <meta property="og:image" content="${imageUrl}" />
     <meta property="og:image:secure_url" content="${imageUrl}" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="${title}" />
     <meta property="og:url" content="${pageUrl}" />
     <meta property="og:type" content="${isCategory ? 'website' : 'article'}" />
-    <meta property="og:site_name" content="Mitaan Express" />
+    <meta property="og:site_name" content="${siteName}" />
+    <meta property="og:locale" content="hi_IN" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${title}" />
     <meta name="twitter:description" content="${description}" />
     <meta name="twitter:image" content="${imageUrl}" />
     <meta name="twitter:url" content="${pageUrl}" />
         `;
+
+        // Add Article timestamps if available
+        if (data.updatedAt) {
+            metaTags += `    <meta property="article:modified_time" content="${new Date(data.updatedAt).toISOString()}" />\n`;
+        }
+
+        // Add Video support if available
+        if (data.videoUrl) {
+            metaTags += `    <meta property="og:video" content="${data.videoUrl}" />\n`;
+        }
 
         // Robust removal of existing tags
         // This handles different attribute orders and self-closing styles

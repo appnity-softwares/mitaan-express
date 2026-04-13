@@ -113,29 +113,29 @@ const AdminAds = () => {
     ];
 
     return (
-        <div className="max-w-[1600px] mx-auto p-4 lg:p-8">
+        <div className="max-w-[1600px] mx-auto p-3 md:p-6 lg:p-8">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-                <div>
-                    <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-3">
-                        <DollarSign className="text-emerald-500" size={32} />
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
+                <div className="text-center lg:text-left">
+                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center justify-center lg:justify-start gap-3">
+                        <DollarSign className="text-emerald-500" size={28} />
                         Advertisement Network
                     </h2>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium">Manage placements, banners, and promotional alerts across the platform.</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium text-sm md:text-base mt-2">Manage placements, banners, and promotional alerts across the platform.</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                     <button 
                         onClick={() => setDebugMode(!debugMode)}
-                        className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-2 border-2 ${debugMode ? 'bg-amber-100 border-amber-500 text-amber-700 shadow-xl' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-white/10 text-slate-500 hover:border-amber-300'}`}
+                        className={`w-full sm:w-auto px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 border-2 ${debugMode ? 'bg-amber-100 border-amber-500 text-amber-700 shadow-xl' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-white/10 text-slate-500 hover:border-amber-300'}`}
                     >
                         <Eye size={16} />
-                        {debugMode ? 'Exit Debug Layout' : 'Visualize Ad Areas'}
+                        {debugMode ? 'Exit Debug' : 'Visualize Areas'}
                         {debugMode && <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-2 h-2 rounded-full bg-amber-500" />}
                     </button>
                     <button 
                         onClick={handleSaveAds}
                         disabled={updateMutation.isPending}
-                        className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black text-sm uppercase tracking-wider shadow-lg shadow-red-500/20 transition-all flex items-center gap-2"
+                        className="w-full sm:w-auto px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black text-sm uppercase tracking-wider shadow-lg shadow-red-500/20 transition-all flex items-center justify-center gap-2"
                     >
                         {updateMutation.isPending ? 'Syncing...' : 'Publish Content'}
                     </button>
@@ -144,26 +144,26 @@ const AdminAds = () => {
 
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
                 {/* Controls Column */}
-                <div className="xl:col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-8 sticky top-24 z-10 bg-slate-50/80 dark:bg-[#0b0f1a]/80 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white dark:border-white/5 shadow-2xl mb-8">
+                <div className="xl:col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:sticky lg:top-24 z-10 bg-slate-50/80 dark:bg-[#0b0f1a]/80 backdrop-blur-xl p-4 md:p-6 rounded-[1.5rem] md:rounded-[2.5rem] border border-white dark:border-white/5 shadow-2xl mb-8">
                     {/* Visual Navigation */}
                     <div className="space-y-4">
                         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Placement Map</h3>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {AD_SLOTS.map((slot) => (
                                 <button
                                     key={slot.id}
                                     onClick={() => setActiveSection(slot.id)}
-                                    className={`p-4 rounded-2xl border transition-all flex flex-col items-start gap-2 ${
+                                    className={`p-3 md:p-4 rounded-xl md:rounded-2xl border transition-all flex flex-row lg:flex-col items-center lg:items-start gap-3 md:gap-2 ${
                                         activeSection === slot.id 
                                         ? 'bg-red-600 border-red-600 text-white shadow-xl shadow-red-500/20 scale-[1.02]' 
                                         : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:border-red-300'
                                     }`}
                                 >
-                                    <div className={`p-2 rounded-lg ${activeSection === slot.id ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-700'}`}>
+                                    <div className={`p-2 rounded-lg shrink-0 ${activeSection === slot.id ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-700'}`}>
                                         {slot.icon}
                                     </div>
                                     <div className="text-left">
-                                        <div className="text-[10px] font-black uppercase whitespace-nowrap">{slot.label}</div>
+                                        <div className="text-[10px] font-black uppercase tracking-wider md:tracking-normal">{slot.label}</div>
                                         <div className={`text-[9px] font-bold ${activeSection === slot.id ? 'text-red-100' : 'text-slate-400'}`}>
                                             {settings[slot.fields[2]] === 'true' ? 'Active' : 'Disabled'}
                                         </div>
@@ -330,31 +330,31 @@ const AdminAds = () => {
 
                 {/* Editor Column */}
                 <div className="xl:col-span-12">
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 md:gap-6">
                         {AD_SLOTS.map((slot) => (
                             <section 
                                 key={slot.id} 
-                                className={`transition-all duration-500 overflow-hidden rounded-[2.5rem] border ${
+                                className={`transition-all duration-500 overflow-hidden rounded-2xl md:rounded-[2.5rem] border ${
                                     activeSection === slot.id 
-                                    ? 'bg-white dark:bg-slate-800 shadow-2xl border-red-500/50 p-8' 
-                                    : 'bg-white/40 dark:bg-white/5 border-transparent p-6'
+                                    ? 'bg-white dark:bg-slate-800 shadow-2xl border-red-500/50 p-5 md:p-8 col-span-1 md:col-span-2 lg:col-span-1' 
+                                    : 'bg-white/40 dark:bg-white/5 border-transparent p-4 md:p-6'
                                 }`}
                             >
                                 <div className="flex items-center justify-between mb-6">
-                                    <div className="flex items-center gap-4">
-                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
+                                    <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
+                                        <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl shrink-0 flex items-center justify-center transition-all ${
                                             activeSection === slot.id ? 'bg-red-600 text-white translate-x-1' : 'bg-slate-100 dark:bg-slate-900 text-slate-400'
                                         }`}>
-                                            {React.cloneElement(slot.icon, { size: activeSection === slot.id ? 24 : 18 })}
+                                            {React.cloneElement(slot.icon, { size: activeSection === slot.id ? (window.innerWidth < 768 ? 20 : 24) : 18 })}
                                         </div>
-                                        <div>
-                                            <h3 className={`font-black text-sm uppercase tracking-wider transition-colors ${
+                                        <div className="min-w-0">
+                                            <h3 className={`font-black text-[11px] md:text-sm uppercase tracking-wider transition-colors truncate ${
                                                 activeSection === slot.id ? 'text-slate-900 dark:text-white' : 'text-slate-400'
                                             }`}>
                                                 {slot.label}
-                                                <span className="ml-3 px-2 py-0.5 bg-slate-100 dark:bg-white/5 rounded text-[9px] font-black text-slate-400 uppercase tracking-tighter shadow-sm border border-slate-200 dark:border-white/5">{slot.dims}</span>
+                                                <span className="hidden sm:inline-block ml-3 px-2 py-0.5 bg-slate-100 dark:bg-white/5 rounded text-[9px] font-black text-slate-400 uppercase tracking-tighter shadow-sm border border-slate-200 dark:border-white/5">{slot.dims}</span>
                                             </h3>
-                                            <p className="text-xs text-slate-500 font-medium">{settings[slot.fields[2]] === 'true' ? 'Currently broadcasting live.' : 'Section is disabled.'}</p>
+                                            <p className="text-[10px] md:text-xs text-slate-500 font-medium truncate">{settings[slot.fields[2]] === 'true' ? 'Live on site' : 'Disabled.'}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -507,16 +507,16 @@ const AdminAds = () => {
             </div>
             
             {/* Sidebar Promo Specialist Section */}
-            <div className="mt-12 bg-gradient-to-br from-red-600 to-red-800 rounded-[3rem] p-1 lg:p-1.5 shadow-2xl overflow-hidden shadow-red-500/30">
-                <div className="bg-white dark:bg-slate-900 rounded-[2.7rem] p-8 lg:p-12 space-y-10">
+            <div className="mt-12 bg-gradient-to-br from-red-600 to-red-800 rounded-3xl md:rounded-[3rem] p-1 shadow-2xl overflow-hidden shadow-red-500/30">
+                <div className="bg-white dark:bg-slate-900 rounded-[1.7rem] md:rounded-[2.7rem] p-5 md:p-8 lg:p-12 space-y-8 md:space-y-10">
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                        <div className="flex items-center gap-6">
-                            <div className="w-16 h-16 rounded-[1.5rem] bg-red-600 flex items-center justify-center text-white shadow-xl shadow-red-500/40">
-                                <Sparkles size={32} />
+                        <div className="flex items-center gap-4 md:gap-6">
+                            <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-[1.5rem] bg-red-600 shrink-0 flex items-center justify-center text-white shadow-xl shadow-red-500/40">
+                                <Sparkles size={24} className="md:w-8 md:h-8" />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Premium Sidebar Branding</h3>
-                                <p className="text-slate-500 dark:text-slate-400 font-medium">Configure the specialized 'Download App' or 'Subscription' cards in the article sidebar.</p>
+                                <h3 className="text-lg md:text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Sidebar Specials</h3>
+                                <p className="text-xs md:text-base text-slate-500 dark:text-slate-400 font-medium">Configure specialized article sidebar cards.</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 p-2 rounded-2xl border border-slate-100 dark:border-white/5">
@@ -524,7 +524,7 @@ const AdminAds = () => {
                                 name="ad_sidebar_enabled"
                                 value={settings.ad_sidebar_enabled}
                                 onChange={handleChange}
-                                className={`px-5 py-2.5 rounded-xl font-black text-xs uppercase outline-none transition-all cursor-pointer ${settings.ad_sidebar_enabled === 'true' ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'}`}
+                                className={`flex-1 lg:flex-none px-4 md:px-5 py-2.5 rounded-xl font-black text-[10px] md:text-xs uppercase outline-none transition-all cursor-pointer ${settings.ad_sidebar_enabled === 'true' ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'}`}
                              >
                                 <option value="true">Live on Sidebar</option>
                                 <option value="false">Card Offline</option>
@@ -532,20 +532,20 @@ const AdminAds = () => {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                        <div className="lg:col-span-12 space-y-8">
-                             <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-white/10 w-fit">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+                        <div className="lg:col-span-12 space-y-6 md:space-y-8">
+                             <div className="flex p-1 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-white/10 w-full sm:w-fit">
                                 <button 
                                     onClick={() => setSettings(p => ({ ...p, ad_sidebar_type: 'promo' }))}
-                                    className={`px-6 py-2.5 rounded-xl text-xs font-black transition-all ${settings.ad_sidebar_type === 'promo' ? 'bg-white dark:bg-slate-700 shadow-md text-red-600' : 'text-slate-500'}`}
+                                    className={`flex-1 sm:flex-none px-4 md:px-6 py-2.5 rounded-xl text-[10px] md:text-xs font-black transition-all ${settings.ad_sidebar_type === 'promo' ? 'bg-white dark:bg-slate-700 shadow-md text-red-600' : 'text-slate-500'}`}
                                 >
-                                    RICH TEXT CARD
+                                    RICH TEXT
                                 </button>
                                 <button 
                                     onClick={() => setSettings(p => ({ ...p, ad_sidebar_type: 'ad' }))}
-                                    className={`px-6 py-2.5 rounded-xl text-xs font-black transition-all ${settings.ad_sidebar_type === 'ad' ? 'bg-white dark:bg-slate-700 shadow-md text-red-600' : 'text-slate-500'}`}
+                                    className={`flex-1 sm:flex-none px-4 md:px-6 py-2.5 rounded-xl text-[10px] md:text-xs font-black transition-all ${settings.ad_sidebar_type === 'ad' ? 'bg-white dark:bg-slate-700 shadow-md text-red-600' : 'text-slate-500'}`}
                                 >
-                                    BANNER IMAGE
+                                    BANNER
                                 </button>
                              </div>
 
@@ -561,27 +561,27 @@ const AdminAds = () => {
                                         <div className="space-y-4">
                                             <div className="space-y-2">
                                                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-2">App/Brand Name</label>
-                                                <input type="text" name="ad_sidebar_promo_title" value={settings.ad_sidebar_promo_title} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-bold shadow-inner" placeholder="Mitaan Express" />
+                                                <input type="text" name="ad_sidebar_promo_title" value={settings.ad_sidebar_promo_title} onChange={handleChange} className="w-full px-5 py-3 md:py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-bold shadow-inner" placeholder="Mitaan Express" />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-2">Marketing Pitch</label>
-                                                <textarea name="ad_sidebar_promo_subtitle" value={settings.ad_sidebar_promo_subtitle} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-medium shadow-inner h-24 resize-none" placeholder="Get real-time news alerts..." />
+                                                <textarea name="ad_sidebar_promo_subtitle" value={settings.ad_sidebar_promo_subtitle} onChange={handleChange} className="w-full px-5 py-3 md:py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-medium shadow-inner h-20 md:h-24 resize-none" placeholder="Get real-time news alerts..." />
                                             </div>
                                         </div>
                                         <div className="space-y-4">
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                 <div className="space-y-2">
                                                     <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-2">CTA Label</label>
-                                                    <input type="text" name="ad_sidebar_promo_cta" value={settings.ad_sidebar_promo_cta} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-bold shadow-inner" placeholder="Download App" />
+                                                    <input type="text" name="ad_sidebar_promo_cta" value={settings.ad_sidebar_promo_cta} onChange={handleChange} className="w-full px-5 py-3 md:py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-bold shadow-inner" placeholder="Download App" />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-2">Platform Context</label>
-                                                    <input type="text" name="ad_sidebar_promo_icon" value={settings.ad_sidebar_promo_icon} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-bold shadow-inner" placeholder="smartphone" />
+                                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-2">Icon ID</label>
+                                                    <input type="text" name="ad_sidebar_promo_icon" value={settings.ad_sidebar_promo_icon} onChange={handleChange} className="w-full px-5 py-3 md:py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-bold shadow-inner" placeholder="smartphone" />
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-2">Redirect URL</label>
-                                                <input type="text" name="ad_sidebar_promo_link" value={settings.ad_sidebar_promo_link} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-mono shadow-inner" placeholder="https://store.apple.com/..." />
+                                                <input type="text" name="ad_sidebar_promo_link" value={settings.ad_sidebar_promo_link} onChange={handleChange} className="w-full px-5 py-3 md:py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-mono shadow-inner" placeholder="https://..." />
                                             </div>
                                         </div>
                                     </motion.div>
@@ -595,23 +595,23 @@ const AdminAds = () => {
                                     >
                                         <div className="space-y-6">
                                             <div className="space-y-2">
-                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-2">Sidebar Image Source</label>
+                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-2">Sidebar Image</label>
                                                 <div className="flex gap-2">
-                                                    <input name="ad_sidebar_image_url" value={settings.ad_sidebar_image_url} onChange={handleChange} className="flex-1 px-5 py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-mono shadow-inner" placeholder="https://..." />
-                                                    <label className="p-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl cursor-pointer hover:scale-105 active:scale-95 transition-all">
+                                                    <input name="ad_sidebar_image_url" value={settings.ad_sidebar_image_url} onChange={handleChange} className="flex-1 px-4 md:px-5 py-3 md:py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-mono shadow-inner" placeholder="https://..." />
+                                                    <label className="p-3 md:p-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl cursor-pointer hover:scale-105 active:scale-95 transition-all">
                                                         <Upload size={20} />
                                                         <input type="file" accept="image/*" className="hidden" onChange={(e) => handleMediaUpload(e, 'ad_sidebar_image_url')} />
                                                     </label>
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
-                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-2">Sidebar Target URL</label>
-                                                <input name="ad_sidebar_link_url" value={settings.ad_sidebar_link_url} onChange={handleChange} className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-mono shadow-inner" placeholder="https://..." />
+                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-2">Sidebar Target</label>
+                                                <input name="ad_sidebar_link_url" value={settings.ad_sidebar_link_url} onChange={handleChange} className="w-full px-4 md:px-5 py-3 md:py-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none focus:ring-2 ring-red-500 text-sm font-mono shadow-inner" placeholder="https://..." />
                                             </div>
                                         </div>
                                         <div className="flex items-center justify-center">
                                             {settings.ad_sidebar_image_url ? (
-                                                <div className="w-full max-w-xs relative group h-48 border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden shadow-2xl">
+                                                <div className="w-full max-w-xs relative group h-40 md:h-48 border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden shadow-2xl">
                                                     <img src={settings.ad_sidebar_image_url} alt="Preview" className="w-full h-full object-cover" />
                                                     <button 
                                                         onClick={() => setSettings(p => ({ ...p, ad_sidebar_image_url: '' }))}
@@ -621,9 +621,9 @@ const AdminAds = () => {
                                                     </button>
                                                 </div>
                                             ) : (
-                                                <div className="w-full max-w-xs h-48 bg-slate-50 dark:bg-slate-800 rounded-2xl border-2 border-dashed border-slate-200 dark:border-white/10 flex flex-col items-center justify-center text-center p-4">
-                                                    <SidebarIcon className="text-slate-300 mb-2" size={32} />
-                                                    <p className="text-[10px] font-black uppercase text-slate-400">Sidebar Preview Placeholder</p>
+                                                <div className="w-full max-w-xs h-40 md:h-48 bg-slate-50 dark:bg-slate-800 rounded-2xl border-2 border-dashed border-slate-200 dark:border-white/10 flex flex-col items-center justify-center text-center p-4">
+                                                    <SidebarIcon className="text-slate-300 mb-2" size={28} />
+                                                    <p className="text-[10px] font-black uppercase text-slate-400">Sidebar Preview</p>
                                                 </div>
                                             )}
                                         </div>
@@ -639,9 +639,9 @@ const AdminAds = () => {
                 <button 
                     onClick={handleSaveAds}
                     disabled={updateMutation.isPending}
-                    className="group px-12 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[2rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-black/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-4"
+                    className="group w-full max-w-md px-8 md:px-12 py-4 md:py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl md:rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-2xl shadow-black/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4"
                 >
-                    {updateMutation.isPending ? 'Syncing Server...' : 'Finalize & Go Live'}
+                    {updateMutation.isPending ? 'Syncing...' : 'Finalize & Go Live'}
                     <motion.div animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
                         <ArrowRight size={20} />
                     </motion.div>
