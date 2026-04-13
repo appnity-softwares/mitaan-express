@@ -5,12 +5,7 @@ exports.getAllCategories = async (req, res) => {
         const categories = await prisma.category.findMany({
             include: {
                 parent: true,
-                _count: {
-                    select: {
-                        articles: true,
-                        blogs: true
-                    }
-                }
+                _count: true
             },
             orderBy: [
                 { parentId: 'asc' },

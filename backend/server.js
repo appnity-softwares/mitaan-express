@@ -77,7 +77,7 @@ const frontendPath = path.join(__dirname, '../frontend/dist');
 app.use(express.static(frontendPath));
 
 // Handle React SPA Routing - Fallback to index.html
-app.get('*', (req, res) => {
+app.get('/*', (req, res) => {
     // Skip API routes that might have reached here erroneously
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'API route not found' });

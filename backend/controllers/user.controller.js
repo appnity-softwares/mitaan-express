@@ -11,11 +11,7 @@ exports.getAllUsers = async (req, res) => {
                 role: true,
                 image: true,
                 createdAt: true,
-                _count: {
-                    select: {
-                        articles: true
-                    }
-                }
+                _count: true
             },
             orderBy: { createdAt: 'desc' }
         });
