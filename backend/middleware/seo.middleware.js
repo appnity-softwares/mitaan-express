@@ -121,10 +121,39 @@ const seoRenderer = async (req, res, next) => {
 
         const pageUrl = `${DOMAIN}${req.path}`;
         const siteName = 'Mitaan Express';
+        const isoDate = data.updatedAt ? new Date(data.updatedAt).toISOString() : new Date().toISOString();
+
+        // Schema.org JSON-LD for Times of India-style Rich Result
+        const jsonLd = {
+            "@context": "https://schema.org",
+            "@type": isCategory ? "WebPage" : (isBlog ? "BlogPosting" : "NewsArticle"),
+            "headline": title,
+            "description": description,
+            "image": [imageUrl],
+            "datePublished": isoDate,
+            "dateModified": isoDate,
+            "author": {
+                "@type": "Organization",
+                "name": siteName,
+                "url": DOMAIN
+            },
+            "publisher": {
+                "@type": "Organization",
+                "name": siteName,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${DOMAIN}/logo.png`
+                }
+            },
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": pageUrl
+            }
+        };
 
         // Construct Meta Tags
         let metaTags = `
-    <title>${title} | ${siteName}</title>
+    <title>${title} - ${siteName}</title>
     <meta name="description" content="${description}" />
     <meta property="og:title" content="${title}" />
     <meta property="og:description" content="${description}" />
@@ -132,25 +161,26 @@ const seoRenderer = async (req, res, next) => {
     <meta property="og:image:secure_url" content="${imageUrl}" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="${title}" />
+    <meta property="og:image:height" content="675" />
     <meta property="og:url" content="${pageUrl}" />
     <meta property="og:type" content="${isCategory ? 'website' : 'article'}" />
     <meta property="og:site_name" content="${siteName}" />
+    <meta property="og:updated_time" content="${isoDate}" />
     <meta property="og:locale" content="hi_IN" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${title}" />
     <meta name="twitter:description" content="${description}" />
     <meta name="twitter:image" content="${imageUrl}" />
-    <meta name="twitter:url" content="${pageUrl}" />
+    <meta name="twitter:site" content="@mitaanexpress" />
+    <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
         `;
 
-        // Add Article timestamps if available
-        if (data.updatedAt) {
-            metaTags += `    <meta property="article:modified_time" content="${new Date(data.updatedAt).toISOString()}" />\n`;
+        if (!isCategory) {
+            metaTags += `    <meta property="article:published_time" content="${isoDate}" />\n`;
+            metaTags += `    <meta property="article:modified_time" content="${isoDate}" />\n`;
+            metaTags += `    <meta property="article:section" content="News" />\n`;
         }
 
-        // Add Video support if available
         if (data.videoUrl) {
             metaTags += `    <meta property="og:video" content="${data.videoUrl}" />\n`;
         }

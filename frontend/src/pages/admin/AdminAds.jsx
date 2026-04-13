@@ -5,7 +5,8 @@ import { useCreateMedia } from '../../hooks/useMedia';
 import { 
     DollarSign, Image as ImageIcon, Link as LinkIcon, Upload, 
     Zap, X, Layout, Monitor, Smartphone, Eye, Info, CheckCircle2,
-    ArrowRight, Sparkles, Sidebar as SidebarIcon, AlignJustify, Plus
+    ArrowRight, Sparkles, Sidebar as SidebarIcon, AlignJustify, Plus,
+    RefreshCcw
 } from 'lucide-react';
 import { useAdminTranslation } from '../../context/AdminTranslationContext';
 import { motion, AnimatePresence } from 'framer-motion';
