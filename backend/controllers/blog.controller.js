@@ -56,10 +56,15 @@ exports.getBlogBySlug = async (req, res) => {
     try {
         const blog = await prisma.blog.findUnique({
             where: { slug: req.params.slug },
-            include: {
-                category: true,
-                author: true,
-                tags: true
+            select: {
+                id: true, title: true, slug: true, content: true, shortDescription: true,
+                image: true, authorName: true, authorImage: true, status: true,
+                language: true, views: true, isBreaking: true, isTrending: true,
+                isFeatured: true, isMustRead: true, categoryId: true, createdAt: true,
+                updatedAt: true,
+                category: { select: { id: true, name: true, nameHi: true, slug: true } },
+                author: { select: { id: true, name: true, image: true } },
+                tags: { select: { id: true, name: true, slug: true } }
             }
         });
         if (!blog) return res.status(404).json({ error: 'Blog not found' });

@@ -78,29 +78,33 @@ exports.getArticleBySlug = async (req, res) => {
         // Check if slug is a numeric ID
         const isNumeric = /^\d+$/.test(slug);
 
+        const articleSelect = {
+            id: true, title: true, slug: true, content: true, shortDescription: true,
+            image: true, authorName: true, authorImage: true, videoUrl: true,
+            views: true, status: true, published: true, language: true,
+            isFeatured: true, isTrending: true, isBreaking: true, isMustRead: true,
+            categoryId: true, createdAt: true, updatedAt: true,
+            category: {
+                select: {
+                    id: true, name: true, nameHi: true, slug: true, parentId: true,
+                    parent: { select: { id: true, name: true, nameHi: true, slug: true } }
+                }
+            },
+            author: { select: { id: true, name: true, image: true } },
+            tags: { select: { id: true, name: true, slug: true } }
+        };
+
         if (isNumeric) {
             // Fetch by ID
             article = await prisma.article.findUnique({
                 where: { id: parseInt(slug) },
-                include: {
-                    category: {
-                        include: { parent: true }
-                    },
-                    author: true,
-                    tags: true,
-                },
+                select: articleSelect
             });
         } else {
             // Fetch by slug
             article = await prisma.article.findUnique({
                 where: { slug },
-                include: {
-                    category: {
-                        include: { parent: true }
-                    },
-                    author: true,
-                    tags: true,
-                },
+                select: articleSelect
             });
         }
 
