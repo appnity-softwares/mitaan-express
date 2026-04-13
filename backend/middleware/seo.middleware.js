@@ -46,8 +46,9 @@ const seoRenderer = async (req, res, next) => {
                 select: { title: true, shortDescription: true, image: true, updatedAt: true, metaTitle: true, metaDescription: true }
             });
         } else if (isBlog) {
+            const isNumeric = /^\d+$/.test(identifier);
             data = await prisma.blog.findUnique({
-                where: { slug: identifier },
+                where: isNumeric ? { id: parseInt(identifier) } : { slug: identifier },
                 select: { title: true, shortDescription: true, image: true, updatedAt: true }
             });
         } else if (isCategory) {
