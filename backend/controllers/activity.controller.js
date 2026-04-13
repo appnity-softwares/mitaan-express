@@ -12,9 +12,7 @@ exports.getLogs = async (req, res) => {
                 take: limit,
                 orderBy: { createdAt: 'desc' },
                 include: {
-                    user: {
-                        select: { name: true, email: true, role: true }
-                    }
+                    user: true
                 }
             }),
             prisma.activityLog.count()

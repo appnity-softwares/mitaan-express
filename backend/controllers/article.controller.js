@@ -58,7 +58,7 @@ exports.getAllArticles = async (req, res) => {
                 author: {
                     select: { id: true, name: true, image: true }
                 },
-                tags: true
+                tags: { select: { id: true, name: true, slug: true } }
             },
             orderBy: { createdAt: 'desc' },
             take: limit ? parseInt(limit) : undefined
