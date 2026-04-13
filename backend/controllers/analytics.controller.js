@@ -63,9 +63,7 @@ exports.getDashboardStats = async (req, res) => {
                 id: true,
                 name: true,
                 slug: true,
-                _count: {
-                    select: { articles: true }
-                }
+                _count: true
             },
             orderBy: {
                 articles: {

@@ -101,7 +101,12 @@ router.get('/rss.xml', async (req, res) => {
             where: { status: 'PUBLISHED' },
             orderBy: { createdAt: 'desc' },
             take: 50,
-            include: { category: true, author: true }
+            select: {
+                id: true, title: true, slug: true, content: true, shortDescription: true,
+                image: true, authorName: true, authorImage: true, createdAt: true,
+                category: { select: { id: true, name: true, nameHi: true, slug: true } },
+                author: { select: { id: true, name: true, image: true } }
+            }
         });
 
         let rss = `<?xml version="1.0" encoding="UTF-8"?>
