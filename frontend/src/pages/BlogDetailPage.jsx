@@ -170,9 +170,9 @@ const BlogDetailPage = ({ language }) => {
                         <div className="flex items-center gap-3">
                             <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg">
                                 {blog.authorImage ? (
-                                    <img src={blog.authorImage} alt={blog.authorName || 'Author'} className="w-full h-full object-cover" />
+                                    <img src={formatImageUrl(blog.authorImage, 200)} alt={blog.authorName || 'Author'} className="w-full h-full object-cover" />
                                 ) : blog.author?.image ? (
-                                    <img src={blog.author.image} alt={blog.author.name} className="w-full h-full object-cover" />
+                                    <img src={formatImageUrl(blog.author.image, 200)} alt={blog.author.name} className="w-full h-full object-cover" />
                                 ) : (
                                     <User size={24} className="text-slate-500" />
                                 )}

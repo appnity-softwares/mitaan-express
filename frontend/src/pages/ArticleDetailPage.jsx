@@ -243,9 +243,9 @@ const ArticleDetailPage = ({ language }) => {
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-white dark:ring-slate-800 shadow-lg overflow-hidden shrink-0">
                                 {article.authorImage ? (
-                                    <img src={article.authorImage} alt={article.authorName || 'Author'} className="w-full h-full object-cover" />
+                                    <img src={formatImageUrl(article.authorImage, 200)} alt={article.authorName || 'Author'} className="w-full h-full object-cover" />
                                 ) : article.author?.image ? (
-                                    <img src={article.author.image} alt={article.author.name} className="w-full h-full object-cover" />
+                                    <img src={formatImageUrl(article.author.image, 200)} alt={article.author.name} className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                                         <User size={20} className="text-slate-400" />

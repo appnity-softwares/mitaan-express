@@ -7,6 +7,7 @@ import { stripHtml } from '../utils/textUtils';
 import Sidebar from '../components/Sidebar';
 import { useIsShort } from '../hooks/useIsShort';
 
+import { formatImageUrl } from '../services/api';
 import { useBlogs } from '../hooks/useQueries';
 
 const BlogsPage = ({ language }) => {
@@ -151,7 +152,7 @@ const BlogsPage = ({ language }) => {
                                     <div className="lg:col-span-7 relative overflow-hidden rounded-[2rem] shadow-2xl">
                                         <div className="aspect-[16/9] lg:aspect-[3/2] overflow-hidden bg-slate-200 dark:bg-gray-800">
                                             <img
-                                                src={featuredArticle.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&q=80&w=1600"}
+                                                src={formatImageUrl(featuredArticle.image, 1600)}
                                                 alt={featuredArticle.title}
                                                 loading="lazy"
                                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -233,7 +234,7 @@ const BlogsPage = ({ language }) => {
 
                                             <div className="relative w-32 md:w-56 xl:w-64 shrink-0 aspect-[4/3] md:aspect-[16/10] overflow-hidden rounded-xl md:rounded-2xl shadow-sm">
                                                 <img
-                                                    src={article.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&q=80&w=800"}
+                                                    src={formatImageUrl(article.image, 800)}
                                                     alt={article.title}
                                                     loading="lazy"
                                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

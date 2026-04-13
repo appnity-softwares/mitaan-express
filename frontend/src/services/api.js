@@ -50,14 +50,16 @@ const handleResponse = async (response) => {
  * @returns {string} - Formatted URL
  */
 export const formatImageUrl = (url, width) => {
-    if (!url) return PLACEHOLDER_IMAGE;
+    if (!url || url === 'undefined' || url === 'null' || url === '') return PLACEHOLDER_IMAGE;
     
     // Unsplash Optimization: handle sizing at the source
-    if (url.includes('images.unsplash.com') && width) {
+    if (typeof url === 'string' && url.includes('images.unsplash.com') && width) {
         const baseUrl = url.split('?')[0];
         // Optimized for performance: q=75 and dynamic format
         return `${baseUrl}?auto=format&fit=crop&q=75&w=${width}`;
     }
+
+    if (typeof url !== 'string') return PLACEHOLDER_IMAGE;
 
     if (url.startsWith('http') || url.startsWith('data:')) return url;
 
