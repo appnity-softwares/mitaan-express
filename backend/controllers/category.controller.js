@@ -3,8 +3,10 @@ const prisma = require('../prisma');
 exports.getAllCategories = async (req, res) => {
     try {
         const categories = await prisma.category.findMany({
-            include: {
-                parent: true,
+            select: {
+                id: true, name: true, nameHi: true, slug: true, description: true,
+                image: true, icon: true, color: true, sortOrder: true, parentId: true,
+                parent: { select: { id: true, name: true, slug: true } },
                 _count: true
             },
             orderBy: [
