@@ -30,7 +30,8 @@ const seoRenderer = async (req, res, next) => {
         
         // Decode identifier for Hindi/International characters
         try {
-            identifier = decodeURIComponent(identifier);
+            identifier = decodeURIComponent(identifier).trim();
+            console.log(`[SEO Renderer] Handling ${req.path} -> decoded identifier: "${identifier}"`);
         } catch (e) {
             console.warn('SEO Renderer: Failed to decode identifier', identifier);
         }
@@ -66,8 +67,10 @@ const seoRenderer = async (req, res, next) => {
 
         // If no content found, let the frontend handle the 404
         if (!data) {
+            console.warn(`[SEO Renderer] No content found for identifier: "${identifier}"`);
             return next();
         }
+        console.log(`[SEO Renderer] Found content: "${data.title}"`);
 
         // Path to the built index.html
         const indexPath = path.join(__dirname, '../../frontend/dist/index.html');
@@ -93,10 +96,21 @@ const seoRenderer = async (req, res, next) => {
             } else if (imageUrl.includes('images.unsplash.com')) {
                 // Optimize for social media preview (1200 width)
                 imageUrl = imageUrl.split('?')[0] + '?auto=format&fit=crop&q=80&w=1200';
-            } else if (!imageUrl.startsWith('http')) {
-                // Handle local uploads - Ensure we have a valid absolute URL
+            } else if (imageUrl.startsWith('http')) {
+                // Already absolute (could be R2 or external)
+                imageUrl = imageUrl;
+            } else {
+                // Handle relative paths (Local or R2)
+                const R2_URL = process.env.R2_ACCOUNT_URL;
                 const cleanPath = imageUrl.startsWith('/') ? imageUrl.slice(1) : imageUrl;
-                imageUrl = `${DOMAIN}/${cleanPath}`;
+                
+                if (R2_URL && (cleanPath.startsWith('media-') || !cleanPath.startsWith('uploads/'))) {
+                    // It's likely an R2 upload if it has the media- prefix or isn't in uploads/
+                    imageUrl = `${R2_URL}/${cleanPath}`;
+                } else {
+                    // Fallback to local domain
+                    imageUrl = `${DOMAIN}/${cleanPath}`;
+                }
             }
         } else {
             imageUrl = `${DOMAIN}/logo.png`; // Fallback image
@@ -111,6 +125,9 @@ const seoRenderer = async (req, res, next) => {
     <meta property="og:title" content="${title}" />
     <meta property="og:description" content="${description}" />
     <meta property="og:image" content="${imageUrl}" />
+    <meta property="og:image:secure_url" content="${imageUrl}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:url" content="${pageUrl}" />
     <meta property="og:type" content="${isCategory ? 'website' : 'article'}" />
     <meta property="og:site_name" content="Mitaan Express" />
@@ -121,12 +138,12 @@ const seoRenderer = async (req, res, next) => {
     <meta name="twitter:url" content="${pageUrl}" />
         `;
 
-        // Efficiently replace existing meta tags and title
-        // Remove standard tags from the template to prevent duplicates
-        html = html.replace(/<title>.*?<\/title>/gi, '');
-        html = html.replace(/<meta name="description" content=".*?"\s*\/?>/gi, '');
-        html = html.replace(/<meta property="og:.*?" content=".*?"\s*\/?>/gi, '');
-        html = html.replace(/<meta name="twitter:.*?" content=".*?"\s*\/?>/gi, '');
+        // Robust removal of existing tags
+        // This handles different attribute orders and self-closing styles
+        html = html.replace(/<title>[\s\S]*?<\/title>/gi, '');
+        html = html.replace(/<meta[^>]*?(?:name|property)=["']description["'][^>]*?>/gi, '');
+        html = html.replace(/<meta[^>]*?(?:name|property)=["']og:[^"']+["'][^>]*?>/gi, '');
+        html = html.replace(/<meta[^>]*?(?:name|property)=["']twitter:[^"']+["'][^>]*?>/gi, '');
 
         // Inject new tags into <head>
         html = html.replace('<head>', `<head>${metaTags}`);
