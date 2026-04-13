@@ -27,7 +27,7 @@ exports.getAllBlogs = async (req, res) => {
                     isFeatured: true, isMustRead: true, categoryId: true, createdAt: true,
                     updatedAt: true,
                     category: true,
-                    author: { select: { id: true, name: true, image: true } },
+                    author: true,
                     tags: true
                 },
                 orderBy: { createdAt: 'desc' },
@@ -58,7 +58,7 @@ exports.getBlogBySlug = async (req, res) => {
             where: { slug: req.params.slug },
             include: {
                 category: true,
-                author: { select: { id: true, name: true, image: true } },
+                author: true,
                 tags: true
             }
         });

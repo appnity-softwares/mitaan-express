@@ -86,7 +86,7 @@ exports.getArticleBySlug = async (req, res) => {
                     category: {
                         include: { parent: true }
                     },
-                    author: { select: { name: true, image: true, bio: true } },
+                    author: true,
                     tags: true,
                 },
             });
@@ -98,7 +98,7 @@ exports.getArticleBySlug = async (req, res) => {
                     category: {
                         include: { parent: true }
                     },
-                    author: { select: { name: true, image: true, bio: true } },
+                    author: true,
                     tags: true,
                 },
             });
