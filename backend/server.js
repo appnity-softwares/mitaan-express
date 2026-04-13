@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const cors = require('cors');
 const compression = require('compression');
 const prisma = require('./prisma');
@@ -65,6 +66,28 @@ app.use('/api/contacts', contactRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/seo', seoRoutes);
 
+// SEO Injection for social sharing
+const seoRenderer = require('./middleware/seo.middleware');
+app.get(['/article/:id', '/insight/:slug', '/category/:id'], seoRenderer);
+
+// Serve Static Frontend
+const frontendPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendPath));
+
+// Handle React SPA Routing - Fallback to index.html
+app.get('*', (req, res) => {
+    // Skip API routes that might have reached here erroneously
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ error: 'API route not found' });
+    }
+    // If frontend build exists, serve it
+    if (fs.existsSync(path.join(frontendPath, 'index.html'))) {
+        res.sendFile(path.join(frontendPath, 'index.html'));
+    } else {
+        res.send('Mitaan Express API is running (Frontend build not found)');
+    }
+});
+
 const { Server } = require("socket.io");
 const http = require('http').createServer(app);
 const io = new Server(http, {
@@ -94,10 +117,6 @@ io.on('connection', (socket) => {
 
 io.engine.on("connection_error", (err) => {
     console.error("Socket.io Connection Error:", err);
-});
-
-app.get('/', (req, res) => {
-    res.send('Mitaan Express API is running');
 });
 
 http.listen(PORT, () => {
