@@ -104,6 +104,98 @@ app.use('/api/contacts', contactRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/seo', seoRoutes);
 
+// ============================================
+// HEALTH CHECK ENDPOINT - For monitoring & deploy verification
+// ============================================
+app.get('/health', async (req, res) => {
+    const health = {
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        checks: {}
+    };
+
+    // Database connectivity check
+    try {
+        await prisma.$queryRaw`SELECT 1`;
+        health.checks.database = 'connected';
+    } catch (err) {
+        health.checks.database = `error: ${err.message}`;
+        health.status = 'DEGRADED';
+    }
+
+    // Response time check
+    const dbStart = Date.now();
+    try {
+        await prisma.$queryRaw`SELECT 1`;
+        health.checks.dbResponseTime = `${Date.now() - dbStart}ms`;
+    } catch (err) {
+        health.checks.dbResponseTime = 'failed';
+    }
+
+    const statusCode = health.status === 'OK' ? 200 : 503;
+    res.status(statusCode).json(health);
+});
+
+// ============================================
+// GLOBAL ERROR HANDLING - Prevents app crashes
+// ============================================
+
+// 404 handler for unknown API routes
+app.use('/api/*', (req, res) => {
+    res.status(404).json({ error: 'API endpoint not found', path: req.originalUrl });
+});
+
+// Global error handler - catches all unhandled errors
+app.use((err, req, res, next) => {
+    // Log the error with full details
+    console.error('[GLOBAL ERROR]', {
+        message: err.message,
+        stack: err.stack,
+        code: err.code,
+        path: req.path,
+        method: req.method,
+        timestamp: new Date().toISOString()
+    });
+
+    // Handle specific error types
+    if (err.name === 'PrismaClientValidationError') {
+        return res.status(400).json({
+            error: 'Database query error',
+            code: 'PRISMA_VALIDATION_ERROR',
+            message: process.env.NODE_ENV === 'production' ? 'Invalid query parameters' : err.message
+        });
+    }
+
+    if (err.name === 'PrismaClientKnownRequestError') {
+        return res.status(400).json({
+            error: 'Database request error',
+            code: err.code,
+            message: process.env.NODE_ENV === 'production' ? 'Database operation failed' : err.message
+        });
+    }
+
+    if (err.name === 'PrismaClientInitializationError') {
+        return res.status(503).json({
+            error: 'Database connection failed',
+            code: 'DB_CONNECTION_ERROR',
+            message: 'Service temporarily unavailable'
+        });
+    }
+
+    // SyntaxError (malformed JSON)
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        return res.status(400).json({ error: 'Invalid JSON in request body' });
+    }
+
+    // Default error response
+    res.status(err.status || 500).json({
+        error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message,
+        code: err.code || 'INTERNAL_ERROR'
+    });
+});
+
 // SEO Injection for social sharing
 const seoRenderer = require('./middleware/seo.middleware');
 app.get(['/article/:id', '/insight/:slug', '/category/:id'], seoRenderer);
@@ -154,4 +246,50 @@ io.engine.on("connection_error", (err) => {
 
 http.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+});
+
+// ============================================
+// PROCESS-LEVEL ERROR HANDLING - Prevents crashes
+// ============================================
+
+// Handle uncaught exceptions - prevents app crash
+process.on('uncaughtException', (err) => {
+    console.error('[FATAL] Uncaught Exception:', {
+        message: err.message,
+        stack: err.stack,
+        timestamp: new Date().toISOString()
+    });
+    // Keep running - only exit on truly fatal errors
+    if (err.message && err.message.includes('Cannot find module')) {
+        console.error('[FATAL] Module loading error - shutting down');
+        process.exit(1);
+    }
+});
+
+// Handle unhandled promise rejections - prevents app crash
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('[FATAL] Unhandled Rejection at:', promise, 'reason:', reason);
+    // Log but don't exit - let the app continue
+});
+
+// Handle SIGTERM for graceful shutdown (PM2 sends this)
+process.on('SIGTERM', async () => {
+    console.log('[SHUTDOWN] SIGTERM received - closing server gracefully');
+    http.close(() => {
+        console.log('[SHUTDOWN] HTTP server closed');
+    });
+    await prisma.$disconnect();
+    console.log('[SHUTDOWN] Database disconnected');
+    process.exit(0);
+});
+
+// Handle SIGINT for graceful shutdown (Ctrl+C)
+process.on('SIGINT', async () => {
+    console.log('[SHUTDOWN] SIGINT received - closing server gracefully');
+    http.close(() => {
+        console.log('[SHUTDOWN] HTTP server closed');
+    });
+    await prisma.$disconnect();
+    console.log('[SHUTDOWN] Database disconnected');
+    process.exit(0);
 });
