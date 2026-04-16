@@ -199,23 +199,35 @@ app.use((err, req, res, next) => {
     });
 });
 
-// SEO Injection for social sharing
-const seoRenderer = require('./middleware/seo.middleware');
-app.get(['/article/:id', '/insight/:slug', '/category/:id'], seoRenderer);
+// ============================================
+// FRONTEND & SEO SERVING
+// ============================================
 
-// Serve Static Frontend
+// 1. Static files first (CSS, JS, Images)
 const frontendPath = path.join(__dirname, '../frontend/dist');
-app.use(express.static(frontendPath));
+app.use(express.static(frontendPath, { index: false })); // Don't auto-serve index.html
 
-// Handle React SPA Routing - Fallback to index.html
-app.get('{/*path}', (req, res) => {
-    // Skip API routes that might have reached here erroneously
+// 2. Dynamic SEO Injection for all page routes
+const seoRenderer = require('./middleware/seo.middleware');
+app.get('*', (req, res, next) => {
+    // Skip API and File routes
+    if (req.path.startsWith('/api/') || req.path.includes('.')) {
+        return next();
+    }
+    
+    // Process through SEO Renderer
+    seoRenderer(req, res, next);
+});
+
+// 3. Fallback for everything else (if SEO renderer didn't respond)
+app.get('*', (req, res) => {
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'API route not found' });
     }
-    // If frontend build exists, serve it
-    if (fs.existsSync(path.join(frontendPath, 'index.html'))) {
-        res.sendFile(path.join(frontendPath, 'index.html'));
+    
+    const indexPath = path.join(frontendPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
     } else {
         res.send('Mitaan Express API is running (Frontend build not found)');
     }

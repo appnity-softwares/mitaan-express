@@ -54,14 +54,11 @@ const generateMetaTags = (data) => {
  * HARDENED: Always returns a valid response, even on DB/Data failure.
  */
 const seoRenderer = async (req, res, next) => {
+    const pathSegments = req.path.split('/').filter(Boolean);
     const isArticle = req.path.startsWith('/article/');
     const isBlog = req.path.startsWith('/insight/');
     const isCategory = req.path.startsWith('/category/');
-
-    // Only proceed for specific SEO routes
-    if (!isArticle && !isBlog && !isCategory) {
-        return next();
-    }
+    const isHome = req.path === '/';
 
     const DOMAIN = process.env.FRONTEND_URL || 'https://mitaanexpress.com';
     const siteName = 'Mitaan Express';
@@ -112,6 +109,19 @@ const seoRenderer = async (req, res, next) => {
                 data.title = data.name + ' News';
                 data.shortDescription = data.description;
             }
+        } else if (isHome) {
+            // Fetch Global Settings for Home Meta
+            const settingsList = await prisma.setting.findMany({
+                where: { key: { in: ['site_title', 'site_description', 'logo_url'] } }
+            });
+            const settings = settingsList.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {});
+            
+            data = {
+                title: settings.site_title || siteName,
+                shortDescription: settings.site_description || 'Unbiased news and premium insights.',
+                image: settings.logo_url || 'https://mitaanexpress.com/logo.png',
+                isHome: true
+            };
         }
     } catch (error) {
         console.error('[SEO Renderer Catch]', error);
