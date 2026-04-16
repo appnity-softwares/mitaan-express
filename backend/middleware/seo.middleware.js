@@ -4,10 +4,39 @@ const prisma = require('../prisma');
 const { stripHtml } = require('../utils/sanitize');
 
 /**
- * Generates SEO meta tags string.
+ * PHASE 3 & FIX 3: HARDEN IMAGE FALLBACK
+ */
+function getImageUrl(image) {
+    const R2_BASE = "https://pub-c3d6bb19e99a4f0dae3b620370bc1b9f.r2.dev/";
+    const DEFAULT = "https://mitaanexpress.com/default-og.jpg";
+
+    // FIX 3: Empty string "" or missing handled correctly
+    if (!image || (typeof image === 'string' && image.trim() === "")) return DEFAULT;
+    
+    if (image.startsWith("http")) return image;
+    if (image.startsWith("data:")) return DEFAULT;
+
+    // Clean relative path
+    const cleanPath = image.startsWith('/') ? image.slice(1) : image;
+    return R2_BASE + cleanPath;
+}
+
+/**
+ * SEO Meta Tag Generator
  */
 const generateMetaTags = (data) => {
-    const { title, description, imageUrl, pageUrl, siteName, isoDate, modifiedDate, imageAlt, jsonLd, isCategory, categoryName, videoUrl } = data;
+    const { 
+        title, 
+        description, 
+        imageUrl, 
+        pageUrl, 
+        siteName, 
+        isoDate, 
+        modifiedDate, 
+        isArticleType, 
+        categoryName,
+        jsonLd 
+    } = data;
 
     let tags = `
     <title>${title} - ${siteName}</title>
@@ -17,212 +46,180 @@ const generateMetaTags = (data) => {
     <meta property="og:description" content="${description}" />
     <meta property="og:image" content="${imageUrl}" />
     <meta property="og:image:secure_url" content="${imageUrl}" />
-    <meta property="og:image:alt" content="${imageAlt}" />
-    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="675" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:url" content="${pageUrl}" />
-    <meta property="og:type" content="${isCategory ? 'website' : 'article'}" />
+    <meta property="og:type" content="${isArticleType ? 'article' : 'website'}" />
     <meta property="og:site_name" content="${siteName}" />
-    <meta property="og:updated_time" content="${modifiedDate}" />
-    <meta property="og:locale" content="hi_IN" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${title}" />
     <meta name="twitter:description" content="${description}" />
     <meta name="twitter:image" content="${imageUrl}" />
-    <meta name="twitter:image:alt" content="${imageAlt}" />
-    <meta name="twitter:site" content="@mitaanexpress" />
     <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
     `;
 
-    if (!isCategory) {
+    if (isArticleType) {
         tags += `    <meta property="article:published_time" content="${isoDate}" />\n`;
         tags += `    <meta property="article:modified_time" content="${modifiedDate}" />\n`;
         tags += `    <meta property="article:section" content="${categoryName}" />\n`;
-    }
-
-    if (videoUrl) {
-        tags += `    <meta property="og:video" content="${videoUrl}" />\n`;
     }
 
     return tags;
 };
 
 /**
- * SEO Renderer Middleware
- * Fetches article/blog data and injects Open Graph meta tags into the HTML index file.
- * HARDENED: Always returns a valid response, even on DB/Data failure.
+ * SEO Renderer Middleware - FINAL REFINED VERSION
  */
 const seoRenderer = async (req, res, next) => {
-    const pathSegments = req.path.split('/').filter(Boolean);
-    const isArticle = req.path.startsWith('/article/');
-    const isBlog = req.path.startsWith('/insight/');
-    const isCategory = req.path.startsWith('/category/');
-    const isHome = req.path === '/';
+    const reqPath = req.path;
+    const isArticle = reqPath.startsWith('/article/');
+    const isInsight = reqPath.startsWith('/insight/');
+    const isBlog = reqPath.startsWith('/blog/');
+    const isCategory = reqPath.startsWith('/category/');
+    const isHome = reqPath === '/';
 
     const DOMAIN = process.env.FRONTEND_URL || 'https://mitaanexpress.com';
     const siteName = 'Mitaan Express';
     let data = null;
-    let identifier = '';
 
     try {
-        identifier = req.params.slug || req.params.id || req.path.split('/').pop();
+        const pathParts = reqPath.split('/').filter(Boolean);
+        const identifier = pathParts[1] || '';
         let decodedId = identifier;
-        try {
-            decodedId = decodeURIComponent(identifier).trim();
-        } catch (e) {
-            // Silently handle decode errors
-        }
-
+        try { decodedId = decodeURIComponent(identifier).trim(); } catch (e) {}
         const isNumeric = /^\d+$/.test(decodedId);
 
-        if (isArticle) {
+        // DATA FETCH LOGIC
+        if (isArticle || isInsight) {
+            // FIX 1 SPEC: /article and /insight fetch from article table
             data = await prisma.article.findUnique({
                 where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
                 select: {
                     title: true, shortDescription: true, image: true,
-                    publishedAt: true, createdAt: true, updatedAt: true,
-                    metaTitle: true, metaDescription: true, videoUrl: true,
+                    publishedAt: true, updatedAt: true, createdAt: true,
                     category: { select: { name: true, nameHi: true } }
                 }
-            }).catch(err => {
-                console.error('[SEO DB ERROR Article]', err.message);
-                return null;
             });
         } else if (isBlog) {
             data = await prisma.blog.findUnique({
                 where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
-                select: { title: true, shortDescription: true, image: true, updatedAt: true, createdAt: true }
-            }).catch(err => {
-                console.error('[SEO DB ERROR Blog]', err.message);
-                return null;
+                select: {
+                    title: true, shortDescription: true, image: true,
+                    updatedAt: true, createdAt: true
+                }
             });
         } else if (isCategory) {
             data = await prisma.category.findUnique({
                 where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
                 select: { name: true, nameHi: true, description: true, image: true }
-            }).catch(err => {
-                console.error('[SEO DB ERROR Category]', err.message);
-                return null;
             });
             if (data) {
-                data.title = data.name + ' News';
+                data.title = (data.nameHi || data.name) + ' - Mitaan Express';
                 data.shortDescription = data.description;
             }
         } else if (isHome) {
-            // Fetch Global Settings for Home Meta
             const settingsList = await prisma.setting.findMany({
                 where: { key: { in: ['site_title', 'site_description', 'logo_url'] } }
             });
             const settings = settingsList.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {});
-            
             data = {
                 title: settings.site_title || siteName,
                 shortDescription: settings.site_description || 'Unbiased news and premium insights.',
-                image: settings.logo_url || 'https://mitaanexpress.com/logo.png',
+                image: settings.logo_url || '/logo.png',
                 isHome: true
             };
         }
-    } catch (error) {
-        console.error('[SEO Renderer Catch]', error);
+    } catch (err) {
+        console.error("[SEO DB ERROR]", err);
     }
 
-    // FALLBACK LOGIC: If no data found, or DB failed, use generic but absolute defaults
+    // FALLBACK SYSTEM
     if (!data) {
-        console.warn(`[SEO Fallback] Used for route: ${req.path}`);
         data = {
             title: siteName + ' - Latest News',
-            shortDescription: 'Unbiased news, deep insights, and real-time updates from Mitaan Express.',
-            image: 'https://img.freepik.com/free-vector/news-grunge-text_460848-9369.jpg?semt=ais_hybrid&w=740&q=80',
+            shortDescription: 'Unbiased news, investigative insights, and real-time updates from Mitaan Express.',
+            image: null,
             createdAt: new Date()
         };
     }
 
-    // SANITIZE & NORMALIZE
-    const rawTitle = stripHtml(data.metaTitle || data.title || siteName);
-    const cleanTitle = rawTitle.replace(/"/g, '&quot;');
-    let cleanDesc = stripHtml(data.metaDescription || data.shortDescription || '').replace(/"/g, '&quot;');
-    if (cleanDesc.length > 200) cleanDesc = cleanDesc.substring(0, 197) + '...';
-    if (!cleanDesc) cleanDesc = 'Latest updates and investigative insights from Mitaan Express.';
+    // FIX 1 & 5: CORRECT OG TYPE LOGIC
+    // SPEC: /article -> og:type = article | /insight & /blog -> og:type = website
+    const isArticleType = isArticle; 
 
-    /**
-     * Helper to resolve R2 and absolute image URLs
-     * FORCED: Using provided R2 Public Base URL
-     */
-    const getValidImage = (image, domain) => {
-        const R2_BASE = "https://pub-c3d6bb19e99a4f0dae3b620370bc1b9f.r2.dev/";
-        const DEFAULT_IMAGE = "https://img.freepik.com/free-vector/news-grunge-text_460848-9369.jpg?semt=ais_hybrid&w=740&q=80";
+    // FIX 2: CORRECT JSON-LD TYPE
+    const jsonLdType = isArticle 
+        ? "NewsArticle" 
+        : (isBlog || isInsight ? "BlogPosting" : "WebSite");
 
-        if (!image) return DEFAULT_IMAGE;
-        
-        // If it's already a full HTTP URL (Unsplash, External or R2)
-        if (image.startsWith('http')) return image;
-        
-        // Skip base64 (fallback to logo)
-        if (image.startsWith('data:')) return `${domain}/logo.png`;
+    // FIX 4: ENSURE CLEAN OG IMAGE OUTPUT
+    const imageUrl = getImageUrl(data.image);
 
-        // Clean relative path and append to R2 base
-        const cleanPath = image.startsWith('/') ? image.slice(1) : image;
-        return `${R2_BASE}${cleanPath}`;
-    };
+    // FIX 6: LOGGING
+    console.log("-----------------------------------------");
+    console.log("ROUTE:", reqPath);
+    console.log("IS ARTICLE:", isArticle);
+    console.log("IS INSIGHT:", isInsight);
+    console.log("DATA FOUND:", !!data && !data.isHome);
+    console.log("FINAL IMAGE:", imageUrl);
+    console.log("-----------------------------------------");
 
-    // Construct Image URL with absolute logic (Mixed format support)
-    let imageUrl = getValidImage(data.image, DOMAIN);
+    // SANITIZATION
+    const cleanTitle = stripHtml(data.title || siteName).replace(/"/g, '&quot;');
+    const cleanDesc = stripHtml(data.shortDescription || '').replace(/"/g, '&quot;').substring(0, 160);
 
-    const pageUrl = `${DOMAIN}${req.path}`;
     const isoDate = new Date(data.publishedAt || data.createdAt || new Date()).toISOString();
     const modifiedDate = new Date(data.updatedAt || data.createdAt || new Date()).toISOString();
-    const categoryName = data.category?.name || data.category?.nameHi || 'News';
-
-    // Schema.org JSON-LD (Search Engines)
+    
+    // JSON-LD
     const jsonLd = {
         "@context": "https://schema.org",
-        "@type": isCategory ? "WebPage" : (isBlog ? "BlogPosting" : "NewsArticle"),
+        "@type": isCategory ? "WebPage" : jsonLdType,
         "headline": cleanTitle,
         "description": cleanDesc,
         "image": [imageUrl],
         "datePublished": isoDate,
         "dateModified": modifiedDate,
-        "publisher": { "@type": "Organization", "name": siteName, "logo": { "@type": "ImageObject", "url": `${DOMAIN}/logo.png` } }
+        "publisher": { 
+            "@type": "Organization", 
+            "name": siteName, 
+            "logo": { "@type": "ImageObject", "url": `${DOMAIN}/logo.png` } 
+        }
     };
 
-    // Prepare metadata for injection
+    // GENERATE TAGS
     const metaTags = generateMetaTags({
         title: cleanTitle,
         description: cleanDesc,
-        imageUrl, // Direct R2 URL for best reliability on WhatsApp
-        pageUrl,
+        imageUrl,
+        pageUrl: `${DOMAIN}${reqPath}`,
         siteName,
         isoDate,
         modifiedDate,
-        imageAlt: cleanTitle,
-        jsonLd,
-        isCategory,
-        categoryName,
-        videoUrl: data.videoUrl
+        isArticleType, // FIX 1 applied here
+        categoryName: data.category?.name || 'News',
+        jsonLd
     });
 
-    // LOAD INDEX.HTML
+    // LOAD AND INJECT
     const indexPath = path.join(__dirname, '../../frontend/dist/index.html');
     let html = '';
-
-    if (fs.existsSync(indexPath)) {
+    try {
         html = fs.readFileSync(indexPath, 'utf8');
-    } else {
-        // ULTIMATE FALLBACK: Return a basic HTML shell if dist/index.html is missing
-        html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><head><body><div id="root"></div></body></html>`;
+    } catch (e) {
+        html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><head><body><div id="root"></div></body></html>`;
     }
 
-    // Clean existing tags
+    // SCRUBBING
     html = html.replace(/<title>[\s\S]*?<\/title>/gi, '');
-    html = html.replace(/<meta[^>]*?(?:name|property)=["'](?:description|og:|twitter:|article:)[^"']+["'][^>]*?>/gi, '');
+    html = html.replace(/<meta[^>]*?property=["']og:[\s\S]*?["'][^>]*?>/gi, '');
+    html = html.replace(/<meta[^>]*?name=["']twitter:[\s\S]*?["'][^>]*?>/gi, '');
+    html = html.replace(/<meta[^>]*?name=["']description["'][^>]*?>/gi, '');
     html = html.replace(/<link[^>]*?rel=["']canonical["'][^>]*?>/gi, '');
-    html = html.replace(/<script[^>]*?type=["']application\/ld\+json["'][^>]*?>[\s\S]*?<\/script>/gi, '');
 
-    // Inject
-    html = html.replace('<head>', `<head>${metaTags}`);
+    // INJECTION
+    html = html.replace('<head>', `<head>\n${metaTags}\n`);
 
-    // Serve
     res.setHeader('Cache-Control', 'public, max-age=3600');
     res.header('Content-Type', 'text/html');
     return res.send(html);

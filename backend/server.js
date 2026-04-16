@@ -209,9 +209,10 @@ app.use(express.static(frontendPath, { index: false })); // Don't auto-serve ind
 
 // 2. Dynamic SEO Injection for all page routes
 const seoRenderer = require('./middleware/seo.middleware');
-app.get('*', (req, res, next) => {
-    // Skip API and File routes
-    if (req.path.startsWith('/api/') || req.path.includes('.')) {
+app.get(/.*/, (req, res, next) => {
+    // Phase 1: Filter out API and static files early
+    const reqPath = req.path;
+    if (reqPath.startsWith('/api/') || reqPath.includes('.')) {
         return next();
     }
     
@@ -220,7 +221,7 @@ app.get('*', (req, res, next) => {
 });
 
 // 3. Fallback for everything else (if SEO renderer didn't respond)
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'API route not found' });
     }
