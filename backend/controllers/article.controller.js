@@ -5,19 +5,44 @@ exports.getAllArticles = async (req, res) => {
         const { category, tag, status, search, limit, author, lang } = req.query;
 
         const where = {};
-        if (category) where.category = { slug: category };
-        if (tag) where.tags = { some: { slug: tag } };
-        if (status) where.status = status;
-        if (author && !isNaN(parseInt(author))) {
-            where.authorId = parseInt(author);
+        
+        // Input validation
+        if (category && typeof category === 'string') {
+            if (category.length > 255) {
+                return res.status(400).json({ error: 'Category slug too long (max 255 characters)' });
+            }
+            where.category = { slug: category.substring(0, 255) };
         }
-        if (lang) where.language = lang; 
+        
+        if (tag && typeof tag === 'string') {
+            if (tag.length > 255) {
+                return res.status(400).json({ error: 'Tag slug too long (max 255 characters)' });
+            }
+            where.tags = { some: { slug: tag.substring(0, 255) } };
+        }
+        
+        if (status && ['DRAFT', 'PUBLISHED'].includes(status)) {
+            where.status = status;
+        }
+        
+        if (author && !isNaN(parseInt(author))) {
+            const authorId = parseInt(author);
+            if (authorId > 0 && authorId <= 2147483647) {
+                where.authorId = authorId;
+            }
+        }
+        
+        if (lang && typeof lang === 'string' && lang.length <= 10) {
+            where.language = lang;
+        }
 
-        // ... rest of search logic ...
-        if (search) {
+        if (search && typeof search === 'string') {
+            if (search.length > 500) {
+                return res.status(400).json({ error: 'Search query too long (max 500 characters)' });
+            }
             where.OR = [
-                { title: { contains: search, mode: 'insensitive' } },
-                { content: { contains: search, mode: 'insensitive' } }
+                { title: { contains: search.substring(0, 500), mode: 'insensitive' } },
+                { content: { contains: search.substring(0, 500), mode: 'insensitive' } }
             ];
         }
 
@@ -73,6 +98,15 @@ exports.getAllArticles = async (req, res) => {
 exports.getArticleBySlug = async (req, res) => {
     const { slug } = req.params;
     try {
+        // Input validation
+        if (!slug || typeof slug !== 'string') {
+            return res.status(400).json({ error: 'Article identifier is required and must be a string' });
+        }
+        
+        if (slug.length > 255) {
+            return res.status(400).json({ error: 'Article identifier too long (max 255 characters)' });
+        }
+
         let article;
 
         // Check if slug is a numeric ID
@@ -95,33 +129,55 @@ exports.getArticleBySlug = async (req, res) => {
         };
 
         if (isNumeric) {
+            // Validate numeric ID
+            const numId = parseInt(slug);
+            if (isNaN(numId) || numId < 1 || numId > 2147483647) {
+                return res.status(400).json({ error: 'Invalid article ID: must be a positive integer' });
+            }
+            
             // Fetch by ID
             article = await prisma.article.findUnique({
-                where: { id: parseInt(slug) },
+                where: { id: numId },
                 select: articleSelect
             });
         } else {
-            // Fetch by slug
+            // Fetch by slug (truncated to max length)
             article = await prisma.article.findUnique({
-                where: { slug },
+                where: { slug: slug.substring(0, 255) },
                 select: articleSelect
             });
         }
 
         if (!article) return res.status(404).json({ error: 'Article not found' });
 
-        // Increment views only for frontend (not admin)
+        // Increment views only for frontend (not admin) - with error handling
         if (!req.headers.authorization) {
-            await prisma.article.update({
-                where: { id: article.id },
-                data: { views: { increment: 1 } }
-            });
+            try {
+                await prisma.article.update({
+                    where: { id: article.id },
+                    data: { views: { increment: 1 } }
+                });
+            } catch (viewError) {
+                // Don't fail the request if view increment fails
+                console.warn('Failed to increment views:', viewError.message);
+            }
         }
 
         res.json(article);
     } catch (error) {
         console.error('Fetch article error:', error);
-        res.status(500).json({ error: 'Failed to fetch article', details: error.message, prismaError: error.code });
+        
+        if (error.name === 'PrismaClientKnownRequestError') {
+            return res.status(400).json({ 
+                error: 'Invalid article identifier',
+                code: error.code 
+            });
+        }
+        
+        res.status(500).json({ 
+            error: 'Failed to fetch article',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 };
 

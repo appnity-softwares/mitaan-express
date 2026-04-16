@@ -3,17 +3,45 @@ const prisma = require('../prisma');
 exports.getAllBlogs = async (req, res) => {
     try {
         const { lang, search, author, page = 1, limit = 10, status } = req.query;
-        const skip = (parseInt(page) - 1) * parseInt(limit);
-        const take = parseInt(limit);
+        
+        // Input validation
+        const pageNum = parseInt(page);
+        const limitNum = parseInt(limit);
+        
+        if (isNaN(pageNum) || pageNum < 1 || pageNum > 10000) {
+            return res.status(400).json({ error: 'Page must be between 1 and 10000' });
+        }
+        
+        if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
+            return res.status(400).json({ error: 'Limit must be between 1 and 100' });
+        }
+        
+        const skip = (pageNum - 1) * limitNum;
+        const take = limitNum;
         const where = {};
 
-        if (lang) where.language = lang;
-        if (author && !isNaN(parseInt(author))) where.authorId = parseInt(author);
-        if (status) where.status = status;
-        if (search) {
+        if (lang && typeof lang === 'string' && lang.length <= 10) {
+            where.language = lang;
+        }
+        
+        if (author && !isNaN(parseInt(author))) {
+            const authorId = parseInt(author);
+            if (authorId > 0 && authorId <= 2147483647) {
+                where.authorId = authorId;
+            }
+        }
+        
+        if (status && ['DRAFT', 'PUBLISHED'].includes(status)) {
+            where.status = status;
+        }
+        
+        if (search && typeof search === 'string') {
+            if (search.length > 500) {
+                return res.status(400).json({ error: 'Search query too long (max 500 characters)' });
+            }
             where.OR = [
-                { title: { contains: search, mode: 'insensitive' } },
-                { content: { contains: search, mode: 'insensitive' } }
+                { title: { contains: search.substring(0, 500), mode: 'insensitive' } },
+                { content: { contains: search.substring(0, 500), mode: 'insensitive' } }
             ];
         }
 
@@ -54,8 +82,19 @@ exports.getAllBlogs = async (req, res) => {
 
 exports.getBlogBySlug = async (req, res) => {
     try {
+        const { slug } = req.params;
+        
+        // Input validation
+        if (!slug || typeof slug !== 'string') {
+            return res.status(400).json({ error: 'Slug is required and must be a string' });
+        }
+        
+        if (slug.length > 255) {
+            return res.status(400).json({ error: 'Slug too long (max 255 characters)' });
+        }
+        
         const blog = await prisma.blog.findUnique({
-            where: { slug: req.params.slug },
+            where: { slug: slug.substring(0, 255) },
             select: {
                 id: true, title: true, slug: true, content: true, shortDescription: true,
                 image: true, authorName: true, authorImage: true, status: true,
@@ -67,10 +106,23 @@ exports.getBlogBySlug = async (req, res) => {
                 tags: { select: { id: true, name: true, slug: true } }
             }
         });
+        
         if (!blog) return res.status(404).json({ error: 'Blog not found' });
         res.json(blog);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch blog' });
+        console.error('Get blog error:', error);
+        
+        if (error.name === 'PrismaClientKnownRequestError') {
+            return res.status(400).json({ 
+                error: 'Invalid blog identifier',
+                code: error.code 
+            });
+        }
+        
+        res.status(500).json({ 
+            error: 'Failed to fetch blog',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 };
 
