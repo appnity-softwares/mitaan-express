@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 export const SOCKET_URL = API_URL.replace('/api', '');
 export const PLACEHOLDER_IMAGE = 'https://plus.unsplash.com/premium_photo-1707080369554-359143c6aa0b?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 

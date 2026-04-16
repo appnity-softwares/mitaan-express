@@ -15,24 +15,38 @@ const allowedOrigins = [
     "http://127.0.0.1:5173",
     "https://mitaanexpress.com",
     "https://www.mitaanexpress.com",
-    "https://api.mitaanexpress.com"
-];
+    "https://api.mitaanexpress.com",
+    process.env.FRONTEND_URL // Add from environment
+].filter(Boolean); // Remove undefined/null
 
 app.use(cors({
     origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps, curl, or server-to-server)
         if (!origin) return callback(null, true);
         
-        if (allowedOrigins.includes(origin)) {
+        // Check if origin is in the allowed list
+        const isAllowed = allowedOrigins.some(allowed => {
+            try {
+                // Normalize both for comparison (remove trailing slashes, etc)
+                const originUrl = new URL(origin).origin;
+                const allowedUrl = new URL(allowed).origin;
+                return originUrl === allowedUrl;
+            } catch (e) {
+                return allowed === origin;
+            }
+        });
+
+        if (isAllowed) {
             callback(null, true);
         } else {
-            console.warn(`CORS blocked for origin: ${origin}`);
-            callback(null, false); // Don't pass an error, just deny and let the browser handle the absence of headers
+            console.warn(`[CORS] Request blocked from origin: ${origin}`);
+            callback(null, false); 
         }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Cache-Control', 'Pragma'],
+    exposedHeaders: ['Set-Cookie']
 }));
 app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ limit: '500mb', extended: true }));
