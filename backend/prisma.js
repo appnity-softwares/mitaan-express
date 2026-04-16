@@ -25,38 +25,8 @@ const prisma = new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error', 'warn']
 });
 
-// Middleware: Log all queries in development
-prisma.$use(async (params, next) => {
-    const start = Date.now();
-    try {
-        const result = await next(params);
-        const duration = Date.now() - start;
-        
-        // Log slow queries (> 1 second)
-        if (duration > 1000) {
-            console.warn('[PRISMA SLOW QUERY]', {
-                model: params.model,
-                action: params.action,
-                duration: `${duration}ms`,
-                timestamp: new Date().toISOString()
-            });
-        }
-        
-        return result;
-    } catch (error) {
-        // Log query errors with context
-        console.error('[PRISMA QUERY ERROR]', {
-            model: params.model,
-            action: params.action,
-            error: error.message,
-            code: error.code,
-            timestamp: new Date().toISOString()
-        });
-        
-        // Re-throw to be caught by controller
-        throw error;
-    }
-});
+// Note: prisma.$use() middleware is NOT supported with driver adapters in Prisma 7.x
+// Query logging is handled via the `log` option above
 
 // Graceful shutdown helper
 async function disconnectPrisma() {

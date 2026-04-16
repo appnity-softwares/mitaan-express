@@ -21,8 +21,9 @@ const allowedOrigins = [
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
-// Pre-flight OPTIONS handler - MUST come before cors()
-app.options('*', (req, res) => {
+// Pre-flight OPTIONS handler - Express 5 compatible
+app.use((req, res, next) => {
+    if (req.method !== 'OPTIONS') return next();
     const origin = req.headers.origin;
     const isAllowed = !origin || allowedOrigins.some(allowed => {
         if (!allowed) return false;
@@ -143,7 +144,7 @@ app.get('/health', async (req, res) => {
 // ============================================
 
 // 404 handler for unknown API routes
-app.use('/api/*', (req, res) => {
+app.use('/api/{*path}', (req, res) => {
     res.status(404).json({ error: 'API endpoint not found', path: req.originalUrl });
 });
 

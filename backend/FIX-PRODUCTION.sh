@@ -84,10 +84,10 @@ stop_processes() {
         fi
     fi
     
-    # Kill any Node.js processes on port 3000
-    if lsof -i :3000 &> /dev/null; then
-        log_info "Killing processes on port 3000..."
-        pkill -f "node.*3000" || true
+    # Kill any Node.js processes on port 4000
+    if lsof -i :4000 &> /dev/null; then
+        log_info "Killing processes on port 4000..."
+        pkill -f "node.*4000" || true
         sleep 2
     fi
     
@@ -107,10 +107,12 @@ update_code() {
     log_info "Pulling latest code from GitHub..."
     git pull origin main
     
-    # Clean install dependencies
+    # Install dependencies
     log_info "Installing dependencies..."
-    rm -rf node_modules package-lock.json
-    npm ci --production
+    npm install 
+    # Ensure required Prisma adapter packages are installed
+    log_info "Ensuring Prisma adapter packages..."
+    npm install @prisma/adapter-pg pg --save
     
     # Generate Prisma client
     log_info "Generating Prisma client..."
@@ -239,7 +241,7 @@ verify_fixes() {
     # Check health endpoint
     log_info "Testing health endpoint..."
     for i in {1..10}; do
-        if curl -f http://localhost:3000/health > /dev/null 2>&1; then
+        if curl -f http://localhost:4000/health > /dev/null 2>&1; then
             log_success "Health endpoint responding"
             break
         fi
@@ -252,13 +254,13 @@ verify_fixes() {
     
     # Test API endpoints
     log_info "Testing API endpoints..."
-    if curl -f http://localhost:3000/api/articles?limit=1 > /dev/null 2>&1; then
+    if curl -f http://localhost:4000/api/articles?limit=1 > /dev/null 2>&1; then
         log_success "Articles API working"
     else
         log_warning "Articles API test failed"
     fi
     
-    if curl -f http://localhost:3000/api/blogs?limit=1 > /dev/null 2>&1; then
+    if curl -f http://localhost:4000/api/blogs?limit=1 > /dev/null 2>&1; then
         log_success "Blogs API working"
     else
         log_warning "Blogs API test failed"
@@ -306,13 +308,13 @@ final_status() {
     echo ""
     echo "Status Checks:"
     echo "  PM2 Process: $(pm2 list | grep mitaan-api | awk '{print $1, $2, $3, $4}' || echo 'Not found')"
-    echo "  Health Endpoint: $(curl -s -w '%{http_code}' http://localhost:3000/health -o /dev/null || echo 'Failed')"
+    echo "  Health Endpoint: $(curl -s -w '%{http_code}' http://localhost:4000/health -o /dev/null || echo 'Failed')"
     echo "  NGINX Status: $(systemctl is-active nginx)"
     echo ""
     echo "Useful Commands:"
     echo "  PM2 Logs:       pm2 logs mitaan-api"
     echo "  PM2 Restart:    pm2 restart mitaan-api"
-    echo "  Health Check:   curl http://localhost:3000/health"
+    echo "  Health Check:   curl http://localhost:4000/health"
     echo "  NGINX Reload:   sudo systemctl reload nginx"
     echo ""
     echo "If you still have issues:"
