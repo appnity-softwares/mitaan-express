@@ -8,7 +8,7 @@ const { stripHtml } = require('../utils/sanitize');
  */
 function getImageUrl(image) {
     const R2_BASE = "https://pub-c3d6bb19e99a4f0dae3b620370bc1b9f.r2.dev/";
-    const DEFAULT = "https://mitaanexpress.com/default-og.jpg";
+    const DEFAULT = "https://mitaanexpress.com/uploads/defaultog.png";
 
     // FIX 3: Empty string "" or missing handled correctly
     if (!image || (typeof image === 'string' && image.trim() === "")) return DEFAULT;
@@ -71,6 +71,9 @@ const generateMetaTags = (data) => {
  * SEO Renderer Middleware - FINAL REFINED VERSION
  */
 const seoRenderer = async (req, res, next) => {
+    // CRITICAL DIAGNOSTIC: Confirm middleware is actually execution
+    console.log("SEO MIDDLEWARE HIT:", req.path);
+
     const reqPath = req.path;
     const isArticle = reqPath.startsWith('/article/');
     const isInsight = reqPath.startsWith('/insight/');

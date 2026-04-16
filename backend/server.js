@@ -203,22 +203,21 @@ app.use((err, req, res, next) => {
 // FRONTEND & SEO SERVING
 // ============================================
 
-// 1. Static files first (CSS, JS, Images)
-const frontendPath = path.join(__dirname, '../frontend/dist');
-app.use(express.static(frontendPath, { index: false })); // Don't auto-serve index.html
-
-// 2. Dynamic SEO Injection for all page routes
+// 1. Dynamic SEO Injection for all page routes
 const seoRenderer = require('./middleware/seo.middleware');
 app.get(/.*/, (req, res, next) => {
-    // Phase 1: Filter out API and static files early
     const reqPath = req.path;
+    // CRITICAL: Filter out API and static assets (images, js, css) so they are NOT processed as pages
     if (reqPath.startsWith('/api/') || reqPath.includes('.')) {
         return next();
     }
-    
     // Process through SEO Renderer
     seoRenderer(req, res, next);
 });
+
+// 2. Static files (CSS, JS, Images)
+const frontendPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendPath, { index: false }));
 
 // 3. Fallback for everything else (if SEO renderer didn't respond)
 app.get(/.*/, (req, res) => {
