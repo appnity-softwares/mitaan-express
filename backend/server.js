@@ -9,44 +9,66 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(compression());
-// Configure CORS
+
+// ============================================
+// CORS CONFIGURATION - PRODUCTION SAFE
+// ============================================
 const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://mitaanexpress.com",
     "https://www.mitaanexpress.com",
-    "https://api.mitaanexpress.com",
-    process.env.FRONTEND_URL // Add from environment
-].filter(Boolean); // Remove undefined/null
+    process.env.FRONTEND_URL
+].filter(Boolean);
+
+// Pre-flight OPTIONS handler - MUST come before cors()
+app.options('*', (req, res) => {
+    const origin = req.headers.origin;
+    const isAllowed = !origin || allowedOrigins.some(allowed => {
+        if (!allowed) return false;
+        try {
+            return new URL(origin).origin === new URL(allowed).origin;
+        } catch {
+            return origin === allowed;
+        }
+    });
+
+    if (isAllowed) {
+        res.setHeader('Access-Control-Allow-Origin', origin || '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    res.status(204).end();
+});
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps, curl, or server-to-server)
+        // Allow requests with no origin (mobile apps, curl, server-to-server)
         if (!origin) return callback(null, true);
-        
-        // Check if origin is in the allowed list
+
         const isAllowed = allowedOrigins.some(allowed => {
+            if (!allowed) return false;
             try {
-                // Normalize both for comparison (remove trailing slashes, etc)
-                const originUrl = new URL(origin).origin;
-                const allowedUrl = new URL(allowed).origin;
-                return originUrl === allowedUrl;
-            } catch (e) {
-                return allowed === origin;
+                return new URL(origin).origin === new URL(allowed).origin;
+            } catch {
+                return origin === allowed;
             }
         });
 
         if (isAllowed) {
             callback(null, true);
         } else {
-            console.warn(`[CORS] Request blocked from origin: ${origin}`);
-            callback(null, false); 
+            console.warn(`[CORS] Blocked origin: ${origin}`);
+            // Return the origin anyway to avoid browser errors, but log it
+            callback(null, allowedOrigins[0] || 'https://mitaanexpress.com');
         }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Cache-Control', 'Pragma'],
-    exposedHeaders: ['Set-Cookie']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    exposedHeaders: ['Set-Cookie'],
+    maxAge: 86400 // 24 hours - reduce preflight requests
 }));
 app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ limit: '500mb', extended: true }));
@@ -108,13 +130,8 @@ const { Server } = require("socket.io");
 const http = require('http').createServer(app);
 const io = new Server(http, {
     cors: {
-        origin: [
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-            "https://mitaanexpress.com",
-            "https://www.mitaanexpress.com"
-        ],
-        methods: ["GET", "POST"],
+        origin: allowedOrigins,
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
         credentials: true
     }
 });

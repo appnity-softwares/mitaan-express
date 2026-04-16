@@ -2,6 +2,45 @@ export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/ap
 export const SOCKET_URL = API_URL.replace('/api', '');
 export const PLACEHOLDER_IMAGE = 'https://plus.unsplash.com/premium_photo-1707080369554-359143c6aa0b?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 
+// ============================================
+// PRODUCTION-READY FETCH WITH RETRY LOGIC
+// ============================================
+const DEFAULT_TIMEOUT = 30000; // 30 seconds
+const MAX_RETRIES = 2;
+const RETRY_DELAY = 1000; // 1 second
+
+/**
+ * Fetch with timeout and automatic retry for network failures
+ * @param {string} url - Request URL
+ * @param {Object} options - Fetch options
+ * @param {number} retries - Number of retries left
+ */
+const fetchWithRetry = async (url, options = {}, retries = MAX_RETRIES) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT);
+    
+    try {
+        const response = await fetch(url, {
+            ...options,
+            signal: controller.signal,
+            credentials: 'include', // Required for cookies/auth
+        });
+        clearTimeout(timeoutId);
+        return response;
+    } catch (error) {
+        clearTimeout(timeoutId);
+        
+        // Retry on network errors (not on 4xx/5xx responses)
+        if (retries > 0 && (error.name === 'TypeError' || error.name === 'AbortError' || error.message?.includes('fetch'))) {
+            console.warn(`[API] Network error, retrying... (${retries} retries left)`, error.message);
+            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+            return fetchWithRetry(url, options, retries - 1);
+        }
+        
+        throw error;
+    }
+};
+
 /**
  * Helper to handle API responses, parse JSON safely, and extract errors
  * @param {Response} response - Fetch API Response object
@@ -247,7 +286,7 @@ export const createBlog = async (token, formData) => {
 
 export const updateBlog = async (token, id, formData) => {
     try {
-        const response = await fetch(`${API_URL}/blogs/${id}`, { // Using ID now
+        const response = await fetchWithRetry(`${API_URL}/blogs/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -257,6 +296,10 @@ export const updateBlog = async (token, id, formData) => {
         });
         return await handleResponse(response);
     } catch (error) {
+        // Provide user-friendly error messages
+        if (error.message?.includes('Failed to fetch') || error.name === 'TypeError') {
+            throw new Error('Network error: Unable to connect to server. Please check your internet connection or try again later.');
+        }
         throw error;
     }
 };
