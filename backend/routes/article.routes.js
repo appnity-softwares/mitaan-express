@@ -5,6 +5,7 @@ const { authenticateToken, authorizeRoles } = require('../middleware/auth.middle
 
 router.get('/', articleController.getAllArticles);
 router.get('/:slug', articleController.getArticleBySlug);
+router.patch('/:id/view', articleController.incrementViews);
 
 
 

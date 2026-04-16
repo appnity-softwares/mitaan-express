@@ -67,7 +67,13 @@ const ArticleCard = ({ article, language }) => {
                 <div className="flex items-center justify-between text-slate-400 dark:text-gray-500">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                            <User size={14} className="text-red-600" />
+                            <div className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-white/5 ring-1 ring-slate-200 dark:ring-white/10 shadow-sm">
+                                {article.authorImage ? (
+                                    <img src={formatImageUrl(article.authorImage, 100)} alt={article.author} className="w-full h-full object-cover" />
+                                ) : (
+                                    <User size={10} className="text-red-600" />
+                                )}
+                            </div>
                             <span className="text-[10px] font-black uppercase tracking-widest">{renderSafe(article.author, 'Mitaan')}</span>
                         </div>
                         <div className="flex items-center gap-2 border-l border-slate-200 dark:border-white/10 pl-4">

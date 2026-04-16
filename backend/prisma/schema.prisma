@@ -37,9 +37,13 @@ model Article {
   content          String        @db.Text
   shortDescription String?       @db.Text
   image            String?
-  authorName       String?       // Custom publisher name
-  authorImage      String?       // Custom publisher image
+  authorName       String?       // Legacy/Alternative publisher name
+  authorImage      String?       // Legacy/Alternative publisher image
   
+  // New Publisher Relationship
+  publisher        Publisher?    @relation(fields: [publisherId], references: [id])
+  publisherId      Int?
+
   // Options
   isBreaking       Boolean       @default(false)
   isTrending       Boolean       @default(false)
@@ -126,9 +130,13 @@ model Blog {
   content          String        @db.Text
   shortDescription String?       @db.Text
   image            String?
-  authorName       String?       // Custom publisher name
-  authorImage      String?       // Custom publisher image
+  authorName       String?       // Legacy/Alternative publisher name
+  authorImage      String?       // Legacy/Alternative publisher image
   
+  // New Publisher Relationship
+  publisher        Publisher?    @relation(fields: [publisherId], references: [id])
+  publisherId      Int?
+
   // Relations
   author           User          @relation(fields: [authorId], references: [id])
   authorId         Int
@@ -155,6 +163,19 @@ model Blog {
 
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
+}
+
+model Publisher {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  nameHi      String?   // Hindi name
+  image       String?
+  description String?   @db.Text
+  designation String?
+  articles    Article[]
+  blogs       Blog[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 

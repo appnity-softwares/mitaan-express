@@ -31,7 +31,8 @@ const HomePage = ({ language }) => {
         description: a.shortDescription || stripHtml(a.content || '').substring(0, 150) + '...' || '',
         image: formatImageUrl(a.image),
         category: language === 'hi' ? (a.category?.nameHi || a.category?.name) : a.category?.name,
-        author: a.authorName || a.author?.name || 'Mitaan',
+        author: (language === 'hi' ? (a.publisher?.nameHi || a.publisher?.name) : a.publisher?.name) || a.authorName || a.author?.name || 'Mitaan',
+        authorImage: a.publisher?.image || a.authorImage || a.author?.image,
         date: new Date(a.createdAt).toLocaleDateString(),
         slug: a.slug,
         type: a.type

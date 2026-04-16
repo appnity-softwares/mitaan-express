@@ -205,6 +205,7 @@ const AdminSidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout, theme, to
 
                         <SidebarLink to="/admin/my-blogs" icon={<FileText size={17} />} label={t('myBlogs')} />
                         <SidebarLink to="/admin/categories" icon={<FolderTree size={17} />} label={t('categories')} />
+                        <SidebarLink to="/admin/publishers" icon={<Users size={17} />} label="Authors" />
                         <SidebarLink to="/admin/featured" icon={<Star size={17} />} label={t('featured')} />
                         <SidebarLink to="/admin/media" icon={<ImageIcon size={17} />} label={t('mediaLibrary') || 'Gallery'} />
 

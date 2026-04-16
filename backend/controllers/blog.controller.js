@@ -55,6 +55,10 @@ exports.getAllBlogs = async (req, res) => {
                     language: true, views: true, isBreaking: true, isTrending: true,
                     isFeatured: true, isMustRead: true, categoryId: true, createdAt: true,
                     updatedAt: true,
+                    publisherId: true,
+                    publisher: {
+                        select: { id: true, name: true, nameHi: true, image: true, designation: true }
+                    },
                     category: { select: { id: true, name: true, nameHi: true, slug: true } },
                     author: { select: { id: true, name: true, image: true } },
                     tags: { select: { id: true, name: true, slug: true } }
@@ -102,6 +106,10 @@ exports.getBlogBySlug = async (req, res) => {
                 language: true, views: true, isBreaking: true, isTrending: true,
                 isFeatured: true, isMustRead: true, categoryId: true, createdAt: true,
                 updatedAt: true,
+                publisherId: true,
+                publisher: {
+                    select: { id: true, name: true, nameHi: true, image: true, description: true, designation: true }
+                },
                 category: { select: { id: true, name: true, nameHi: true, slug: true } },
                 author: { select: { id: true, name: true, image: true } },
                 tags: { select: { id: true, name: true, slug: true } }
@@ -131,7 +139,7 @@ const { uploadToR2, processContentImages, isR2Enabled } = require('../utils/r2')
 
 exports.createBlog = async (req, res) => {
     try {
-        let { title, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, isMustRead, createdAt, authorName, authorImage } = req.body;
+        let { title, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, isMustRead, createdAt, authorName, authorImage, publisherId } = req.body;
 
         // Sanitize plain-text fields - strip HTML tags
         const plainFields = { title, shortDescription, authorName };
@@ -185,6 +193,7 @@ exports.createBlog = async (req, res) => {
                 authorImage: authorImage || null,
                 createdAt: createdAt ? new Date(createdAt) : undefined,
                 author: { connect: { id: req.user.id } },
+                publisher: publisherId ? { connect: { id: parseInt(publisherId) } } : undefined,
                 category: categoryId ? { connect: { id: parseInt(categoryId) } } : undefined,
                 tags: tags && tags.length > 0 ? {
                     connectOrCreate: tags.map(tag => {
@@ -216,7 +225,7 @@ exports.createBlog = async (req, res) => {
 exports.updateBlog = async (req, res) => {
     try {
         const { id } = req.params;
-        let { title, slug, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, isMustRead, createdAt, authorName, authorImage } = req.body;
+        let { title, slug, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, isMustRead, createdAt, authorName, authorImage, publisherId } = req.body;
 
         // Sanitize plain-text fields - strip HTML tags
         const plainFields = { title, shortDescription, authorName };
@@ -303,7 +312,8 @@ exports.updateBlog = async (req, res) => {
                             create: { name: tag, slug: tagSlug }
                         };
                     })
-                } : undefined
+                } : undefined,
+                publisher: publisherId ? { connect: { id: parseInt(publisherId) } } : (req.body.hasOwnProperty('publisherId') ? { disconnect: true } : undefined)
             }
         });
         res.json(blog);
@@ -319,5 +329,32 @@ exports.deleteBlog = async (req, res) => {
         res.json({ message: 'Blog deleted' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete blog' });
+    }
+};
+
+exports.incrementViews = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const blogId = parseInt(id);
+        
+        if (isNaN(blogId)) {
+            return res.status(400).json({ error: 'Invalid blog ID' });
+        }
+
+        // Logic to prevent duplicate counting (e.g. check Authorization header)
+        // If it's an admin, don't increment
+        if (req.headers.authorization) {
+            return res.status(204).end();
+        }
+
+        await prisma.blog.update({
+            where: { id: blogId },
+            data: { views: { increment: 1 } }
+        });
+
+        res.status(204).end();
+    } catch (error) {
+        console.warn('Silent view increment failure:', error.message);
+        res.status(204).end(); // Always return success/no-content to frontend
     }
 };

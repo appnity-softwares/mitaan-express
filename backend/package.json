@@ -20,6 +20,8 @@
     "@aws-sdk/lib-storage": "^3.999.0",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@vercel/og": "^0.11.1",
     "axios": "^1.14.0",
     "bcryptjs": "^3.0.3",
     "compression": "^1.8.1",
@@ -30,6 +32,8 @@
     "multer": "^2.1.0",
     "pg": "^8.17.2",
     "prisma": "^7.3.0",
+    "satori": "^0.26.0",
+    "satori-html": "^0.3.2",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {

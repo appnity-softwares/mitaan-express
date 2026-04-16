@@ -10,6 +10,7 @@ import ArticleEditor from './admin/ArticleEditor';
 import BlogEditor from './admin/BlogEditor';
 import Settings from './admin/Settings';
 import Categories from './admin/Categories';
+import Publishers from './admin/Publishers';
 import { Menu, Moon, Sun, LogOut, Globe, ChevronDown, RefreshCcw } from 'lucide-react';
 
 import MediaLibrary from './admin/MediaLibrary';
@@ -220,6 +221,7 @@ const AdminContent = () => {
                         <Route path="/articles/new" element={<ArticleEditor />} />
                         <Route path="/articles/edit/:id" element={<ArticleEditor />} />
                         <Route path="/categories" element={<Categories />} />
+                        <Route path="/publishers" element={<Publishers />} />
                         <Route path="/featured" element={<FeaturedContent />} />
                         <Route path="/media" element={<MediaLibrary />} />
 

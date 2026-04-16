@@ -58,6 +58,10 @@ exports.getAllArticles = async (req, res) => {
                 image: true,
                 authorName: true,
                 authorImage: true,
+                publisherId: true,
+                publisher: {
+                    select: { id: true, name: true, nameHi: true, image: true, designation: true }
+                },
                 videoUrl: true,
                 views: true,
                 status: true,
@@ -115,7 +119,11 @@ exports.getArticleBySlug = async (req, res) => {
 
         const articleSelect = {
             id: true, title: true, slug: true, content: true, shortDescription: true,
-            image: true, authorName: true, authorImage: true, videoUrl: true,
+            image: true, authorName: true, authorImage: true, publisherId: true,
+            publisher: {
+                select: { id: true, name: true, nameHi: true, image: true, description: true, designation: true }
+            },
+            videoUrl: true,
             views: true, status: true, published: true, language: true,
             isFeatured: true, isTrending: true, isBreaking: true, isMustRead: true,
             categoryId: true, createdAt: true, updatedAt: true,
@@ -151,19 +159,6 @@ exports.getArticleBySlug = async (req, res) => {
 
         if (!article) return res.status(404).json({ error: 'Article not found' });
 
-        // Increment views only for frontend (not admin) - with error handling
-        if (!req.headers.authorization) {
-            try {
-                await prisma.article.update({
-                    where: { id: article.id },
-                    data: { views: { increment: 1 } }
-                });
-            } catch (viewError) {
-                // Don't fail the request if view increment fails
-                console.warn('Failed to increment views:', viewError.message);
-            }
-        }
-
         res.json(article);
     } catch (error) {
         console.error('Fetch article error:', error);
@@ -189,7 +184,7 @@ exports.createArticle = async (req, res) => {
         title, slug, content, shortDescription, image, videoUrl, categoryId,
         tags, isBreaking, isTrending, isFeatured, isMustRead,
         metaTitle, metaDescription, metaKeywords, status, metadata,
-        priority, scheduledAt, language, authorName, authorImage, createdAt
+        priority, scheduledAt, language, authorName, authorImage, createdAt, publisherId
     } = req.body;
 
     // Sanitize plain-text fields - strip HTML tags
@@ -272,6 +267,7 @@ exports.createArticle = async (req, res) => {
                 scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
                 createdAt: createdAt ? new Date(createdAt) : undefined,
                 category: { connect: { id: parseInt(categoryId) } },
+                publisher: publisherId ? { connect: { id: parseInt(publisherId) } } : undefined,
                 author: { connect: { id: req.user.id } },
                 tags: { connectOrCreate: tagConnect }
             },
@@ -310,7 +306,7 @@ exports.updateArticle = async (req, res) => {
         title, slug, content, shortDescription, image, videoUrl, categoryId,
         tags, isBreaking, isTrending, isFeatured, isMustRead,
         metaTitle, metaDescription, metaKeywords, status, metadata,
-        priority, scheduledAt, language, authorName, authorImage, createdAt
+        priority, scheduledAt, language, authorName, authorImage, createdAt, publisherId
     } = req.body;
 
     // Sanitize plain-text fields - strip HTML tags
@@ -402,6 +398,12 @@ exports.updateArticle = async (req, res) => {
             return res.status(400).json({ error: 'Invalid category ID' });
         }
 
+        if (publisherId) {
+            updateData.publisher = { connect: { id: parseInt(publisherId) } };
+        } else if (req.body.hasOwnProperty('publisherId')) {
+            updateData.publisher = { disconnect: true };
+        }
+
         const article = await prisma.article.update({
             where: { id: articleId },
             data: updateData
@@ -462,5 +464,31 @@ exports.toggleActive = async (req, res) => {
     } catch (error) {
         console.error('Toggle error:', error);
         res.status(500).json({ error: 'Toggle failed' });
+    }
+};
+
+exports.incrementViews = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const articleId = parseInt(id);
+        
+        if (isNaN(articleId)) {
+            return res.status(400).json({ error: 'Invalid article ID' });
+        }
+
+        // Don't increment if admin is viewing
+        if (req.headers.authorization) {
+            return res.status(204).end();
+        }
+
+        await prisma.article.update({
+            where: { id: articleId },
+            data: { views: { increment: 1 } }
+        });
+
+        res.status(204).end();
+    } catch (error) {
+        console.warn('Silent view increment failure:', error.message);
+        res.status(204).end();
     }
 };

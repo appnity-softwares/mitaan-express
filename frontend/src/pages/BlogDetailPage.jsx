@@ -6,7 +6,7 @@ import {
     Share2, Bookmark, Check, Copy,
     Facebook, Twitter, Linkedin
 } from 'lucide-react';
-import { fetchBlogBySlug, fetchArticles, formatImageUrl } from '../services/api';
+import { fetchBlogBySlug, fetchArticles, formatImageUrl, incrementBlogViews } from '../services/api';
 import AdSpace from '../components/AdSpace';
 import SEO from '../components/SEO';
 import FloatingShareButtons from '../components/FloatingShareButtons';
@@ -54,6 +54,17 @@ const BlogDetailPage = ({ language }) => {
         };
         loadData();
     }, [slug, language, articles, navigate]);
+
+    // Dynamic View Count - only once per session
+    useEffect(() => {
+        if (blog?.id) {
+            const sessionKey = `viewed_blog_${blog.id}`;
+            if (!sessionStorage.getItem(sessionKey)) {
+                incrementBlogViews(blog.id);
+                sessionStorage.setItem(sessionKey, 'true');
+            }
+        }
+    }, [blog?.id]);
 
     const handleShare = async (platform) => {
         const rawUrl = window.location.href;
@@ -168,17 +179,23 @@ const BlogDetailPage = ({ language }) => {
 
                     <div className="flex flex-wrap items-center gap-6 mb-8 pb-8 border-b border-slate-200 dark:border-slate-800">
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg">
-                                {blog.authorImage ? (
+                            <Link to={blog.publisherId ? `/author/${blog.publisherId}` : '#'} className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-lg transition-transform active:scale-95">
+                                {blog.publisher?.image ? (
+                                    <img src={formatImageUrl(blog.publisher.image, 200)} alt={blog.publisher.nameHi || blog.publisher.name} className="w-full h-full object-cover" />
+                                ) : blog.authorImage ? (
                                     <img src={formatImageUrl(blog.authorImage, 200)} alt={blog.authorName || 'Author'} className="w-full h-full object-cover" />
                                 ) : blog.author?.image ? (
                                     <img src={formatImageUrl(blog.author.image, 200)} alt={blog.author.name} className="w-full h-full object-cover" />
                                 ) : (
                                     <User size={24} className="text-slate-500" />
                                 )}
-                            </div>
+                            </Link>
                             <div className="text-left">
-                                <p className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wide">{blog.authorName || blog.author?.name || 'Author'}</p>
+                                <Link to={blog.publisherId ? `/author/${blog.publisherId}` : '#'} className="block">
+                                    <p className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wide hover:text-red-600 transition-colors">
+                                        {(language === 'hi' ? (blog.publisher?.nameHi || blog.publisher?.name) : blog.publisher?.name) || blog.authorName || blog.author?.name || 'Author'}
+                                    </p>
+                                </Link>
                                 <p className="text-xs text-slate-500">{formattedDate}</p>
                             </div>
                         </div>

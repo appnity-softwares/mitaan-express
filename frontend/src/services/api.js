@@ -148,6 +148,14 @@ export const fetchArticleBySlug = async (slug) => {
     }
 };
 
+export const incrementArticleViews = async (id) => {
+    try {
+        await fetch(`${API_URL}/articles/${id}/view`, { method: 'PATCH' });
+    } catch (e) {
+        console.warn('View increment failed', e);
+    }
+};
+
 export const loginUser = async (email, password, rememberMe) => {
     try {
         const response = await fetch(`${API_URL}/auth/login`, {
@@ -264,6 +272,14 @@ export const fetchBlogBySlug = async (slug) => { // Added for editing
         return await handleResponse(response);
     } catch (error) {
         return null;
+    }
+};
+
+export const incrementBlogViews = async (id) => {
+    try {
+        await fetch(`${API_URL}/blogs/${id}/view`, { method: 'PATCH' });
+    } catch (e) {
+        console.warn('View increment failed', e);
     }
 };
 
@@ -425,6 +441,63 @@ export const deleteDonation = async (id, token) => {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Failed to delete donation');
+        return true;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Publisher API
+export const fetchPublishers = async () => {
+    try {
+        const response = await fetch(`${API_URL}/publishers`);
+        if (!response.ok) throw new Error('Failed to fetch publishers');
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching publishers:', error);
+        return [];
+    }
+};
+
+export const createPublisher = async (token, formData) => {
+    try {
+        const response = await fetch(`${API_URL}/publishers`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(formData),
+        });
+        return await handleResponse(response);
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updatePublisher = async (token, id, formData) => {
+    try {
+        const response = await fetch(`${API_URL}/publishers/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(formData),
+        });
+        return await handleResponse(response);
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deletePublisher = async (token, id) => {
+    try {
+        const response = await fetch(`${API_URL}/publishers/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Failed to delete publisher');
         return true;
     } catch (error) {
         throw error;

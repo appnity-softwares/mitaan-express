@@ -184,11 +184,19 @@ const BlogsPage = ({ language }) => {
 
                                         <div className="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-white/10">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center">
-                                                    <User size={18} className="text-slate-400" />
+                                                <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center overflow-hidden ring-2 ring-white dark:ring-slate-800 shadow-sm">
+                                                    {featuredArticle.publisher?.image ? (
+                                                        <img src={formatImageUrl(featuredArticle.publisher.image, 200)} alt={featuredArticle.publisher.name} className="w-full h-full object-cover" />
+                                                    ) : featuredArticle.authorImage ? (
+                                                        <img src={formatImageUrl(featuredArticle.authorImage, 200)} alt={featuredArticle.authorName} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <User size={18} className="text-slate-400" />
+                                                    )}
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="text-xs font-bold uppercase">{featuredArticle.authorName || featuredArticle.author?.name || 'Editor'}</span>
+                                                    <span className="text-xs font-bold uppercase">
+                                                        {(language === 'hi' ? (featuredArticle.publisher?.nameHi || featuredArticle.publisher?.name) : featuredArticle.publisher?.name) || featuredArticle.authorName || featuredArticle.author?.name || 'Editor'}
+                                                    </span>
                                                     <span className="text-[10px] text-slate-400">{new Date(featuredArticle.createdAt).toLocaleDateString()}</span>
                                                 </div>
                                             </div>
@@ -223,6 +231,21 @@ const BlogsPage = ({ language }) => {
                                                 </p>
 
                                                 <div className="flex items-center gap-3 text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest hidden md:flex">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-white/5 ring-1 ring-slate-200 dark:ring-white/10 shadow-sm">
+                                                            {article.publisher?.image ? (
+                                                                <img src={formatImageUrl(article.publisher.image, 100)} alt={article.publisher.name} className="w-full h-full object-cover" />
+                                                            ) : article.authorImage ? (
+                                                                <img src={formatImageUrl(article.authorImage, 100)} alt={article.authorName} className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                <User size={10} />
+                                                            )}
+                                                        </div>
+                                                        <span className="group-hover:text-red-600 transition-colors">
+                                                            {(language === 'hi' ? (article.publisher?.nameHi || article.publisher?.name) : article.publisher?.name) || article.authorName || article.author?.name || 'Editor'}
+                                                        </span>
+                                                    </div>
+                                                    <span>•</span>
                                                     <div className="flex items-center gap-1.5 focus:text-slate-900 group-hover:text-red-600 transition-colors">
                                                         <Clock size={12} />
                                                         <span>{Math.ceil((article.content?.length || 0) / 1000) || 1} min read</span>

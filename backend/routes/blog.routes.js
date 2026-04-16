@@ -5,6 +5,7 @@ const { authenticateToken } = require('../middleware/auth.middleware');
 
 router.get('/', blogController.getAllBlogs);
 router.get('/:slug', blogController.getBlogBySlug);
+router.patch('/:id/view', blogController.incrementViews);
 
 router.post('/', authenticateToken, blogController.createBlog);
 router.put('/:id', authenticateToken, blogController.updateBlog);

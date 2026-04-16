@@ -89,6 +89,7 @@ const donationRoutes = require('./routes/donation.routes');
 const contactRoutes = require('./routes/contact.routes');
 const searchRoutes = require('./routes/search.routes');
 const seoRoutes = require('./routes/seo.routes');
+const publisherRoutes = require('./routes/publisher.routes');
 
 
 app.use('/api/auth', authRoutes);
@@ -104,6 +105,7 @@ app.use('/api/donations', donationRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/seo', seoRoutes);
+app.use('/api/publishers', publisherRoutes);
 
 // ============================================
 // HEALTH CHECK ENDPOINT - For monitoring & deploy verification

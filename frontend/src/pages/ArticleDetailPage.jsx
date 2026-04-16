@@ -13,7 +13,7 @@ import RelatedPosts from '../components/RelatedPosts';
 import useIsShort from '../hooks/useIsShort';
 import SEO from '../components/SEO';
 import FloatingShareButtons from '../components/FloatingShareButtons';
-import { formatImageUrl } from '../services/api';
+import { formatImageUrl, incrementArticleViews } from '../services/api';
 
 const stripHtml = (html) => {
     if (!html) return '';
@@ -98,6 +98,17 @@ const ArticleDetailPage = ({ language }) => {
             }
         }
     }, [id, articles, blogs, navigate]);
+
+    // Dynamic View Count - only once per session
+    useEffect(() => {
+        if (article?.id) {
+            const sessionKey = `viewed_art_${article.id}`;
+            if (!sessionStorage.getItem(sessionKey)) {
+                incrementArticleViews(article.id);
+                sessionStorage.setItem(sessionKey, 'true');
+            }
+        }
+    }, [article?.id]);
 
     const handleShare = async (platform) => {
         const rawUrl = window.location.href;
@@ -241,8 +252,10 @@ const ArticleDetailPage = ({ language }) => {
                     {/* Meta Info */}
                     <div className="flex flex-wrap items-center justify-between gap-4 border-y border-slate-100 dark:border-white/5 py-4 sm:py-6 w-full mb-8 sm:mb-12">
                         <div className="flex flex-wrap items-center gap-3">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-white dark:ring-slate-800 shadow-lg overflow-hidden shrink-0">
-                                {article.authorImage ? (
+                            <Link to={article.publisherId ? `/author/${article.publisherId}` : '#'} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-white dark:ring-slate-800 shadow-lg overflow-hidden shrink-0 transition-transform active:scale-95">
+                                {article.publisher?.image ? (
+                                    <img src={formatImageUrl(article.publisher.image, 200)} alt={article.publisher.nameHi || article.publisher.name} className="w-full h-full object-cover" />
+                                ) : article.authorImage ? (
                                     <img src={formatImageUrl(article.authorImage, 200)} alt={article.authorName || 'Author'} className="w-full h-full object-cover" />
                                 ) : article.author?.image ? (
                                     <img src={formatImageUrl(article.author.image, 200)} alt={article.author.name} className="w-full h-full object-cover" />
@@ -251,9 +264,13 @@ const ArticleDetailPage = ({ language }) => {
                                         <User size={20} className="text-slate-400" />
                                     </div>
                                 )}
-                            </div>
+                            </Link>
                             <div className="text-left">
-                                <p className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wide">{article.authorName || article.author?.name || 'Mitaan Team'}</p>
+                                <Link to={article.publisherId ? `/author/${article.publisherId}` : '#'} className="block">
+                                    <p className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wide hover:text-red-600 transition-colors">
+                                        {(language === 'hi' ? (article.publisher?.nameHi || article.publisher?.name) : article.publisher?.name) || article.authorName || article.author?.name || 'Mitaan Team'}
+                                    </p>
+                                </Link>
                                 <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{formattedDate}</p>
                             </div>
                         </div>

@@ -9,6 +9,7 @@ import {
     fetchStats,
     fetchSettings,
     fetchActivityLogs,
+    fetchPublishers,
     API_URL,
 } from '../services/api';
 
@@ -69,6 +70,17 @@ export const useCategories = () => {
         queryKey: queryKeys.categories.all,
         queryFn: fetchCategories,
         staleTime: 10 * 60 * 1000, // Categories change less often - 10 min
+    });
+};
+
+/**
+ * Fetch all publishers
+ */
+export const usePublishers = () => {
+    return useQuery({
+        queryKey: ['publishers'],
+        queryFn: fetchPublishers,
+        staleTime: 10 * 60 * 1000,
     });
 };
 

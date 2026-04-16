@@ -159,4 +159,23 @@ Sitemap: ${DOMAIN}/api/seo/rss.xml`;
     res.send(robots);
 });
 
+const { generateOgImage } = require('../utils/og-generator');
+
+// Dynamic OG Image Generator
+router.get('/og', async (req, res) => {
+    try {
+        const title = req.query.title || 'Mitaan Express';
+        const png = await generateOgImage(title);
+        
+        // Cache for 24 hours (86400 seconds)
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.setHeader('Content-Type', 'image/png');
+        return res.send(png);
+    } catch (error) {
+        console.error('[OG API Error]', error);
+        // Fallback to static logo on error
+        res.status(500).redirect('/logo.png');
+    }
+});
+
 module.exports = router;

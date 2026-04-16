@@ -8,6 +8,9 @@ import {
     updateBlog,
     deleteBlog,
     updateSettings,
+    createPublisher,
+    updatePublisher,
+    deletePublisher,
     API_URL,
 } from '../services/api';
 
@@ -251,6 +254,64 @@ export const useCreateComment = () => {
             });
             // Also invalidate admin comments list
             queryClient.invalidateQueries({ queryKey: queryKeys.admin.comments });
+        },
+    });
+};
+
+// ============================================
+// PUBLISHER MUTATIONS
+// ============================================
+
+/**
+ * Create new publisher
+ */
+export const useCreatePublisher = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (formData) => {
+            const token = getToken();
+            if (!token) throw new Error('No auth token');
+            return createPublisher(token, formData);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['publishers'] });
+        },
+    });
+};
+
+/**
+ * Update existing publisher
+ */
+export const useUpdatePublisher = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, formData }) => {
+            const token = getToken();
+            if (!token) throw new Error('No auth token');
+            return updatePublisher(token, id, formData);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['publishers'] });
+        },
+    });
+};
+
+/**
+ * Delete publisher
+ */
+export const useDeletePublisher = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (id) => {
+            const token = getToken();
+            if (!token) throw new Error('No auth token');
+            return deletePublisher(token, id);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['publishers'] });
         },
     });
 };

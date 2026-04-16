@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Save, Type, Globe, Tag, Zap, TrendingUp, Eye, Calendar, Image as ImageIcon, Upload, X } from 'lucide-react';
 import QuillEditor from '../../components/admin/QuillEditor';
-import { useCategories, useArticle } from '../../hooks/useQueries';
+import { useCategories, useArticle, usePublishers } from '../../hooks/useQueries';
 import { useCreateArticle, useUpdateArticle } from '../../hooks/useMutations';
 import { useCreateMedia } from '../../hooks/useMedia';
 import { useAdminTranslation } from '../../context/AdminTranslationContext';
@@ -34,6 +34,7 @@ const ArticleEditor = () => {
 
     // TanStack Query Hooks
     const { data: categories = [] } = useCategories();
+    const { data: publishers = [] } = usePublishers();
     const { data: article, isLoading: articleLoading } = useArticle(id);
     const createMediaMutation = useCreateMedia();
 
@@ -59,6 +60,7 @@ const ArticleEditor = () => {
         createdAt: '',
         authorName: '',
         authorImage: '',
+        publisherId: '',
         isMustRead: false,
     });
 
@@ -90,6 +92,7 @@ const ArticleEditor = () => {
                 createdAt: article.createdAt ? new Date(article.createdAt).toISOString().slice(0, 16) : '',
                 authorName: article.authorName || '',
                 authorImage: article.authorImage || '',
+                publisherId: article.publisherId?.toString() || '',
                 isMustRead: article.isMustRead || false,
             });
         } else if (defaultCategoryId && !id) {
@@ -181,6 +184,7 @@ const ArticleEditor = () => {
                 createdAt: formData.createdAt ? new Date(formData.createdAt).toISOString() : undefined,
                 authorName: formData.authorName,
                 authorImage: formData.authorImage,
+                publisherId: formData.publisherId ? parseInt(formData.publisherId) : null,
                 isMustRead: formData.isMustRead,
                 metadata: {} // Clear metadata usage for these fields
             };
@@ -749,50 +753,21 @@ const ArticleEditor = () => {
                                 </label>
 
                                 <div className="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-white/5 shadow-sm space-y-4">
-                                    <label className="block text-xs font-bold text-slate-500 uppercase">Publisher Override</label>
-                                    <input
-                                        type="text"
-                                        name="authorName"
-                                        value={formData.authorName}
-                                        onChange={handleChange}
-                                        placeholder="Publisher Name..."
-                                        className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-sm outline-none focus:ring-2 ring-red-600 dark:text-white rounded-lg"
-                                    />
-                                    <div className="space-y-2">
-                                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Publisher Image URL</label>
-                                        <div className="flex gap-2">
-                                            <input
-                                                type="url"
-                                                name="authorImage"
-                                                value={formData.authorImage}
-                                                onChange={handleChange}
-                                                placeholder="https://..."
-                                                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-sm outline-none focus:ring-2 ring-red-600 dark:text-white rounded-lg"
-                                            />
-                                            <label className="p-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg cursor-pointer hover:opacity-90">
-                                                <Upload size={14} />
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    className="hidden"
-                                                    onChange={(e) => {
-                                                        if (e.target.files?.[0]) {
-                                                            const file = e.target.files[0];
-                                                            const fmData = new FormData();
-                                                            fmData.append('file', file);
-                                                            fmData.append('type', 'IMAGE');
-                                                            fmData.append('title', file.name || 'publisher-avatar');
-                                                            fmData.append('category', 'SYSTEM');
-                                                            fmData.append('size', `${(file.size / 1024).toFixed(0)} KB`);
-                                                            createMediaMutation.mutate({ payload: fmData }, {
-                                                                onSuccess: (data) => setFormData(p => ({ ...p, authorImage: data.url })),
-                                                                onError: (err) => toast.error(err.message)
-                                                            });
-                                                        }
-                                                    }}
-                                                />
-                                            </label>
-                                        </div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase">Select Author</label>
+                                    <div className="space-y-3">
+                                        <select
+                                            name="publisherId"
+                                            value={formData.publisherId}
+                                            onChange={handleChange}
+                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-sm outline-none focus:ring-2 ring-red-600 dark:text-white rounded-lg font-bold"
+                                        >
+                                            <option value="">Choose an Author...</option>
+                                            {publishers.map(pub => (
+                                                <option key={pub.id} value={pub.id}>
+                                                    {pub.nameHi} / {pub.name}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
                                 </div>
 
