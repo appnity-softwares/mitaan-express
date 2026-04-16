@@ -114,14 +114,14 @@ const BlogDetailPage = ({ language }) => {
             <SEO
                 title={`${blog.title} - Mitaan Express`}
                 description={blog.shortDescription || blog.content?.replace(/<[^>]*>/g, '').substring(0, 150)}
-                image={blog.image}
+                image={formatImageUrl(blog.image)}
                 type="article"
                 schemaData={{
                     "@context": "https://schema.org",
                     "@type": "BlogPosting",
                     "headline": blog.title,
                     "description": blog.shortDescription || blog.content?.replace(/<[^>]*>/g, '').substring(0, 150),
-                    "image": [blog.image],
+                    "image": [formatImageUrl(blog.image)],
                     "datePublished": blog.createdAt,
                     "dateModified": blog.updatedAt || blog.createdAt,
                     "author": [{

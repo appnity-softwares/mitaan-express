@@ -1,4 +1,5 @@
 const prisma = require('../prisma');
+const { sanitizeFields, PLAIN_TEXT_FIELDS } = require('../utils/sanitize');
 
 exports.getAllArticles = async (req, res) => {
     try {
@@ -191,6 +192,15 @@ exports.createArticle = async (req, res) => {
         priority, scheduledAt, language, authorName, authorImage, createdAt
     } = req.body;
 
+    // Sanitize plain-text fields - strip HTML tags
+    const plainFields = { title, shortDescription, metaTitle, metaDescription, authorName };
+    sanitizeFields(plainFields, PLAIN_TEXT_FIELDS);
+    title = plainFields.title;
+    shortDescription = plainFields.shortDescription;
+    metaTitle = plainFields.metaTitle;
+    metaDescription = plainFields.metaDescription;
+    authorName = plainFields.authorName;
+
     if (!categoryId || isNaN(parseInt(categoryId))) {
         return res.status(400).json({ error: 'Please select a valid category.' });
     }
@@ -302,6 +312,15 @@ exports.updateArticle = async (req, res) => {
         metaTitle, metaDescription, metaKeywords, status, metadata,
         priority, scheduledAt, language, authorName, authorImage, createdAt
     } = req.body;
+
+    // Sanitize plain-text fields - strip HTML tags
+    const plainFields = { title, shortDescription, metaTitle, metaDescription, authorName };
+    sanitizeFields(plainFields, PLAIN_TEXT_FIELDS);
+    title = plainFields.title;
+    shortDescription = plainFields.shortDescription;
+    metaTitle = plainFields.metaTitle;
+    metaDescription = plainFields.metaDescription;
+    authorName = plainFields.authorName;
 
     try {
         // Handle Featured Image Upload to R2

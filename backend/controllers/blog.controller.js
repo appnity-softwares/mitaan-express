@@ -1,4 +1,5 @@
 const prisma = require('../prisma');
+const { sanitizeFields, PLAIN_TEXT_FIELDS } = require('../utils/sanitize');
 
 exports.getAllBlogs = async (req, res) => {
     try {
@@ -132,6 +133,13 @@ exports.createBlog = async (req, res) => {
     try {
         let { title, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, isMustRead, createdAt, authorName, authorImage } = req.body;
 
+        // Sanitize plain-text fields - strip HTML tags
+        const plainFields = { title, shortDescription, authorName };
+        sanitizeFields(plainFields, PLAIN_TEXT_FIELDS);
+        title = plainFields.title;
+        shortDescription = plainFields.shortDescription;
+        authorName = plainFields.authorName;
+
         // Handle Featured Image Upload to R2
         if (isR2Enabled && image && image.startsWith('data:image')) {
             const fileName = `blog-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.jpg`;
@@ -209,6 +217,13 @@ exports.updateBlog = async (req, res) => {
     try {
         const { id } = req.params;
         let { title, slug, content, status, language, tags, categoryId, image, shortDescription, isBreaking, isTrending, isFeatured, isMustRead, createdAt, authorName, authorImage } = req.body;
+
+        // Sanitize plain-text fields - strip HTML tags
+        const plainFields = { title, shortDescription, authorName };
+        sanitizeFields(plainFields, PLAIN_TEXT_FIELDS);
+        title = plainFields.title;
+        shortDescription = plainFields.shortDescription;
+        authorName = plainFields.authorName;
 
         // Handle Featured Image Upload to R2
         if (isR2Enabled && image && image.startsWith('data:image')) {

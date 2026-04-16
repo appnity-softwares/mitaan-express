@@ -1,11 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const prisma = require('../prisma');
-
-const stripHtml = (html) => {
-    if (!html) return '';
-    return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
-};
+const { stripHtml } = require('../utils/sanitize');
 
 /**
  * SEO Renderer Middleware
@@ -47,7 +43,12 @@ const seoRenderer = async (req, res, next) => {
             const isNumeric = /^\d+$/.test(decodedId);
             data = await prisma.article.findUnique({
                 where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
-                select: { title: true, shortDescription: true, image: true, updatedAt: true, metaTitle: true, metaDescription: true }
+                select: {
+                    title: true, shortDescription: true, image: true,
+                    publishedAt: true, createdAt: true, updatedAt: true,
+                    metaTitle: true, metaDescription: true,
+                    category: { select: { name: true, nameHi: true } }
+                }
             });
         } else if (isBlog) {
             const isNumeric = /^\d+$/.test(decodedId);
@@ -57,8 +58,9 @@ const seoRenderer = async (req, res, next) => {
             });
         } else if (isCategory) {
             contentType = 'website';
+            const isNumeric = /^\d+$/.test(decodedId);
             data = await prisma.category.findUnique({
-                where: { slug: decodedId },
+                where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
                 select: { name: true, nameHi: true, description: true, image: true }
             });
             if (data) {
@@ -86,7 +88,7 @@ const seoRenderer = async (req, res, next) => {
         let html = fs.readFileSync(indexPath, 'utf8');
 
         // Prepare Meta Data
-        const title = (data.metaTitle || data.title || 'Mitaan Express').replace(/"/g, '&quot;');
+        const title = stripHtml(data.metaTitle || data.title || 'Mitaan Express').replace(/"/g, '&quot;');
         let description = stripHtml(data.metaDescription || data.shortDescription || data.title || '').replace(/"/g, '&quot;');
         if (description.length > 200) description = description.substring(0, 197) + '...';
         
@@ -121,7 +123,9 @@ const seoRenderer = async (req, res, next) => {
 
         const pageUrl = `${DOMAIN}${req.path}`;
         const siteName = 'Mitaan Express';
-        const isoDate = data.updatedAt ? new Date(data.updatedAt).toISOString() : new Date().toISOString();
+        const publishedDate = data.publishedAt || data.createdAt || data.updatedAt;
+        const isoDate = publishedDate ? new Date(publishedDate).toISOString() : new Date().toISOString();
+        const modifiedDate = data.updatedAt ? new Date(data.updatedAt).toISOString() : isoDate;
 
         // Schema.org JSON-LD for Times of India-style Rich Result
         const jsonLd = {
@@ -131,7 +135,7 @@ const seoRenderer = async (req, res, next) => {
             "description": description,
             "image": [imageUrl],
             "datePublished": isoDate,
-            "dateModified": isoDate,
+            "dateModified": modifiedDate,
             "author": {
                 "@type": "Organization",
                 "name": siteName,
@@ -151,46 +155,59 @@ const seoRenderer = async (req, res, next) => {
             }
         };
 
+        // Get category name for article:section
+        const categoryName = data.category?.name || data.category?.nameHi || 'News';
+
+        // Alt text for image
+        const imageAlt = title;
+
         // Construct Meta Tags
         let metaTags = `
     <title>${title} - ${siteName}</title>
     <meta name="description" content="${description}" />
+    <link rel="canonical" href="${pageUrl}" />
     <meta property="og:title" content="${title}" />
     <meta property="og:description" content="${description}" />
     <meta property="og:image" content="${imageUrl}" />
     <meta property="og:image:secure_url" content="${imageUrl}" />
+    <meta property="og:image:alt" content="${imageAlt}" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="675" />
     <meta property="og:url" content="${pageUrl}" />
     <meta property="og:type" content="${isCategory ? 'website' : 'article'}" />
     <meta property="og:site_name" content="${siteName}" />
-    <meta property="og:updated_time" content="${isoDate}" />
+    <meta property="og:updated_time" content="${modifiedDate}" />
     <meta property="og:locale" content="hi_IN" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${title}" />
     <meta name="twitter:description" content="${description}" />
     <meta name="twitter:image" content="${imageUrl}" />
+    <meta name="twitter:image:alt" content="${imageAlt}" />
     <meta name="twitter:site" content="@mitaanexpress" />
     <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
         `;
 
         if (!isCategory) {
             metaTags += `    <meta property="article:published_time" content="${isoDate}" />\n`;
-            metaTags += `    <meta property="article:modified_time" content="${isoDate}" />\n`;
-            metaTags += `    <meta property="article:section" content="News" />\n`;
+            metaTags += `    <meta property="article:modified_time" content="${modifiedDate}" />\n`;
+            metaTags += `    <meta property="article:section" content="${categoryName}" />\n`;
         }
 
         if (data.videoUrl) {
             metaTags += `    <meta property="og:video" content="${data.videoUrl}" />\n`;
         }
 
-        // Robust removal of existing tags
+        // Robust removal of existing tags to prevent duplication
         // This handles different attribute orders and self-closing styles
         html = html.replace(/<title>[\s\S]*?<\/title>/gi, '');
         html = html.replace(/<meta[^>]*?(?:name|property)=["']description["'][^>]*?>/gi, '');
         html = html.replace(/<meta[^>]*?(?:name|property)=["']og:[^"']+["'][^>]*?>/gi, '');
         html = html.replace(/<meta[^>]*?(?:name|property)=["']twitter:[^"']+["'][^>]*?>/gi, '');
+        html = html.replace(/<meta[^>]*?(?:name|property)=["']article:[^"']+["'][^>]*?>/gi, '');
+        html = html.replace(/<link[^>]*?rel=["']canonical["'][^>]*?>/gi, '');
+        // Remove existing JSON-LD scripts to prevent duplication
+        html = html.replace(/<script[^>]*?type=["']application\/ld\+json["'][^>]*?>[\s\S]*?<\/script>/gi, '');
 
         // Inject new tags into <head>
         html = html.replace('<head>', `<head>${metaTags}`);

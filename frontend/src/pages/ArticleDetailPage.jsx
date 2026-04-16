@@ -167,14 +167,14 @@ const ArticleDetailPage = ({ language }) => {
             <SEO
                 title={`${article.title} - Mitaan Express`}
                 description={article.shortDescription || article.content?.replace(/<[^>]*>/g, '').substring(0, 150)}
-                image={article.image}
+                image={formatImageUrl(article.image)}
                 type="article"
                 schemaData={{
                     "@context": "https://schema.org",
                     "@type": "NewsArticle",
                     "headline": article.title,
                     "description": article.shortDescription || article.content?.replace(/<[^>]*>/g, '').substring(0, 150),
-                    "image": [article.image],
+                    "image": [formatImageUrl(article.image)],
                     "datePublished": article.createdAt,
                     "dateModified": article.updatedAt || article.createdAt,
                     "author": [{
