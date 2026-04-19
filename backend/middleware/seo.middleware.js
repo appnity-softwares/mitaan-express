@@ -93,6 +93,13 @@ const seoRenderer = async (req, res, next) => {
         const isNumeric = /^\d+$/.test(decodedId);
 
         // DATA FETCH LOGIC
+        const totalCount = await prisma.article.count();
+        const recent = await prisma.article.findMany({ 
+            take: 3, 
+            orderBy: { createdAt: 'desc' },
+            select: { slug: true }
+        });
+        console.log(`[SEO DEBUG] DB STATS: Total Articles: ${totalCount}, Recent Slugs: ${recent.map(r => r.slug).join(', ')}`);
         console.log(`[SEO DEBUG] Checking identifier: "${decodedId}" (Numeric: ${isNumeric})`);
         
         if (isArticle || isInsight) {
