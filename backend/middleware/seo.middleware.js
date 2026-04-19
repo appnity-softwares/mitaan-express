@@ -103,6 +103,8 @@ const seoRenderer = async (req, res, next) => {
                         { slug: decodedId },
                         { slug: `insight/${decodedId}` },
                         { slug: `article/${decodedId}` },
+                        // Fuzzy match for long slugs that might be truncated in DB
+                        { slug: { startsWith: decodedId.substring(0, 80) } },
                         { id: isNumeric ? parseInt(decodedId) : -999 }
                     ]
                 },
