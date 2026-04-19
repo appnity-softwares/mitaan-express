@@ -97,8 +97,15 @@ const seoRenderer = async (req, res, next) => {
         
         if (isArticle || isInsight) {
             console.log(`[SEO DEBUG] Searching ARTICLE table for: ${decodedId}`);
-            data = await prisma.article.findUnique({
-                where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
+            data = await prisma.article.findFirst({
+                where: {
+                    OR: [
+                        { slug: decodedId },
+                        { slug: `insight/${decodedId}` },
+                        { slug: `article/${decodedId}` },
+                        { id: isNumeric ? parseInt(decodedId) : -999 }
+                    ]
+                },
                 select: {
                     title: true, shortDescription: true, image: true,
                     publishedAt: true, updatedAt: true, createdAt: true,
@@ -108,8 +115,14 @@ const seoRenderer = async (req, res, next) => {
             console.log(`[SEO DEBUG] Article Fetch Result: ${data ? 'SUCCESS' : 'NOT FOUND'}`);
         } else if (isBlog) {
             console.log(`[SEO DEBUG] Searching BLOG table for: ${decodedId}`);
-            data = await prisma.blog.findUnique({
-                where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
+            data = await prisma.blog.findFirst({
+                where: {
+                    OR: [
+                        { slug: decodedId },
+                        { slug: `blog/${decodedId}` },
+                        { id: isNumeric ? parseInt(decodedId) : -999 }
+                    ]
+                },
                 select: {
                     title: true, shortDescription: true, image: true,
                     updatedAt: true, createdAt: true
