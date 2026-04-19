@@ -93,8 +93,10 @@ const seoRenderer = async (req, res, next) => {
         const isNumeric = /^\d+$/.test(decodedId);
 
         // DATA FETCH LOGIC
+        console.log(`[SEO DEBUG] Checking identifier: "${decodedId}" (Numeric: ${isNumeric})`);
+        
         if (isArticle || isInsight) {
-            // FIX 1 SPEC: /article and /insight fetch from article table
+            console.log(`[SEO DEBUG] Searching ARTICLE table for: ${decodedId}`);
             data = await prisma.article.findUnique({
                 where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
                 select: {
@@ -103,7 +105,9 @@ const seoRenderer = async (req, res, next) => {
                     category: { select: { name: true, nameHi: true } }
                 }
             });
+            console.log(`[SEO DEBUG] Article Fetch Result: ${data ? 'SUCCESS' : 'NOT FOUND'}`);
         } else if (isBlog) {
+            console.log(`[SEO DEBUG] Searching BLOG table for: ${decodedId}`);
             data = await prisma.blog.findUnique({
                 where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
                 select: {
