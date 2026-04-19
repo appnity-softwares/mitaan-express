@@ -100,15 +100,14 @@ const seoRenderer = async (req, res, next) => {
         console.log(`[SEO DEBUG] DB STATS: Articles: ${artCount}, Blogs: ${blogCount}, DB: ${dbHint}`);
         console.log(`[SEO DEBUG] Checking identifier: "${decodedId}" (Numeric: ${isNumeric})`);
         
-        if (isArticle || isInsight) {
-            console.log(`[SEO DEBUG] Searching ARTICLE table for: ${decodedId}`);
+        if (isArticle || isInsight || isBlog) {
+            console.log(`[SEO DEBUG] Searching for Story: ${decodedId}`);
+            
+            // Try ARTICLE table first
             data = await prisma.article.findFirst({
                 where: {
                     OR: [
                         { slug: decodedId },
-                        { slug: `insight/${decodedId}` },
-                        { slug: `article/${decodedId}` },
-                        // Fuzzy match for long slugs that might be truncated in DB
                         { slug: { startsWith: decodedId.substring(0, 80) } },
                         { id: isNumeric ? parseInt(decodedId) : -999 }
                     ]
@@ -119,22 +118,25 @@ const seoRenderer = async (req, res, next) => {
                     category: { select: { name: true, nameHi: true } }
                 }
             });
-            console.log(`[SEO DEBUG] Article Fetch Result: ${data ? 'SUCCESS' : 'NOT FOUND'}`);
-        } else if (isBlog) {
-            console.log(`[SEO DEBUG] Searching BLOG table for: ${decodedId}`);
-            data = await prisma.blog.findFirst({
-                where: {
-                    OR: [
-                        { slug: decodedId },
-                        { slug: `blog/${decodedId}` },
-                        { id: isNumeric ? parseInt(decodedId) : -999 }
-                    ]
-                },
-                select: {
-                    title: true, shortDescription: true, image: true,
-                    updatedAt: true, createdAt: true
-                }
-            });
+
+            // FALLBACK TO BLOG table if not found in Article
+            if (!data) {
+                console.log(`[SEO DEBUG] Not found in Article, checking BLOG table...`);
+                data = await prisma.blog.findFirst({
+                    where: {
+                        OR: [
+                            { slug: decodedId },
+                            { slug: { startsWith: decodedId.substring(0, 80) } },
+                            { id: isNumeric ? parseInt(decodedId) : -999 }
+                        ]
+                    },
+                    select: {
+                        title: true, shortDescription: true, image: true,
+                        updatedAt: true, createdAt: true
+                    }
+                });
+            }
+            console.log(`[SEO DEBUG] Story Result: ${data ? 'SUCCESS' : 'NOT FOUND'}`);
         } else if (isCategory) {
             data = await prisma.category.findUnique({
                 where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
