@@ -91,7 +91,7 @@ cd ..
 
 # 7. Process Management (PM2)
 echo -e "${GREEN}🔄 Starting Application via PM2...${NC}"
-pm2 delete mitaan-backend || true
+pm2 delete mitaan-api || true
 pm2 start ecosystem.config.js --env production
 pm2 save
 pm2 startup | tail -n 1 | bash # Set PM2 to start on boot

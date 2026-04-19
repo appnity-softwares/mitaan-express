@@ -1,7 +1,7 @@
 module.exports = {
     apps: [
         {
-            name: 'mitaan-backend',
+            name: 'mitaan-api',
             script: 'server.js',
             cwd: './backend',
             instances: 1,

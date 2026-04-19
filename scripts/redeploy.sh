@@ -32,6 +32,6 @@ cd ..
 
 # 4. Reload processes
 echo "🔄 Reloading Application via PM2..."
-pm2 reload mitaan-backend || pm2 start ecosystem.config.js --env production
+pm2 reload mitaan-api --update-env || pm2 start ecosystem.config.js --env production
 
 echo "✅ Redeployment Complete!"
