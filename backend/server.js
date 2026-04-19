@@ -146,7 +146,7 @@ app.get('/health', async (req, res) => {
 // ============================================
 
 // 404 handler for unknown API routes
-app.use('/api/*', (req, res) => {
+app.use('/api/:path*', (req, res) => {
     res.status(404).json({ error: 'API endpoint not found', path: req.originalUrl });
 });
 
@@ -205,7 +205,7 @@ app.use((err, req, res, next) => {
 
 // 1. Dynamic SEO Injection for all page routes
 const seoRenderer = require('./middleware/seo.middleware');
-app.get(/.*/, (req, res, next) => {
+app.get('(.*)', (req, res, next) => {
     const reqPath = req.path;
     // CRITICAL: Filter out API and static assets (images, js, css) so they are NOT processed as pages
     if (reqPath.startsWith('/api/') || reqPath.includes('.')) {
@@ -220,7 +220,7 @@ const frontendPath = path.join(__dirname, '../frontend/dist');
 app.use(express.static(frontendPath, { index: false }));
 
 // 3. Fallback for everything else (if SEO renderer didn't respond)
-app.get(/.*/, (req, res) => {
+app.get('(.*)', (req, res) => {
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'API route not found' });
     }
