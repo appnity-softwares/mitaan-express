@@ -79,6 +79,11 @@ const seoRenderer = async (req, res, next) => {
     const isInsight = reqPath.startsWith('/insight/');
     const isBlog = reqPath.startsWith('/blog/');
     const isCategory = reqPath.startsWith('/category/');
+    const isAuthor = reqPath.startsWith('/author/');
+    const isPublisher = reqPath.startsWith('/publisher/');
+    const isVideo = reqPath.startsWith('/v/') || reqPath.startsWith('/video/');
+    const isGallery = reqPath.startsWith('/gallery/');
+    const isPoetry = reqPath.startsWith('/p/');
     const isHome = reqPath === '/';
 
     const DOMAIN = process.env.FRONTEND_URL || 'https://mitaanexpress.com';
@@ -108,7 +113,10 @@ const seoRenderer = async (req, res, next) => {
                 where: {
                     OR: [
                         { slug: decodedId },
-                        { slug: { startsWith: decodedId.substring(0, 80) } },
+                        // Find if DB slug is a truncated version of the URL slug
+                        { slug: { in: [decodedId.substring(0, 100), decodedId.substring(0, 110), decodedId.substring(0, 120)] } },
+                        // Find if URL slug starts with what's in the DB (for very long IDs)
+                        { slug: { startsWith: decodedId.substring(0, 50) } },
                         { id: isNumeric ? parseInt(decodedId) : -999 }
                     ]
                 },
@@ -126,7 +134,8 @@ const seoRenderer = async (req, res, next) => {
                     where: {
                         OR: [
                             { slug: decodedId },
-                            { slug: { startsWith: decodedId.substring(0, 80) } },
+                            { slug: { in: [decodedId.substring(0, 100), decodedId.substring(0, 110), decodedId.substring(0, 120)] } },
+                            { slug: { startsWith: decodedId.substring(0, 50) } },
                             { id: isNumeric ? parseInt(decodedId) : -999 }
                         ]
                     },
@@ -138,13 +147,42 @@ const seoRenderer = async (req, res, next) => {
             }
             console.log(`[SEO DEBUG] Story Result: ${data ? 'SUCCESS' : 'NOT FOUND'}`);
         } else if (isCategory) {
-            data = await prisma.category.findUnique({
-                where: isNumeric ? { id: parseInt(decodedId) } : { slug: decodedId },
+            data = await prisma.category.findFirst({
+                where: { OR: [ { slug: decodedId }, { id: isNumeric ? parseInt(decodedId) : -999 } ] },
                 select: { name: true, nameHi: true, description: true, image: true }
             });
             if (data) {
                 data.title = (data.nameHi || data.name) + ' - Mitaan Express';
                 data.shortDescription = data.description;
+            }
+        } else if (isAuthor || isPublisher) {
+            // Check User table for authors
+            const user = await prisma.user.findFirst({
+                where: { OR: [ { name: decodedId }, { id: isNumeric ? parseInt(decodedId) : -999 } ] },
+                select: { name: true, bio: true, image: true }
+            });
+            // Also check Publisher table
+            const publisher = !user ? await prisma.publisher.findFirst({
+                where: { OR: [ { slug: decodedId }, { id: isNumeric ? parseInt(decodedId) : -999 } ] },
+                select: { name: true, nameHi: true, description: true, image: true }
+            }) : null;
+
+            if (user || publisher) {
+                const target = user || publisher;
+                data = {
+                    title: (target.nameHi || target.name) + ' - Profile',
+                    shortDescription: target.bio || target.description || 'Contributor at Mitaan Express',
+                    image: target.image
+                };
+            }
+        } else if (isVideo || isGallery) {
+            data = await prisma.media.findFirst({
+                where: { id: isNumeric ? parseInt(decodedId) : -999 },
+                select: { title: true, description: true, thumbnail: true, url: true }
+            });
+            if (data) {
+                data.shortDescription = data.description;
+                data.image = data.thumbnail || data.url;
             }
         } else if (isHome) {
             const settingsList = await prisma.setting.findMany({
