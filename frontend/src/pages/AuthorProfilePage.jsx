@@ -5,7 +5,7 @@ import {
     User, Newspaper, FileText, Calendar, 
     ArrowLeft, ChevronRight, Share2, Info, Copy, Check
 } from 'lucide-react';
-import { formatImageUrl } from '../services/api';
+import { formatImageUrl, fetchPublisherById } from '../services/api';
 import SEO from '../components/SEO';
 import LoadingSkeletons from '../components/LoadingSkeletons';
 import toast from 'react-hot-toast';
@@ -43,17 +43,15 @@ const AuthorProfilePage = ({ language }) => {
     };
 
     useEffect(() => {
-        const fetchAuthor = async () => {
+        const getAuthor = async () => {
             setLoading(true);
             try {
-                // Ensure no double /api/api if VITE_API_URL has /api
-                const baseUrl = import.meta.env.VITE_API_URL;
-                const path = baseUrl.endsWith('/api') ? `/publishers/${id}` : `/api/publishers/${id}`;
+                const data = await fetchPublisherById(id);
                 
-                const response = await fetch(`${baseUrl}${path}`);
-                if (!response.ok) throw new Error('Failed to fetch');
-                
-                const data = await response.json();
+                if (!data) {
+                    setAuthor(null);
+                    return;
+                }
                 
                 // Ensure articles and blogs are always arrays to prevent .map errors
                 const sanitizedData = {
@@ -75,15 +73,15 @@ const AuthorProfilePage = ({ language }) => {
                 setLoading(false);
             }
         };
-        fetchAuthor();
+        getAuthor();
     }, [id]);
 
     if (loading) return <LoadingSkeletons type="page" />;
     if (!author) return (
         <div className="min-h-screen flex flex-col items-center justify-center p-4">
             <Info size={48} className="text-slate-300 mb-4" />
-            <h2 className="text-xl font-bold">Author Not Found</h2>
-            <Link to="/" className="mt-4 text-red-600 font-bold hover:underline">Return Home</Link>
+            <h2 className="text-xl font-bold">{language === 'hi' ? 'लेखक नहीं मिला' : 'Author Not Found'}</h2>
+            <Link to="/" className="mt-4 text-red-600 font-bold hover:underline">{language === 'hi' ? 'मुख्य पृष्ठ पर वापस जाएं' : 'Return Home'}</Link>
         </div>
     );
 
@@ -94,7 +92,7 @@ const AuthorProfilePage = ({ language }) => {
             <SEO 
                 title={`${author.name} - Author Profile | Mitaan Express`}
                 description={author.description || `Read articles and blogs by ${author.name} on Mitaan Express.`}
-                image={author.image}
+                image={formatImageUrl(author.image)}
             />
 
             {/* Hero Section */}
@@ -140,7 +138,7 @@ const AuthorProfilePage = ({ language }) => {
                                     className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-700 transition-all shadow-xl shadow-red-600/20 active:scale-95"
                                 >
                                     <Share2 size={16} />
-                                    Share Profile
+                                    {language === 'hi' ? 'प्रोफ़ाइल साझा करें' : 'Share Profile'}
                                 </button>
                             </div>
 
@@ -153,11 +151,11 @@ const AuthorProfilePage = ({ language }) => {
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-2">
                                 <div className="px-5 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-2xl flex items-center gap-3">
                                     <Newspaper size={18} className="text-red-600" />
-                                    <span className="text-sm font-bold">{author.articles?.length || 0} Articles</span>
+                                    <span className="text-sm font-bold">{author.articles?.length || 0} {language === 'hi' ? 'लेख' : 'Articles'}</span>
                                 </div>
                                 <div className="px-5 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-2xl flex items-center gap-3">
                                     <FileText size={18} className="text-red-600" />
-                                    <span className="text-sm font-bold">{author.blogs?.length || 0} Blogs</span>
+                                    <span className="text-sm font-bold">{author.blogs?.length || 0} {language === 'hi' ? 'ब्लॉग' : 'Blogs'}</span>
                                 </div>
                             </div>
                         </div>
@@ -173,7 +171,7 @@ const AuthorProfilePage = ({ language }) => {
                             onClick={() => setActiveTab('articles')}
                             className={`py-6 text-xs font-black uppercase tracking-widest relative transition-all ${activeTab === 'articles' ? 'text-red-600' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}`}
                         >
-                            Articles
+                            {language === 'hi' ? 'लेख' : 'Articles'}
                             {activeTab === 'articles' && (
                                 <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-1 bg-red-600 rounded-full" />
                             )}
@@ -182,7 +180,7 @@ const AuthorProfilePage = ({ language }) => {
                             onClick={() => setActiveTab('blogs')}
                             className={`py-6 text-xs font-black uppercase tracking-widest relative transition-all ${activeTab === 'blogs' ? 'text-red-600' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}`}
                         >
-                            Insights / Blogs
+                            {language === 'hi' ? 'ब्लॉग' : 'Insights / Blogs'}
                             {activeTab === 'blogs' && (
                                 <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-1 bg-red-600 rounded-full" />
                             )}
@@ -198,7 +196,11 @@ const AuthorProfilePage = ({ language }) => {
                         <div className="w-20 h-20 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto">
                             <Newspaper className="text-slate-300 dark:text-slate-700" size={32} />
                         </div>
-                        <p className="font-bold text-slate-400 uppercase tracking-widest text-xs">No {activeTab} published yet</p>
+                        <p className="font-bold text-slate-400 uppercase tracking-widest text-xs">
+                            {language === 'hi' 
+                                ? `अभी तक कोई ${activeTab === 'articles' ? 'लेख' : 'ब्लॉग'} प्रकाशित नहीं हुआ है` 
+                                : `No ${activeTab} published yet`}
+                        </p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -222,20 +224,22 @@ const AuthorProfilePage = ({ language }) => {
                                         />
                                         <div className="absolute top-4 left-4">
                                             <div className="px-3 py-1 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-full text-[9px] font-black uppercase tracking-widest text-red-600">
-                                                {activeTab === 'articles' ? 'Article' : 'Insight'}
+                                                {activeTab === 'articles' 
+                                                    ? (language === 'hi' ? 'लेख' : 'Article') 
+                                                    : (language === 'hi' ? 'ब्लॉग' : 'Insight')}
                                             </div>
                                         </div>
                                     </div>
                                     <div className="p-6 space-y-4">
                                         <div className="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                                             <Calendar size={12} />
-                                            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                                            <span>{new Date(post.createdAt).toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-US')}</span>
                                         </div>
                                         <h3 className="text-lg font-black text-slate-900 dark:text-white leading-tight line-clamp-2 group-hover:text-red-600 transition-colors">
                                             {post.title}
                                         </h3>
                                         <div className="flex items-center gap-2 text-xs font-black text-red-600 uppercase tracking-widest group-hover:gap-3 transition-all">
-                                            Read More <ChevronRight size={14} />
+                                            {language === 'hi' ? 'और पढ़ें' : 'Read More'} <ChevronRight size={14} />
                                         </div>
                                     </div>
                                 </Link>

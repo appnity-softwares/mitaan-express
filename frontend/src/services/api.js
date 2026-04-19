@@ -459,6 +459,17 @@ export const fetchPublishers = async () => {
     }
 };
 
+export const fetchPublisherById = async (id) => {
+    try {
+        const response = await fetch(`${API_URL}/publishers/${id}`);
+        if (!response.ok) throw new Error('Failed to fetch author profile');
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching author by ID:', error);
+        return null;
+    }
+};
+
 export const createPublisher = async (token, formData) => {
     try {
         const response = await fetch(`${API_URL}/publishers`, {

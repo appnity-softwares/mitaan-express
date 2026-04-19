@@ -146,7 +146,7 @@ app.get('/health', async (req, res) => {
 // ============================================
 
 // 404 handler for unknown API routes
-app.use('/api/{*path}', (req, res) => {
+app.use('/api/*', (req, res) => {
     res.status(404).json({ error: 'API endpoint not found', path: req.originalUrl });
 });
 
